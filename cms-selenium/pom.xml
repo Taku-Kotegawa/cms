@@ -59,7 +59,12 @@
 <!--             <artifactId>ojdbc8</artifactId> -->
 <!--             <scope>test</scope> -->
 <!--         </dependency> -->
-
+        <!-- == For maria db connection == -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- Please set the appropriate version according to the web browser. -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

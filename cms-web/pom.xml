@@ -126,6 +126,12 @@
 <!--             <artifactId>ojdbc8</artifactId> -->
 <!--             <scope>runtime</scope> -->
 <!--         </dependency> -->
+        <!-- == For maria db connection == -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- == End Database == -->
 
         <!-- == Begin Unit Test == -->
