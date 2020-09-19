@@ -53,6 +53,10 @@
             <artifactId>terasoluna-gfw-recommended-dependencies</artifactId>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>org.terasoluna.gfw</groupId>
+            <artifactId>terasoluna-gfw-validator</artifactId>
+        </dependency>
         <!-- == End TERASOLUNA == -->
 
         <!-- == Begin Database == -->
@@ -168,7 +172,10 @@
             <artifactId>terasoluna-gfw-codepoints-jisx0213kanji</artifactId>
         </dependency>
         <!-- == End Coding Support == -->
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>

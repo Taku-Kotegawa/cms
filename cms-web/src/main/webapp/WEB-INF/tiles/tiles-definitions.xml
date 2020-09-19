@@ -11,6 +11,9 @@
         <put-attribute name="body" value="" />
     </definition>
 
+    <definition name="login/loginForm" template="/WEB-INF/views/login/loginForm.jsp">
+    </definition>
+
     <definition name="*/*" extends="layouts">
         <put-attribute name="title" value="title.{1}.{2}" />
         <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />

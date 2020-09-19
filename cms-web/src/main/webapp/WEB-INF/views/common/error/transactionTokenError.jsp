@@ -10,32 +10,14 @@
         <h1>Transaction Token Error!</h1>
         <div class="error">
             <c:if test="${!empty exceptionCode}">[${f:h(exceptionCode)}]</c:if>
-            <spring:message code="e.xx.fw.7001" />
-        </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+            <spring:message code="e.sl.fw.7001" />
+
+<br>
+<br>
+<br>
+<br>
+<%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
+
     </div>
 </body>
 </html>

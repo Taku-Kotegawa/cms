@@ -12,10 +12,11 @@ import java.io.Serializable;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class Person extends AbstractEntity<String> implements Serializable {
 
     @Id

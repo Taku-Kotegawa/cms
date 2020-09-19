@@ -1,24 +1,28 @@
 <!DOCTYPE html>
-<html class="no-js">
+<html class="no-js" lang="ja">
+
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width" />
-<script type="text/javascript">
-    
-</script>
-<c:set var="titleKey">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width" />
+
+  <%@ include file="/WEB-INF/views/common/includes/include-common.jsp" %>
+
+  <c:set var="titleKey">
     <tiles:insertAttribute name="title" ignore="true" />
-</c:set>
-<title><spring:message code="${titleKey}" text="cms" /></title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/app/css/styles.css">
+  </c:set>
+  <title>
+    <spring:message code="${titleKey}" text="myscaffold" />
+  </title>
+
 </head>
-<body>
-    <div class="container">
-        <tiles:insertAttribute name="header" />
-        <tiles:insertAttribute name="body" />
-        <hr>
-        <p style="text-align: center; background: #e5eCf9;">Copyright &copy; 20XX CompanyName</p>
+
+<body class="layout-top-nav layout-navbar-fixed layout-footer-fixed">
+  <div class="wrapper">
+    <tiles:insertAttribute name="header" />
+    <div class="content-wrapper">
+      <tiles:insertAttribute name="body" />
     </div>
+  </div>
 </body>
 </html>

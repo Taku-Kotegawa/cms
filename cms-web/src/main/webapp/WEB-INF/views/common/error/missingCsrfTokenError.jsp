@@ -10,32 +10,15 @@
         <h1>CSRF Error! Missing CSRF Token!</h1>
         <div class="error">
             <c:if test="${!empty exceptionCode}">[${f:h(exceptionCode)}]</c:if>
-            <spring:message code="e.xx.fw.7004" />
+            <spring:message code="e.sl.fw.7004" />
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+
+<br>
+<br>
+<br>
+<br>
+<%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
+
     </div>
 </body>
 </html>

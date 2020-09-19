@@ -9,14 +9,35 @@
 
     <sec:http pattern="/resources/**" security="none"/>
     <sec:http>
-        <sec:form-login/>
-        <sec:logout/>
+        <sec:form-login login-page="/login"
+                        login-processing-url="/login" username-parameter="username"
+                        password-parameter="password"/>
+        <sec:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler"
+                    delete-cookies="JSESSIONID"/>
+        <sec:csrf/>
         <sec:access-denied-handler ref="accessDeniedHandler"/>
         <sec:custom-filter ref="userIdMDCPutFilter" after="ANONYMOUS_FILTER"/>
         <sec:session-management />
+        <sec:intercept-url pattern="/login/**" access="permitAll"/>
+        <sec:intercept-url pattern="/account/create" access="permitAll"/>
+        <sec:intercept-url pattern="/reissue/**" access="permitAll"/>
+        <sec:intercept-url pattern="/api/receivedmail" access="permitAll"/>
+        <sec:intercept-url pattern="/unlock/**" access="hasRole('ADMIN')"/>
+
+        <!-- /** は一番下 -->
+        <sec:intercept-url pattern="/**" access="isAuthenticated()"/>
+
+        <!-- ロールの階層化 -->
+        <sec:expression-handler ref="webExpressionHandler"/>
+
     </sec:http>
 
-    <sec:authentication-manager />
+    <sec:authentication-manager>
+        <sec:authentication-provider
+                user-service-ref="loggedInUserDetailsService">
+            <sec:password-encoder ref="passwordEncoder"/>
+        </sec:authentication-provider>
+    </sec:authentication-manager>
 
     <!-- CSRF Protection -->
     <bean id="accessDeniedHandler"
@@ -53,5 +74,37 @@
     <!-- Put UserID into MDC -->
     <bean id="userIdMDCPutFilter" class="org.terasoluna.gfw.security.web.logging.UserIdMDCPutFilter">
     </bean>
+
+    <!-- logout -->
+    <bean id="logoutSuccessHandler"
+          class="jp.co.stnet.cms.app.common.security.CacheClearLogoutSuccessHandler">
+        <constructor-arg value="/"/>
+    </bean>
+
+
+    <!-- ロール階層化 -->
+    <bean id="roleHierarchy"
+          class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl"> <!-- (1) -->
+        <property name="hierarchy"> <!-- (2) -->
+            <value>
+                ROLE_ADMIN > ROLE_STAFF
+                ROLE_STAFF > ROLE_USER
+            </value>
+        </property>
+    </bean>
+
+    <bean id="webExpressionHandler"
+          class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler">
+        <property name="roleHierarchy" ref="roleHierarchy"/>
+    </bean>
+
+    <bean id="methodExpressionHandler"
+          class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler"> <!-- (1) -->
+        <property name="roleHierarchy" ref="roleHierarchy"/>
+    </bean>
+
+    <sec:global-method-security pre-post-annotations="enabled">
+        <sec:expression-handler ref="methodExpressionHandler"/>
+    </sec:global-method-security>
 
 </beans>
