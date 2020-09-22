@@ -10,11 +10,13 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@Transactional
 public class AuthenticationEventSharedServiceImpl implements jp.co.stnet.cms.domain.service.authentication.AuthenticationEventSharedService {
 
     @Autowired

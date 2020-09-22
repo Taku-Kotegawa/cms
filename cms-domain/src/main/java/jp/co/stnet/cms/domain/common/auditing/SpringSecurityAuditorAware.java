@@ -1,6 +1,8 @@
 package jp.co.stnet.cms.domain.common.auditing;
 
+import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -10,6 +12,7 @@ public class SpringSecurityAuditorAware implements AuditorAware<String> {
 
     @Override
     public Optional<String> getCurrentAuditor() {
-        return Optional.of("aaa");
+        LoggedInUser loggedInUser = (LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return Optional.of(loggedInUser.getUsername());
     }
 }

@@ -34,5 +34,9 @@ public final class Constants {
         public static final String VIEW = "view";
     }
     
-    
+    public static final class FILE_STATUS {
+        public static final boolean PERMANENT = true;
+        public static final boolean TEMPORARY = false;
+    }
+
 }

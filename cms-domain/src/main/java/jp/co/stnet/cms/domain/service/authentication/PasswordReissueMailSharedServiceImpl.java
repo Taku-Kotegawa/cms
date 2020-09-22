@@ -4,12 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 @Slf4j
 @Service
+@Transactional
 public class PasswordReissueMailSharedServiceImpl implements PasswordReissueMailSharedService {
 
     @Inject

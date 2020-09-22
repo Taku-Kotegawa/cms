@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.terasoluna.gfw.common.exception.BusinessException;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
@@ -25,6 +26,7 @@ import static jp.co.stnet.cms.domain.common.message.MessageKeys.*;
 
 @Slf4j
 @Service
+@Transactional
 public class PasswordReissueServiceImpl implements PasswordReissueService {
 
     @Autowired

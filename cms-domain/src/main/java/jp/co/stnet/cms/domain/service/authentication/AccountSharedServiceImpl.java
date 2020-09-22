@@ -30,6 +30,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.terasoluna.gfw.common.exception.BusinessException;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
@@ -44,6 +45,7 @@ import static jp.co.stnet.cms.domain.common.message.MessageKeys.E_SL_FW_5001;
 
 @Slf4j
 @Service
+@Transactional
 public class AccountSharedServiceImpl implements AccountSharedService {
 
     @Autowired
@@ -184,7 +186,8 @@ public class AccountSharedServiceImpl implements AccountSharedService {
         account.setPassword(password);
         account = accountRepository.save(account);
 
-        passwordHistorySharedService.insert(PasswordHistory.builder()
+        passwordHistorySharedService.insert(
+                PasswordHistory.builder()
                 .username(username)
                 .password(password)
                 .useFrom(LocalDateTime.now()).build());
