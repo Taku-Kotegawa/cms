@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:sec="http://www.springframework.org/schema/security"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
         http://www.springframework.org/schema/security https://www.springframework.org/schema/security/spring-security.xsd
         http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
     ">
 
     <sec:http pattern="/resources/**" security="none"/>
+
     <sec:http>
         <sec:form-login login-page="/login"
                         login-processing-url="/login" username-parameter="username"
                         password-parameter="password"/>
         <sec:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler"
                     delete-cookies="JSESSIONID"/>
-        <sec:csrf/>
+        <sec:csrf request-matcher-ref="csrfMatcher"/>
         <sec:access-denied-handler ref="accessDeniedHandler"/>
         <sec:custom-filter ref="userIdMDCPutFilter" after="ANONYMOUS_FILTER"/>
         <sec:session-management />
@@ -106,5 +109,25 @@
     <sec:global-method-security pre-post-annotations="enabled">
         <sec:expression-handler ref="methodExpressionHandler"/>
     </sec:global-method-security>
+
+
+    <bean id="csrfMatcher" class="org.springframework.security.web.util.matcher.OrRequestMatcher">
+        <constructor-arg>
+            <util:list value-type="org.springframework.security.web.util.matcher.RequestMatcher">
+                <bean class="org.springframework.security.web.util.matcher.RegexRequestMatcher">
+                    <constructor-arg name="pattern" value="^(?!/api).*"/>
+                    <constructor-arg name="httpMethod" value="POST"/>
+                </bean>
+                <bean class="org.springframework.security.web.util.matcher.RegexRequestMatcher">
+                    <constructor-arg name="pattern" value="^(?!/api).*"/>
+                    <constructor-arg name="httpMethod" value="PUT"/>
+                </bean>
+                <bean class="org.springframework.security.web.util.matcher.RegexRequestMatcher">
+                    <constructor-arg name="pattern" value="^(?!/api).*"/>
+                    <constructor-arg name="httpMethod" value="DELETE"/>
+                </bean>
+            </util:list>
+        </constructor-arg>
+    </bean>
 
 </beans>

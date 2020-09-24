@@ -23,9 +23,9 @@
         <div class="col-12">
           <label>アップロードファイル *</label>
           <div id="upload_file_input-block" class="input-group">
-            <input form="upload_form" id="upload_file" name="upload_file" type="file"
-              class="form-control form-control-file" />
-            <button id="upload_file_upload" type="button" onclick="upload();">アップロード</button>
+            <input form="upload_form" id="upload_file" name="file" type="file"
+              class="form-control form-control-file" onChange="upload(this);"/>
+            <!-- <button id="upload_file_upload" type="button" onclick="upload();">アップロード</button> -->
           </div>
           <div id="upload_file_attached-block" class="input-group">
             <!-- <span id="upload_file_attached"><a href="#">ファイル名.txt</a><button type="button">削除</button></span> -->
@@ -64,8 +64,13 @@
 
 <script type="text/javascript">
 
+  var contextPath = "${pageContext.request.contextPath}";
+
+
+
+
+
   function file_delete() {
-    $(function () {
       document.getElementById("upload_file_input-block").style.display = "";
       var attaced_block = document.getElementById("upload_file_attached-block");
       while (attaced_block.firstChild) {
@@ -73,22 +78,31 @@
       }
       var input = document.getElementById("upload_file");
       input.value = "";
-    })
-  };
+  }
 
 
-  function upload() {
-    $(function () {
-      var $upload_form = $('#upload_form');
-      if (!$('#upload_file')[0].value) {
+  function upload(element) {
+
+      // var $upload_file = document.getElementById('upload_file')
+      var $upload_file = element;
+      var $upload_form = $upload_file.form;
+
+      if (!$upload_file.value) {
         alert("アップロードファイルを指定してください。");
         return;
       }
+
+      if ($upload_file.files[0].size > 10*1024*1024) {
+        alert("ファイルが大きすぎます。");
+        return;
+      }
+
       var regex = /\\|\//;
-      var array = $('#upload_file')[0].value.split(regex);
-      var ajaxUrl = " upload";
+      var array = $upload_file.value.split(regex);
+      var ajaxUrl = contextPath + "/api/file";
+
       if (window.FormData) {
-        var formData = new FormData($upload_form[0]);
+        var formData = new FormData($upload_form);
         $.ajax({
           type: "POST", // HTTP通信の種類
           url: ajaxUrl, // リクエストを送信する先のURL
@@ -96,7 +110,11 @@
           data: formData, // サーバーに送信するデータ
           processData: false,
           contentType: false,
+          enctype: 'multipart/form-data',
+
         }).done(function (data) { // Ajax通信が成功した時の処理
+
+
 
           document.getElementById("upload_file_input-block").style.display = "none";
 
@@ -139,12 +157,14 @@
           span.appendChild(fid);
 
         }).fail(function (XMLHttpRequest, textStatus, errorThrown) { // Ajax通信が失敗した時の処理
+          console.log(XMLHttpRequest);
+          console.log(textStatus);
+          console.log(errorThrown);
           alert("アップロードが失敗しました。");
 
         });
       } else {
         alert("アップロードに対応できていないブラウザです。");
       }
-    });
   }
 </script>

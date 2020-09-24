@@ -112,6 +112,13 @@
         </dependency>
         <!-- == End Tomcat == -->
 
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+
         <!-- == Begin Database == -->
         <!--  JDBC Driver is normally provided by application server .
               But if you want to include JDBC Driver in the application,
