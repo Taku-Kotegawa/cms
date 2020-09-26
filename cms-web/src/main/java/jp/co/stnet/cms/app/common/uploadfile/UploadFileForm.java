@@ -7,6 +7,6 @@ public class UploadFileForm {
 
     private String test;
 
-    private Long fileId;
+    private String uploadFileUuid;
 
 }

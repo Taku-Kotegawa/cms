@@ -1,8 +1,15 @@
+<script>
+  var contextPath = "${pageContext.request.contextPath}";
+</script>
+
 <!-- JQuery ----------------------------------------------------------------------------------------------------------->
 <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/jquery/jquery.min.js"></script>
 
 <!-- ダブルクリック防止 ------------------------------------------------------------------------------------------------->
 <script src="${pageContext.request.contextPath}/resources/app/js/blockdoubleclick.js"></script>
+
+<!-- マネージドファイル ------------------------------------------------------------------------------------------------->
+<script src="${pageContext.request.contextPath}/resources/app/js/filemanaged.js"></script>
 
 <!-- Bootstrap 4 ------------------------------------------------------------------------------------------------------>
 <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js">

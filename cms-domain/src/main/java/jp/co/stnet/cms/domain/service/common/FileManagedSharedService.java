@@ -3,10 +3,23 @@ package jp.co.stnet.cms.domain.service.common;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+
 public interface FileManagedSharedService {
 
-    FileManaged store(MultipartFile file, String fileType, Boolean status);
+    byte[] getFile(Long fid);
 
-    void delete(FileManaged fileManaged);
+    FileManaged findOne(Long fid);
+
+    FileManaged findOne(String uuid);
+
+    FileManaged store(MultipartFile file, String fileType, Boolean status) throws IOException;
+
+    void delete(Long id);
+
+    void delete(String uuid);
+
+    void cleanup(LocalDateTime deleteTo);
 
 }

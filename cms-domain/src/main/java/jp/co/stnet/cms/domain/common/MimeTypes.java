@@ -1,5 +1,7 @@
 package jp.co.stnet.cms.domain.common;
 
+import org.springframework.http.MediaType;
+
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -588,4 +590,9 @@ public class MimeTypes {
 
         return mime != null ? mime : "application/octet-stream";
     }
+
+    public static MediaType getMediaType(String extension) {
+        return MediaType.parseMediaType(getMimeType(extension));
+    }
+
 }

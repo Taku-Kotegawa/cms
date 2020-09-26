@@ -4,6 +4,7 @@ import jp.co.stnet.cms.app.common.uploadfile.UploadFileResult;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @RestController
 @RequestMapping("file")
 public class FileRestController {
@@ -21,17 +23,15 @@ public class FileRestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public UploadFileResult upload(
+    public UploadFileResult store(
             @RequestParam("file") MultipartFile multipartFile,
+            @RequestParam(value = "filetype", required = false) String fileType,
             @AuthenticationPrincipal LoggedInUser loggedInUser,
             HttpServletRequest request) {
 
-        if (multipartFile.isEmpty()) {
-        }
-
         try {
 
-            FileManaged fileManaged = fileManagedSharedService.store(multipartFile, "test", false);
+            FileManaged fileManaged = fileManagedSharedService.store(multipartFile, fileType, false);
 
             return UploadFileResult.builder()
                     .fid(fileManaged.getFid())
@@ -40,10 +40,9 @@ public class FileRestController {
                     .type(fileManaged.getFilemime())
                     .size(fileManaged.getFilesize())
                     .message("Upload Success.")
-                    .url(request.getContextPath() + "/file/download/" + fileManaged.getFid().toString())
-                    .deleteUrl(request.getContextPath() + "/file/delete/" + fileManaged.getFid().toString())
+                    .url(fileManaged.getUuid() + "/download")
+//                    .deleteUrl(request.getContextPath() + "/api/file/" + fileManaged.getUuid() + "/delete")
                     .build();
-
 
         } catch (Exception e) {
             return UploadFileResult.builder()
@@ -53,12 +52,15 @@ public class FileRestController {
 
     }
 
-
-    @GetMapping("{fid}/delete")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete() {
-
-
-    }
+//    @GetMapping("{uuid}/delete")
+//    @ResponseStatus(HttpStatus.OK)
+//    public UploadFileResult delete(@PathVariable("uuid") String uuid) {
+//        fileManagedSharedService.delete(uuid);
+//        return new UploadFileResult().builder()
+//                .message("file deleted.")
+//                .uuid(uuid)
+//                .build();
+//
+//    }
 
 }

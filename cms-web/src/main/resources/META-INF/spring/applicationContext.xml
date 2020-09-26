@@ -3,13 +3,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.1.xsd">
 
     <import resource="classpath:/META-INF/spring/cms-domain.xml" />
 
@@ -167,9 +170,8 @@
         <ref bean="digitRule"/>
     </util:list>
 
-    <!--
     <bean id="expiredReissueInfoCleaner"
-        class="com.example.domain.common.scheduled.UnnecessaryReissueInfoCleaner" />
+        class="jp.co.stnet.cms.domain.common.scheduled.UnnecessaryReissueInfoCleaner" />
     <bean id="expiredReissueInfoCleanTrigger" class="org.springframework.scheduling.support.PeriodicTrigger">
         <constructor-arg name="period" value="${security.reissueInfoCleanupSeconds}" />
         <constructor-arg name="timeUnit" value="SECONDS" />
@@ -182,7 +184,7 @@
     </task:scheduled-tasks>
 
     <bean id="tempFileCleaner"
-        class="com.example.domain.common.scheduled.TempFileCleaner" />
+        class="jp.co.stnet.cms.domain.common.scheduled.TempFileCleaner" />
     <bean id="tempFileCleanTrigger" class="org.springframework.scheduling.support.PeriodicTrigger">
         <constructor-arg name="period" value="${security.tempFileCleanupSeconds}" />
         <constructor-arg name="timeUnit" value="SECONDS" />
@@ -191,6 +193,5 @@
     <task:scheduled-tasks scheduler="tempFileTaskScheduler">
         <task:scheduled ref="tempFileCleaner" method="cleanup" trigger="tempFileCleanTrigger" />
     </task:scheduled-tasks>
-    -->
 
 </beans>
