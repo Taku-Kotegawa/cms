@@ -16,12 +16,6 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
-    <p>Welcome ${f:h(account.firstName)} ${f:h(account.lastName)}</p>
-
-    <c:if test="${!empty lastLoginDate}">
-      <p id="lastLogin">Last login date is ${f:h(lastLoginDate)}.</p>
-    </c:if>
-
     <div class="row">
       <a id="info" href="${f:h(pageContext.request.contextPath)}/account/" class="btn-button mr-2">
         アカウント情報
@@ -39,8 +33,28 @@
       <button id="logout" class="btn-button">ログアウト</button>
     </form:form>
     </div>
+    <div class="row mb-5">
+      <div class="col-36">
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-36">
+        <h4>管理者メニュー</h4>
+        <ul>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/role">ロール管理</a></li>
+        </ul>
+
+
+      </div>
+    </div>
+
 
   </div>
+
+
+
   <div class="container-fluid">
 
     <h2>Session</h2>

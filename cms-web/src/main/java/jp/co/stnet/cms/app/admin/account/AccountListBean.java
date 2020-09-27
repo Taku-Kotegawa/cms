@@ -1,4 +1,4 @@
-package jp.co.stnet.cms.app.authentication.account;
+package jp.co.stnet.cms.app.admin.account;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

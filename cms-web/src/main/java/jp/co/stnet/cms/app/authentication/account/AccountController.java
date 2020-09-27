@@ -4,8 +4,6 @@ package jp.co.stnet.cms.app.authentication.account;
 import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.app.authentication.account.AccountCreateForm.Confirm;
 import jp.co.stnet.cms.app.authentication.account.AccountCreateForm.CreateAccount;
-import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
-import jp.co.stnet.cms.domain.common.datatables.DataTablesOutput;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.AccountImage;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.terasoluna.gfw.common.message.ResultMessages;
 
-import javax.validation.Valid;
 import javax.validation.groups.Default;
 import java.io.IOException;
 import java.util.Arrays;
@@ -139,31 +136,6 @@ public final class AccountController {
     public String createComplete() {
         return "account/createComplete";
     }
-
-
-    /**
-     * 一覧画面の表示
-     */
-    @GetMapping(value = "list")
-    public String list(Model model) {
-
-        return "account/list";
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/list/json", method = RequestMethod.GET)
-    public DataTablesOutput<AccountListBean> getListJson(@Valid DataTablesInput input) {
-
-
-        DataTablesOutput<AccountListBean> output = new DataTablesOutput<>();
-        output.setData(null);
-        output.setDraw(input.getDraw());
-        output.setRecordsTotal(0);
-        output.setRecordsFiltered(0);
-
-        return output;
-    }
-
 
 
 }

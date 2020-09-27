@@ -2,6 +2,7 @@ package jp.co.stnet.cms.app.common.uploadfile;
 
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
+import jp.co.stnet.cms.domain.repository.authentication.RoleRepository;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class UploadFileController {
     @Autowired
     FileManagedSharedService fileManagedSharedService;
 
+    @Autowired
+    RoleRepository target;
+
     @ModelAttribute
     public UploadFileForm setUp() {
         return new UploadFileForm();
@@ -29,6 +33,24 @@ public class UploadFileController {
 
     @GetMapping(value = "upload", params = "form")
     public String form(Model model, UploadFileForm form) {
+
+
+//        List<Permission> permissions = new ArrayList<>();
+//        permissions.add(Permission.builder().permission("create_all_account").label("全ユーザの追加").build());
+//        permissions.add(Permission.builder().permission("edit_all_account").label("全ユーザの編集").build());
+//
+//        target.save(Role.builder()
+//                .role("USER")
+//                .label("利用者")
+//                .permissions(permissions).build());
+//
+//
+//        Role role = target.findById("USER").orElse(null);
+//
+//        log.info("Role = " + role);
+
+
+
         return "example/fileuploadForm";
     }
 
