@@ -84,8 +84,13 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
                     sql.append("function('date_format', ");
                     sql.append("c." + column.getData());
                     sql.append(", '%Y/%m/%d %T')");
+
+                } else if (isNumeric(substringLabel(column.getData()))) {
+                    sql.append("function('format', ");
+                    sql.append("c." + substringLabel(column.getData()));
+                    sql.append(", 0)");
                 } else {
-                    sql.append("c." + column.getData());
+                    sql.append("c." + substringLabel(column.getData()));
                 }
 
                 sql.append(" LIKE '");
@@ -110,7 +115,7 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
                         sql.append("c." + column.getData());
                         sql.append(", '%Y/%m/%d %T')");
                     } else {
-                        sql.append("c." + column.getData());
+                        sql.append("c." + substringLabel(column.getData()));
                     }
                     sql.append(" LIKE '");
                     sql.append(QueryEscapeUtils.toContainingCondition(globalSearch));
@@ -123,7 +128,7 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
         List<String> orderClause = new ArrayList<>();
         for (Order order : input.getOrder()) {
             orderClause.add(
-                    "c." + input.getColumns().get(order.getColumn()).getData() + " " + order.getDir());
+                    "c." + substringLabel(input.getColumns().get(order.getColumn()).getData()) + " " + order.getDir());
         }
         sql.append(" ORDER BY ");
         sql.append(StringUtils.join(orderClause, ','));
@@ -145,6 +150,14 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
         return "java.time.LocalDateTime".equals(fieldMap.get(fieldName));
     }
 
+    protected boolean isNumeric(String fieldName) {
+        return "java.lang.Integer".equals(fieldMap.get(fieldName))
+                || "java.lang.Long".equals(fieldMap.get(fieldName))
+                || "java.lang.BigDecimal".equals(fieldMap.get(fieldName))
+                || "java.lang.Float".equals(fieldMap.get(fieldName))
+                || "java.lang.Double".equals(fieldMap.get(fieldName));
+    }
+
 //    protected TypedQuery<T> getQuery(DataTablesInput input) {
 //        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 //        CriteriaQuery<T> q = cb.createQuery(clazz);
@@ -164,6 +177,16 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
 //
 //        return entityManager.createQuery(q);
 //    }
+
+
+    private String substringLabel(String org) {
+        if (StringUtils.endsWith(org, "Label")) {
+            return StringUtils.left(org, org.length() - 5);
+        } else {
+            return org;
+        }
+
+    }
 
     protected Pageable getPageable(DataTablesInput input) {
         return PageRequest.of(input.getStart() / input.getLength(), input.getLength());

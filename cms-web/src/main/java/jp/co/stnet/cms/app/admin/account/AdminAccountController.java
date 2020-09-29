@@ -100,6 +100,12 @@ public final class AdminAccountController {
             AccountListBean accountListBean = beanMapper.map(account, AccountListBean.class);
             accountListBean.setOperations(op.getToggleButton(account.getUsername()));
             accountListBean.setDT_RowId(account.getUsername());
+
+            // ステータスラベル
+            String statusLabel = account.getStatus() == 1 ? "有効" : "無効";
+            if (accountSharedService.isLocked(account.getUsername())) statusLabel = statusLabel + "(ロック)";
+            accountListBean.setStatusLabel(statusLabel);
+
             list.add(accountListBean);
         }
 
@@ -398,27 +404,27 @@ public final class AdminAccountController {
         includeKeys.add(Constants.BUTTON.DELETE);
         includeKeys.add(Constants.BUTTON.UNLOCK);
 
-        StateMap stateMap = new StateMap(Default.class, includeKeys, new ArrayList<>());
+        StateMap buttonState = new StateMap(Default.class, includeKeys, new ArrayList<>());
 
         // 常に表示
-        stateMap.setViewTrue(Constants.BUTTON.GOTOLIST);
+        buttonState.setViewTrue(Constants.BUTTON.GOTOLIST);
 
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
-            stateMap.setViewTrue(Constants.BUTTON.SAVE);
+            buttonState.setViewTrue(Constants.BUTTON.SAVE);
         }
 
         // 編集
         if (Constants.OPERATION.UPDATE.equals(operation)) {
 
             if (Constants.STATUS.VALID.equals(record.getStatus())) {
-                stateMap.setViewTrue(Constants.BUTTON.SAVE);
-                stateMap.setViewTrue(Constants.BUTTON.VIEW);
+                buttonState.setViewTrue(Constants.BUTTON.SAVE);
+                buttonState.setViewTrue(Constants.BUTTON.VIEW);
             }
 
             if (Constants.STATUS.INVALID.equals(record.getStatus())) {
-                stateMap.setViewTrue(Constants.BUTTON.VIEW);
-                stateMap.setViewTrue(Constants.BUTTON.DELETE);
+                buttonState.setViewTrue(Constants.BUTTON.VIEW);
+                buttonState.setViewTrue(Constants.BUTTON.DELETE);
             }
 
         }
@@ -428,19 +434,19 @@ public final class AdminAccountController {
 
             // スタータスが公開時
             if (Constants.STATUS.VALID.equals(record.getStatus())) {
-                stateMap.setViewTrue(Constants.BUTTON.GOTOUPDATE);
-                stateMap.setViewTrue(Constants.BUTTON.INVALID);
-                stateMap.setViewTrue(Constants.BUTTON.DELETE);
-                stateMap.setViewTrue(Constants.BUTTON.UNLOCK);
+                buttonState.setViewTrue(Constants.BUTTON.GOTOUPDATE);
+                buttonState.setViewTrue(Constants.BUTTON.INVALID);
+                buttonState.setViewTrue(Constants.BUTTON.DELETE);
+                buttonState.setViewTrue(Constants.BUTTON.UNLOCK);
             }
 
             // スタータスが無効
             if (Constants.STATUS.INVALID.equals(record.getStatus())) {
-                stateMap.setViewTrue(Constants.BUTTON.DELETE);
+                buttonState.setViewTrue(Constants.BUTTON.DELETE);
             }
         }
 
-        return stateMap;
+        return buttonState;
     }
 
     /**
@@ -453,30 +459,31 @@ public final class AdminAccountController {
 
         // 常設の隠しフィールドは状態管理しない
 
-        StateMap stateMap = new StateMap(AccountForm.class, new ArrayList<>(), excludeKeys);
+        StateMap fieldState = new StateMap(AccountForm.class, new ArrayList<>(), excludeKeys);
 
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
-            stateMap.setInputTrueAll();
+            fieldState.setInputTrueAll();
+            fieldState.setViewFalse("state");
         }
 
         // 編集
         if (Constants.OPERATION.UPDATE.equals(operation)) {
-            stateMap.setInputTrueAll();
-            stateMap.setReadOnlyTrue("username");
+            fieldState.setInputTrueAll();
+            fieldState.setReadOnlyTrue("username");
 
             // スタータスが無効
             if (Constants.STATUS.INVALID.equals(record.getStatus())) {
-                stateMap.setReadOnlyTrueAll();
+                fieldState.setReadOnlyTrueAll();
             }
         }
 
         // 参照
         if (Constants.OPERATION.VIEW.equals(operation)) {
-            stateMap.setViewTrueAll();
-            stateMap.setViewFalse("password");
+            fieldState.setViewTrueAll();
+            fieldState.setViewFalse("password");
         }
 
-        return stateMap;
+        return fieldState;
     }
 }

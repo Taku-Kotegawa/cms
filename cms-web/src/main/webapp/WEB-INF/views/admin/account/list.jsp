@@ -26,23 +26,31 @@
               <i class="fas fa-check"></i>
             </button>
           </th>
+          <th data-filter="disable"></th>
           <th></th>
           <th></th>
           <th></th>
           <th></th>
           <th></th>
-          <th></th>
+          <th data-filter="disable">
+            <select id="col_filter_7" data-column="7" class="dataTables_column_filter form-control">
+              <option value=""></option>
+              <option value="1">有効</option>
+              <option value="2">無効</option>
+            </select>
+          </th>
           <th></th>
         </tr>
         <tr class="title">
           <th class="text-center px-0"></th>
-          <th>操作</th>
-          <th>ユーザ名</th>
-          <th>名</th>
-          <th>姓</th>
-          <th>e-mail</th>
-          <th>URL</th>
-          <th>最終更新日時</th>
+          <th class="text-center">操作</th>
+          <th class="text-center">ユーザ名</th>
+          <th class="text-center">名</th>
+          <th class="text-center">姓</th>
+          <th class="text-center">e-mail</th>
+          <th class="text-center">URL</th>
+          <th>ステータス</th>
+          <th class="text-center">最終更新日時</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -59,10 +67,11 @@
       function () {
 
         // 項目単位フィルタ用のInputフィールドを追加する。
-        var startcolnum = 2;
+        // TODO 開始列番号を指定
+        var startcolnum = 1;
         $('tr.filter th').each(function () {
           var idx = $(this).index();
-          if (startcolnum <= idx) {
+          if (startcolnum <= idx　&& $(this).data("filter") != 'disable') {
             $(this).html('<input type="text" id="col_filter_' + idx + '" data-column="' + idx +
               '" class="dataTables_column_filter form-control" />');
           }
@@ -100,7 +109,13 @@
               data: 'url',
             },
             {
-              'data': 'lastModifiedDate',
+              data: 'statusLabel',
+              className: 'text-center',
+              // orderable: false,
+              // searchable: false,
+            },
+            {
+              data: 'lastModifiedDate',
             },
           ],
 

@@ -37,8 +37,11 @@ public class AccountListBean extends Account {
     public Map<String, String> getDT_RowAttr() {
         return DT_RowAttr;
     }
+
     @Override
     @JsonIgnore
     public String getPassword() { return null; }
 
+    private String statusLabel;
 }
+

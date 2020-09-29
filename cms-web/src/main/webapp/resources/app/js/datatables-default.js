@@ -114,6 +114,13 @@ function addFieldFilter2(table) {
         }
     });
 
+    // 項目単位フィルタのためのイベント処理を設定する。(Select用)
+    $('select.dataTables_column_filter').on('change', function (e, s) {
+            var th = $(this).parents('th')[0];
+            var visIndex = th.cellIndex;
+            table.column(visIndex + ':visIdx').search(this.value).draw();
+    });
+
     fnRecoverFieldSearch(table);
 //    restoreColumnFilterByColReOrder(table);
 

@@ -147,12 +147,13 @@
         <div class="col-8">
           <!-- ラベル -->
           <c:if test="${fieldState.password__input || fieldState.password__view}">
-            <form:label path="password">パスワード(変更が必要な場合のみ入力)</form:label>
+            <form:label path="password">パスワード</form:label>
           </c:if>
           <!-- 入力 -->
           <c:if test="${fieldState.password__input}">
             <form:input type="password" path="password" cssClass="form-control" cssErrorClass="form-control is-invalid"
               disabled="${fieldState.password__disabled}" readonly="${fieldState.password__readonly}" />
+            新規は必須、変更は必要な場合のみ
             <form:errors path="password" cssClass="invalid-feedback" />
           </c:if>
           <!-- 隠しフィールド-->
@@ -195,7 +196,7 @@
         <div class="col-12">
           <!-- ラベル -->
           <c:if test="${fieldState.image__input || fieldState.image__view}">
-            <form:label path="image">画像</form:label>
+            <form:label path="image">画像*</form:label>
           </c:if>
           <!-- 入力 -->
           <c:if test="${fieldState.image__input}">
@@ -212,9 +213,9 @@
           <div id="image__attached-block" class="input-group">
             <span>
               <i class="far fa-file ml-2"></i>
-              <a href="${imageFileManaged.uuid}/download" target="_blank"
+              <a href="${pageContext.request.contextPath}/admin/account/${imageFileManaged.uuid}/download" target="_blank"
                 class="link-attached">${imageFileManaged.originalFilename}</a>
-              <c:if test="${fieldState.image__input}">
+              <c:if test="${fieldState.image__input && !fieldState.image__readonly}">
                 <i class="far fa-trash-alt" style="color: brown;" onclick="file_detach('image')"></i>
               </c:if>
               <form:input type="hidden" path="imageUuid" />
@@ -225,14 +226,16 @@
 
       <div class="row mb-3">
         <div class="col-12">
-          <!-- ステータスは常に表示のみ -->
+          <!-- ステータスは新規登録時非表示、それ以外は常に表示のみ -->
           <!-- ラベル -->
+          <c:if test="${fieldState.status__view}">
             <label>ステータス</label>
             <div class="">
               <c:if test="${account.status == 1}">有効</c:if>
               <c:if test="${account.status == 2}">無効</c:if>
               <c:if test="${isLocked}">(ロック)</c:if>
             </div>
+          </c:if>
         </div>
       </div>
 
