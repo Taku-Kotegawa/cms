@@ -3,8 +3,6 @@ package jp.co.stnet.cms.domain.service;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface NodeIService<T, ID> {
 
 
@@ -13,10 +11,6 @@ public interface NodeIService<T, ID> {
      */
     T findById(ID id);
 
-    /**
-     * DataTables用の検索
-     */
-    List<T> findAllByInput(DataTablesInput input);
 
     /**
      * DataTables用の検索(Page)

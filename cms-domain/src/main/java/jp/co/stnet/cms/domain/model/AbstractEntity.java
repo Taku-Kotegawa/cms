@@ -1,5 +1,6 @@
 package jp.co.stnet.cms.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,9 +27,11 @@ public abstract class AbstractEntity<U> {
     @LastModifiedBy
     private String lastModifiedBy;
 
+    @JsonFormat(pattern="yyyy/MM/dd HH:mm:ss")
     @CreatedDate
     private LocalDateTime createdDate;
 
+    @JsonFormat(pattern="yyyy/MM/dd HH:mm:ss")
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 

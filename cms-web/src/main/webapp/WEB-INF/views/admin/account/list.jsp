@@ -18,18 +18,6 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
-    <div class="card">
-      <div class="card-body">
-        <div class="row">
-          <div class-="co4">
-            <label>氏名</label>
-            <input type="text" id="col_filter_3" data-column="3" class="dataTables_column_filter form-control">
-          </div>
-        </div>
-      </div>
-    </div>
-
-
     <table id="acountlist" class="table-sm table-striped">
       <thead>
         <tr class="filter">
@@ -44,15 +32,17 @@
           <th></th>
           <th></th>
           <th></th>
+          <th></th>
         </tr>
         <tr class="title">
           <th class="text-center px-0"></th>
           <th>操作</th>
-          <th>username</th>
-          <th>firstName</th>
-          <th>lastName</th>
-          <th>email</th>
-          <th>url</th>
+          <th>ユーザ名</th>
+          <th>名</th>
+          <th>姓</th>
+          <th>e-mail</th>
+          <th>URL</th>
+          <th>最終更新日時</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -70,38 +60,48 @@
 
         // 項目単位フィルタ用のInputフィールドを追加する。
         var startcolnum = 2;
-//        $('tr.filter th').each(function () {
-//          var idx = $(this).index();
-//          if (startcolnum <= idx) {
-//            $(this).html('<input type="text" id="col_filter_' + idx + '" data-column="' + idx +
-//              '" class="dataTables_column_filter form-control" />');
-//          }
-//        });
+        $('tr.filter th').each(function () {
+          var idx = $(this).index();
+          if (startcolnum <= idx) {
+            $(this).html('<input type="text" id="col_filter_' + idx + '" data-column="' + idx +
+              '" class="dataTables_column_filter form-control" />');
+          }
+        });
 
         var table = $('#acountlist').DataTable({
-
-//           'serverSide': false,
-//           'ajax': 'list/json2',
-//            "deferRender": false,
-
-          'processing': true,
-
           // 一覧に表示する項目とJSONの項目にマッピング
-          'columns': [
-            {'data': 'username',              className: 'text-center'},
-            {'data': 'operations',            className: ''           },
-            {'data': 'username',              className: ''           },
-            {'data': 'firstName',             className: ''           },
-            {'data': 'lastName',              className: ''           },
-            {'data': 'email',                 className: ''           },
-            {'data': 'url',                   className: ''           },
-          ],
-
-          // 項目別の設定
-          'columnDefs': [
-            {'targets': 0, 'orderable': false, 'searchable': false,
-              'checkboxes': {'selectRow': true }, },
-            {'targets': 1, 'orderable': false, 'searchable': false},
+          'columns': [{
+              data: 'username',
+              className: 'text-center',
+              orderable: false,
+              searchable: false,
+              checkboxes: {
+                selectRow: true
+              },
+            },
+            {
+              data: 'operations',
+              orderable: false,
+              searchable: false,
+            },
+            {
+              data: 'username',
+            },
+            {
+              data: 'firstName',
+            },
+            {
+              data: 'lastName',
+            },
+            {
+              data: 'email',
+            },
+            {
+              data: 'url',
+            },
+            {
+              'data': 'lastModifiedDate',
+            },
           ],
 
           // 初期ソート
@@ -114,7 +114,7 @@
 
           // データロード後処理
           'initComplete': function (settings, json) {
-            // グローバルフィルターの仕様変更(Enterキーでサーバに送信
+            // グローバルフィルターのEnterキーでサーバに送信
             fnGlobalFilterOnReturn(table);
           },
         });
@@ -127,8 +127,10 @@
         });
 
         // 項目単位フィルタの追加
-        addFieldFilter(table)
-        //addFieldFilter2(table)
+        // addFieldFilter(table)
+
+        // 項目単位フィルタを追加(列の並び順対応版)
+        addFieldFilter2(table)
 
       });
 
@@ -137,7 +139,7 @@
     var storageKey = "DataTables_acountlist_/cms-web/account/list";
     var url = '/cms-web/account/list/allkeyjson';
     var stateSaveData = JSON.parse(localStorage.getItem(storageKey));
-    $.getJSON(url, function(data){
+    $.getJSON(url, function (data) {
       data.forEach(function (value) {
         stateSaveData.checkboxes[0][value] = 1;
       });

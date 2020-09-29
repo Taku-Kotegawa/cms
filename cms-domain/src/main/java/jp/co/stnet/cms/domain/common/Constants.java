@@ -20,6 +20,7 @@ public final class Constants {
         public static final String INVALID = "invalid";
         public static final String LIST = "list";
         public static final String VIEW = "view";
+        public static final String UNLOCK = "unlock";
     }
 
     public static final class BUTTON {
@@ -32,6 +33,7 @@ public final class Constants {
         public static final String INVALID = "invalid";
         public static final String DELETE = "delete";
         public static final String VIEW = "view";
+        public static final String UNLOCK = "unlock";
     }
     
     public static final class FILE_STATUS {

@@ -1,9 +1,8 @@
 /**
  * マネージドファイルの添付削除
  * @param {*} element_id <input type="file">のID
- * @param {*} delete API URL
  */
-function file_detach(element_id, deleteUrl) {
+function file_detach(element_id) {
 
   var $upload_file = document.getElementById(element_id);
   $upload_file.style.display = "";
@@ -88,7 +87,7 @@ function file_attach(element) {
       trush_icon.classList = "far fa-trash-alt";
       trush_icon.style = "color: brown;";
       trush_icon.onclick = function () {
-        file_detach($upload_file.id, data.deleteUrl);
+        file_detach($upload_file.id);
       };
       span.appendChild(trush_icon);
 

@@ -3,7 +3,10 @@ package jp.co.stnet.cms.domain.model.authentication;
 import jp.co.stnet.cms.domain.model.AbstractEntity;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.List;
 
@@ -21,30 +24,37 @@ public class Account extends AbstractEntity<String> implements Serializable {
      */
     @Id
     private String username;
+
     /**
      * パスワード
      */
     private String password;
+
     /**
      * 名
      */
     private String firstName;
+
     /**
      * 姓
      */
     private String lastName;
+
     /**
      * メールアドレス
      */
     private String email;
+
     /**
      * URL
      */
     private String url;
+
     /**
      * プロフィール
      */
     private String profile;
+
     /**
      * ロール
      */
@@ -54,7 +64,11 @@ public class Account extends AbstractEntity<String> implements Serializable {
     /**
      * ステータス
      */
-    @Column(columnDefinition = "boolean default true")
-    private Boolean status;
+    private Integer status;
+
+    /**
+     * 画像UUID
+     */
+    private String imageUuid;
 
 }

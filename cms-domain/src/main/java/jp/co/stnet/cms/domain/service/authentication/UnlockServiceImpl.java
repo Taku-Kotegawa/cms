@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UnlockServiceImpl implements jp.co.stnet.cms.domain.service.authentication.UnlockService {
 
     @Autowired
-    jp.co.stnet.cms.domain.service.authentication.AuthenticationEventSharedService authenticationEventSharedService;
+    AuthenticationEventSharedService authenticationEventSharedService;
 
     @Override
     public void unlock(String username) {

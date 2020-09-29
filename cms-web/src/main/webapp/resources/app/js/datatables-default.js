@@ -36,7 +36,7 @@ $.extend($.fn.dataTable.defaults, {
         'sEmptyTable': 'テーブルにデータがありません',
         'sInfo': ' _TOTAL_ 件中 _START_ から _END_ まで表示',
         'sInfoEmpty': ' 0 件中 0 から 0 まで表示',
-        'sInfoFiltered': '（全 _MAX_ 件より抽出）',
+        'sInfoFiltered': '',
         'sInfoPostFix': '',
         'sInfoThousands': ',',
         'sLengthMenu': '_MENU_',

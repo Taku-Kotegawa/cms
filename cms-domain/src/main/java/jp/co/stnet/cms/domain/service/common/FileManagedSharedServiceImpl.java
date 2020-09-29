@@ -41,7 +41,7 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
     @Override
     public byte[] getFile(Long fid) {
-        String filePath = STORE_BASEDIR + findOne(fid).getUri();
+        String filePath = STORE_BASEDIR + findById(fid).getUri();
         try {
             return Files.readAllBytes(Paths.get(filePath));
         } catch (IOException e) {
@@ -50,15 +50,13 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
     }
 
     @Override
-    public FileManaged findOne(Long fid) {
-        return fileManagedRepository.findById(fid)
-                .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001, fid)));
+    public FileManaged findById(Long fid) {
+        return fileManagedRepository.findById(fid).orElse(null);
     }
 
     @Override
-    public FileManaged findOne(String uuid) {
-        return fileManagedRepository.findByUuid(uuid)
-                .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001, uuid)));
+    public FileManaged findByUuid(String uuid) {
+        return fileManagedRepository.findByUuid(uuid).orElse(null);
     }
 
     @Override

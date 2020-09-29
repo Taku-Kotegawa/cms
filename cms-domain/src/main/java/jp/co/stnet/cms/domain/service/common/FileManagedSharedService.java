@@ -10,9 +10,9 @@ public interface FileManagedSharedService {
 
     byte[] getFile(Long fid);
 
-    FileManaged findOne(Long fid);
+    FileManaged findById(Long fid);
 
-    FileManaged findOne(String uuid);
+    FileManaged findByUuid(String uuid);
 
     FileManaged store(MultipartFile file, String fileType, Boolean status) throws IOException;
 

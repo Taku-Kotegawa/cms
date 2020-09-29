@@ -23,7 +23,7 @@
 
     <sec:authorize url="/unlock">
       <div>
-        <a id="unlock" href="${f:h(pageContext.request.contextPath)}/unlock?form" class="btn-button">
+        <a id="unlock" href="${f:h(pageContext.request.contextPath)}/unlock?form" class="btn-button mr-2">
           ロック解除
         </a>
       </div>
@@ -43,7 +43,8 @@
       <div class="col-36">
         <h4>管理者メニュー</h4>
         <ul>
-          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/role">ロール管理</a></li>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/account/list">アカウント</a></li>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/role/list">ロール</a></li>
         </ul>
 
 
