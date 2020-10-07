@@ -7,12 +7,6 @@ public final class Constants {
         public static final String USER = "USER";
     }
 
-    public static final class STATUS {
-        public static final Integer DRAFT = 0;
-        public static final Integer VALID = 1;
-        public static final Integer INVALID = 2;
-    }
-
     public static final class OPERATION {
         public static final String CREATE = "create";
         public static final String UPDATE = "update";
@@ -34,11 +28,6 @@ public final class Constants {
         public static final String DELETE = "delete";
         public static final String VIEW = "view";
         public static final String UNLOCK = "unlock";
-    }
-    
-    public static final class FILE_STATUS {
-        public static final boolean PERMANENT = true;
-        public static final boolean TEMPORARY = false;
     }
 
 }

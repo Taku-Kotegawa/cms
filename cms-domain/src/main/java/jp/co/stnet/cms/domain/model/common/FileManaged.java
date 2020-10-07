@@ -18,7 +18,7 @@ import java.net.URLEncoder;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @Table(indexes = {@Index(columnList = "uuid, status")})
-public class FileManaged extends AbstractEntity implements Serializable {
+public class FileManaged extends AbstractEntity<Long> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,4 +80,18 @@ public class FileManaged extends AbstractEntity implements Serializable {
         }
     }
 
+    @Override
+    public void setStatus(String status) {
+
+    }
+
+    @Override
+    public Long getId() {
+        return fid;
+    }
+
+    @Override
+    public boolean isNew() {
+        return fid == null;
+    }
 }

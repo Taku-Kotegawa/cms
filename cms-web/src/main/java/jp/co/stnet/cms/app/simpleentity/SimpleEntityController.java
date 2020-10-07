@@ -1,76 +1,67 @@
-package jp.co.stnet.cms.app.admin.account;
+package jp.co.stnet.cms.app.simpleentity;
 
 import com.github.dozermapper.core.Mapper;
-import jp.co.stnet.cms.app.admin.account.AccountForm.Create;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.common.StateMap;
-import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesOutput;
 import jp.co.stnet.cms.domain.common.datatables.OperationsUtil;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
-import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
-import jp.co.stnet.cms.domain.service.authentication.AccountService;
-import jp.co.stnet.cms.domain.service.authentication.AccountSharedService;
-import jp.co.stnet.cms.domain.service.authentication.PasswordChangeService;
-import jp.co.stnet.cms.domain.service.authentication.UnlockService;
+import jp.co.stnet.cms.domain.model.example.SimpleEntity;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
+import jp.co.stnet.cms.domain.service.example.SimpleEntityService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.terasoluna.gfw.common.codelist.CodeList;
 import org.terasoluna.gfw.common.exception.BusinessException;
 import org.terasoluna.gfw.common.message.ResultMessages;
 import org.terasoluna.gfw.web.token.transaction.TransactionTokenCheck;
 import org.terasoluna.gfw.web.token.transaction.TransactionTokenType;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Controller
-@RequestMapping("admin/account")
-@TransactionTokenCheck("admin/account")
-public final class AdminAccountController {
+@RequestMapping("simpleentity")
+@TransactionTokenCheck("simpleentity")
+public class SimpleEntityController {
 
-    private final String BASE_PATH = "/admin/account/";
-    private final String JSP_LIST = "admin/account/list";
-    private final String JSP_FORM = "admin/account/form";
-    private final String JSP_VIEW = "admin/account/view";
-
-    @Autowired
-    AccountService accountService;
+    private final String BASE_PATH = "/simpleentity/";
+    private final String JSP_LIST = "simpleentity/list";
+    private final String JSP_FORM = "simpleentity/form";
+    private final String JSP_VIEW = "simpleentity/view";
 
     @Autowired
-    AccountSharedService accountSharedService;
+    SimpleEntityService simpleEntityService;
 
     @Autowired
     FileManagedSharedService fileManagedSharedService;
 
-    @Autowired
-    UnlockService unlockService;
-
-    @Autowired
-    PasswordChangeService passwordChangeService;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    @Inject
+    @Named("CL_STATUS")
+    CodeList statusCodeList;
 
     @Autowired
     Mapper beanMapper;
 
     @ModelAttribute
-    private AccountForm setUp() {
-        return new AccountForm();
+    private SimpleEntityForm setUp() {
+        return new SimpleEntityForm();
     }
 
     // ---------------- 一覧 -----------------------------------------------------
@@ -91,31 +82,30 @@ public final class AdminAccountController {
      */
     @ResponseBody
     @GetMapping(value = "/list/json")
-    public DataTablesOutput<AccountListBean> getListJson(@Validated DataTablesInput input) {
+    public DataTablesOutput<SimpleEntityListRow> getListJson(@Validated DataTablesInput input) {
 
         OperationsUtil op = new OperationsUtil("");
 
-        List<AccountListBean> list = new ArrayList<>();
-        Page<Account> accountPage = accountService.findPageByInput(input);
+        List<SimpleEntityListRow> list = new ArrayList<>();
+        Page<SimpleEntity> simpleEntityPage = simpleEntityService.findPageByInput(input);
 
-        for (Account account : accountPage.getContent()) {
-            AccountListBean accountListBean = beanMapper.map(account, AccountListBean.class);
-            accountListBean.setOperations(op.getToggleButton(account.getUsername()));
-            accountListBean.setDT_RowId(account.getUsername());
+        for (SimpleEntity simpleEntity : simpleEntityPage.getContent()) {
+            SimpleEntityListRow simpleEntityListRow = beanMapper.map(simpleEntity, SimpleEntityListRow.class);
+            simpleEntityListRow.setOperations(op.getToggleButton(simpleEntity.getId().toString()));
+            simpleEntityListRow.setDT_RowId(simpleEntity.getId().toString());
 
             // ステータスラベル
-            String statusLabel = account.getStatus().equals(Status.VALID.getCodeValue()) ? Status.VALID.getCodeLabel() : Status.INVALID.getCodeLabel();
-            if (accountSharedService.isLocked(account.getUsername())) statusLabel = statusLabel + "(ロック)";
-            accountListBean.setStatusLabel(statusLabel);
+            String statusLabel = simpleEntity.getStatus().equals(Status.VALID.getCodeValue()) ? Status.VALID.getCodeLabel() : Status.INVALID.getCodeLabel();
+            simpleEntityListRow.setStatusLabel(statusLabel);
 
-            list.add(accountListBean);
+            list.add(simpleEntityListRow);
         }
 
-        DataTablesOutput<AccountListBean> output = new DataTablesOutput<>();
+        DataTablesOutput<SimpleEntityListRow> output = new DataTablesOutput<>();
         output.setData(list);
         output.setDraw(input.getDraw());
         output.setRecordsTotal(0);
-        output.setRecordsFiltered(accountPage.getTotalElements());
+        output.setRecordsFiltered(simpleEntityPage.getTotalElements());
 
         return output;
     }
@@ -127,27 +117,24 @@ public final class AdminAccountController {
      */
     @GetMapping(value = "create", params = "form")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
-    public String createForm(AccountForm form,
+    public String createForm(SimpleEntityForm form,
                              Model model,
                              @AuthenticationPrincipal LoggedInUser loggedInUser,
-                             @RequestParam(value = "copy", required = false) String copy) {
+                             @RequestParam(value = "copy", required = false) Long copy) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
-        if (!StringUtils.isEmpty(copy)) {
-            Account source = accountService.findById(copy);
+        if (copy != null) {
+            SimpleEntity source = simpleEntityService.findById(copy);
             beanMapper.map(source, form);
-            form.setUsername(null);
+            form.setId(null);
         }
 
-        // ボタンの状態を設定
-        StateMap buttonState = getButtonStateMap(Constants.OPERATION.CREATE, null);
-        model.addAttribute("buttonState", buttonState.asMap());
-
-        // フィールドの状態を設定
-        StateMap filedState = getFiledStateMap(Constants.OPERATION.CREATE, null);
-        model.addAttribute("fieldState", filedState.asMap());
+        // ボタン・フィールドの状態を設定
+        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, null).asMap());
+        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.CREATE, null).asMap());
+        model.addAttribute("op", new OperationsUtil(BASE_PATH));
 
         return JSP_FORM;
     }
@@ -157,25 +144,24 @@ public final class AdminAccountController {
      */
     @PostMapping(value = "create")
     @TransactionTokenCheck
-    public String create(@Validated({Create.class, Default.class}) AccountForm form,
+    public String create(@Validated({SimpleEntityForm.Create.class, Default.class}) SimpleEntityForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
                          @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
             return createForm(form, model, loggedInUser, null);
         }
 
-        Account account = beanMapper.map(form, Account.class);
-        account.setStatus(Status.VALID.getCodeValue());
-        account.setPassword(passwordEncoder.encode(form.getPassword()));
+        SimpleEntity simpleEntity = beanMapper.map(form, SimpleEntity.class);
+        simpleEntity.setStatus(Status.VALID.getCodeValue());
 
         try {
-            accountService.save(account);
+            simpleEntityService.save(simpleEntity);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
             return createForm(form, model, loggedInUser, null);
@@ -185,7 +171,7 @@ public final class AdminAccountController {
         redirect.addFlashAttribute(messages);
 
         OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getEditUrl(account.getUsername());
+        return "redirect:" + op.getEditUrl(simpleEntity.getId().toString());
     }
 
     // ---------------- 編集 ---------------------------------------------------------
@@ -193,31 +179,27 @@ public final class AdminAccountController {
     /**
      * 編集画面を開く
      */
-    @GetMapping(value = "{username}/update", params = "form")
+    @GetMapping(value = "{id}/update", params = "form")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
-    public String updateForm(AccountForm form, Model model, @AuthenticationPrincipal LoggedInUser loggedInUser,
-                             @PathVariable("username") String username) {
+    public String updateForm(SimpleEntityForm form, Model model, @AuthenticationPrincipal LoggedInUser loggedInUser,
+                             @PathVariable("id") Long id) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
 
         // DBからデータ取得し、modelとformにセット
-        Account account = accountService.findById(username);
-        beanMapper.map(account, form);
-        form.setPassword(null);
-        model.addAttribute("account", account);
+        SimpleEntity simpleEntity = simpleEntityService.findById(id);
+        beanMapper.map(simpleEntity, form);
+        model.addAttribute("simpleEntity", simpleEntity);
 
         // 添付フィアルの情報をセット
-        FileManaged fileManaged = fileManagedSharedService.findByUuid(account.getImageUuid());
+        FileManaged fileManaged = fileManagedSharedService.findByUuid(simpleEntity.getAttachedFile01Uuid());
         model.addAttribute("imageFileManaged", fileManaged);
 
-        // ボタンの状態を設定
-        StateMap buttonState = getButtonStateMap(Constants.OPERATION.UPDATE, account);
-        model.addAttribute("buttonState", buttonState.asMap());
-
-        // フィールドの状態を設定
-        StateMap filedState = getFiledStateMap(Constants.OPERATION.UPDATE, account);
-        model.addAttribute("fieldState", filedState.asMap());
+        // ボタン・フィールドの状態を設定
+        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.UPDATE, simpleEntity).asMap());
+        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.UPDATE, simpleEntity).asMap());
+        model.addAttribute("op", new OperationsUtil(BASE_PATH));
 
         return JSP_FORM;
     }
@@ -225,42 +207,36 @@ public final class AdminAccountController {
     /**
      * 更新
      */
-    @PostMapping(value = "{username}/update")
+    @PostMapping(value = "{id}/update")
     @TransactionTokenCheck
-    public String update(@Validated({AccountForm.Update.class, Default.class}) AccountForm form,
+    public String update(@Validated({SimpleEntityForm.Update.class, Default.class}) SimpleEntityForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
                          @AuthenticationPrincipal LoggedInUser loggedInUser,
-                         @PathVariable("username") String username) {
+                         @PathVariable("id") Long id) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
-            return updateForm(form, model, loggedInUser, username);
+            return updateForm(form, model, loggedInUser, id);
         }
 
-        Account account = accountService.findById(username);
-        beanMapper.map(form, account);
-
-        // パスワード欄が入力された場合にパスワード設定
-        if (!StringUtils.isEmpty(form.getPassword())) {
-            passwordChangeService.updatePassword(form.getUsername(), form.getPassword());
-        }
+        SimpleEntity simpleEntity = beanMapper.map(form, SimpleEntity.class);
 
         try {
-             Account saved = accountService.save(account);
+            simpleEntityService.save(simpleEntity);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
-            return updateForm(form, model, loggedInUser, username);
+            return updateForm(form, model, loggedInUser, id);
         }
 
         ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0004);
         redirect.addFlashAttribute(messages);
 
         OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getEditUrl(account.getUsername());
+        return "redirect:" + op.getEditUrl(simpleEntity.getId().toString());
     }
 
     // ---------------- 削除 ---------------------------------------------------------
@@ -268,16 +244,16 @@ public final class AdminAccountController {
     /**
      * 削除
      */
-    @GetMapping(value = "{username}/delete")
+    @GetMapping(value = "{id}/delete")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
     public String delete(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
-                         @PathVariable("username") String username) {
+                         @PathVariable("id") Long id) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
 
         try {
-            accountService.delete(username);
+            simpleEntityService.delete(id);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
         }
@@ -291,16 +267,16 @@ public final class AdminAccountController {
 
     // ---------------- 無効化 ---------------------------------------------------------
 
-    @GetMapping(value = "{username}/invalid")
+    @GetMapping(value = "{id}/invalid")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
     public String invalid(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
-                          @PathVariable("username") String username) {
+                          @PathVariable("id") Long id) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
 
         try {
-            accountService.invalid(username);
+            simpleEntityService.invalid(id);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
         }
@@ -309,7 +285,7 @@ public final class AdminAccountController {
         redirect.addFlashAttribute(messages);
 
         OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getViewUrl(username);
+        return "redirect:" + op.getViewUrl(id.toString());
     }
 
     // ---------------- 参照 ---------------------------------------------------------
@@ -317,56 +293,28 @@ public final class AdminAccountController {
     /**
      * 参照画面の表示
      */
-    @GetMapping(value = "{username}")
+    @GetMapping(value = "{id}")
     public String view(Model model, @AuthenticationPrincipal LoggedInUser loggedInUser,
-                       @PathVariable("username") String username) {
+                       @PathVariable("id") Long id) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
 
-        Account account = accountService.findById(username);
-        model.addAttribute("account", account);
-
-        // ロック状態確認
-        model.addAttribute("isLocked", accountSharedService.isLocked(username));
+        SimpleEntity simpleEntity = simpleEntityService.findById(id);
+        model.addAttribute("simpleEntity", simpleEntity);
 
         // 添付フィアルの情報をセット
-        FileManaged fileManaged = fileManagedSharedService.findByUuid(account.getImageUuid());
+        FileManaged fileManaged = fileManagedSharedService.findByUuid(simpleEntity.getAttachedFile01Uuid());
         model.addAttribute("imageFileManaged", fileManaged);
 
-        // ボタンの状態を設定
-        StateMap buttonState = getButtonStateMap(Constants.OPERATION.VIEW, account);
-        model.addAttribute("buttonState", buttonState.asMap());
-
-        // フィールドの状態を設定
-        StateMap filedState = getFiledStateMap(Constants.OPERATION.VIEW, account);
-        model.addAttribute("fieldState", filedState.asMap());
+        // ボタン・フィールドの状態を設定
+        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
+        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
+        model.addAttribute("op", new OperationsUtil(BASE_PATH));
 
         return JSP_FORM;
     }
 
-    // ---------------- ロック解除 ---------------------------------------------------------
-
-    /**
-     * 参照画面の表示
-     */
-    @GetMapping(value = "{username}/unlock")
-    public String unlock(Model model, @AuthenticationPrincipal LoggedInUser loggedInUser,
-                         @PathVariable("username") String username) {
-
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
-
-        // 存在しなければ例外
-        Account account = accountService.findById(username);
-
-        // ロック解除
-        unlockService.unlock(username);
-
-        // 参照画面へ
-        OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getViewUrl(username);
-    }
 
     // ---------------- ダウンロード -----------------------------------------------
 
@@ -377,7 +325,7 @@ public final class AdminAccountController {
             @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
 
         FileManaged fileManaged = fileManagedSharedService.findByUuid(uuid);
         model.addAttribute(fileManaged);
@@ -391,10 +339,10 @@ public final class AdminAccountController {
      * @param record
      * @return
      */
-    private StateMap getButtonStateMap(String operation, Account record) {
+    private StateMap getButtonStateMap(String operation, SimpleEntity record) {
 
         if (record == null) {
-            record = new Account();
+            record = new SimpleEntity();
         }
 
         List<String> includeKeys = new ArrayList<>();
@@ -456,23 +404,22 @@ public final class AdminAccountController {
      * @param record
      * @return
      */
-    private StateMap getFiledStateMap(String operation, Account record) {
+    private StateMap getFiledStateMap(String operation, SimpleEntity record) {
         List<String> excludeKeys = new ArrayList<>();
 
         // 常設の隠しフィールドは状態管理しない
 
-        StateMap fieldState = new StateMap(AccountForm.class, new ArrayList<>(), excludeKeys);
+        StateMap fieldState = new StateMap(SimpleEntityForm.class, new ArrayList<>(), excludeKeys);
 
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
             fieldState.setInputTrueAll();
-            fieldState.setViewFalse("state");
         }
 
         // 編集
         if (Constants.OPERATION.UPDATE.equals(operation)) {
             fieldState.setInputTrueAll();
-            fieldState.setReadOnlyTrue("username");
+            fieldState.setReadOnlyTrue("id");
 
             // スタータスが無効
             if (Status.INVALID.toString().equals(record.getStatus())) {
@@ -483,9 +430,9 @@ public final class AdminAccountController {
         // 参照
         if (Constants.OPERATION.VIEW.equals(operation)) {
             fieldState.setViewTrueAll();
-            fieldState.setViewFalse("password");
         }
 
         return fieldState;
     }
+
 }

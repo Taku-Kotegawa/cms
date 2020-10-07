@@ -1,7 +1,6 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
 
-import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.AccountImage;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
@@ -42,13 +41,6 @@ public class AccountServiceImpl extends AbstractNodeService<Account, String> imp
     }
 
     @Override
-    public Account invalid(String id) {
-        Account account = findById(id);
-        account.setStatus(Constants.STATUS.INVALID);
-        return save(account);
-    }
-
-    @Override
     @PostAuthorize("returnObject == true")
     public Boolean hasAuthority(String Operation, LoggedInUser loggedInUser) {
         return true;
@@ -70,6 +62,5 @@ public class AccountServiceImpl extends AbstractNodeService<Account, String> imp
 
         return getRepository().save(account);
     }
-
 
 }

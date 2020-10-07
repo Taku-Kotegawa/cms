@@ -230,6 +230,6 @@ $.fn.dataTable.ext.buttons.createnew = {
     text: '<i class="far fa-file"></i>',
     titleAttr: '新規作成',
     action: function (e, dt, node, config) {
-        window.location.href = "create?form&distination=list";
+        window.location.href = "create?form";
     }
 };

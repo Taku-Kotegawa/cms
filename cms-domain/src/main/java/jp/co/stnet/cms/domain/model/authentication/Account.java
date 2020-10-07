@@ -64,11 +64,20 @@ public class Account extends AbstractEntity<String> implements Serializable {
     /**
      * ステータス
      */
-    private Integer status;
+    private String status;
 
     /**
      * 画像UUID
      */
     private String imageUuid;
 
+    @Override
+    public String getId() {
+        return username;
+    }
+
+    @Override
+    public boolean isNew() {
+        return getVersion() == null;
+    }
 }

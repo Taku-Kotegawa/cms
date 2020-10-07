@@ -2,14 +2,14 @@ package jp.co.stnet.cms.domain.repository.example;
 
 import jp.co.stnet.cms.domain.model.example.Person;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:test-context.xml"})
+import javax.transaction.Transactional;
+
+@SpringJUnitConfig(locations = {"classpath:test-context.xml"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
 class PersonRepositoryTest {
 
     @Autowired
@@ -42,22 +42,5 @@ class PersonRepositoryTest {
 
         target.findAll();
     }
-
-    @Test
-    void test_002() {
-        Person person = target.findById(1L).orElse(null);
-        person.setAge(12);
-        target.save(person);
-    }
-
-    @Test
-    void test_003() {
-        Person person = target.findById(1L).orElse(null);
-        person.setId(null);
-        person.setVersion(null);
-        person.setAge(13);
-        target.save(person);
-    }
-
 
 }

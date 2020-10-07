@@ -17,7 +17,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class Person extends AbstractEntity<String> implements Serializable {
+public class Person extends AbstractEntity<Long> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +27,14 @@ public class Person extends AbstractEntity<String> implements Serializable {
 
     private Integer age;
 
+
+    @Override
+    public void setStatus(String status) {
+
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
 }

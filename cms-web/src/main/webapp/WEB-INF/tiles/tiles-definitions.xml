@@ -18,6 +18,7 @@
         <put-attribute name="title" value="title.{1}.{2}" />
         <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
     </definition>
+
     <definition name="admin/*/*" extends="layouts">
         <put-attribute name="title" value="title.admin.{1}.{2}" />
         <put-attribute name="body" value="/WEB-INF/views/admin/{1}/{2}.jsp" />

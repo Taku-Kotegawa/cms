@@ -77,7 +77,7 @@
     };
     eModal.alert(options);
 
-    eModal.ajax('http://localhost:8080/myscaffold-web/common/dialog/test', 'Jobs - Form apply')
+    eModal.ajax('http://localhost:8080/cms-web/common/dialog/test', 'Jobs - Form apply')
       .then(ajaxOnLoadCallback);
 
   });

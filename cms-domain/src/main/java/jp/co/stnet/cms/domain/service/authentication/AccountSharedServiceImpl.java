@@ -16,8 +16,8 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
 import com.github.dozermapper.core.Mapper;
-import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.model.authentication.*;
+import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.model.common.TempFile;
 import jp.co.stnet.cms.domain.repository.authentication.AccountImageRepository;
 import jp.co.stnet.cms.domain.repository.authentication.AccountRepository;
@@ -121,7 +121,7 @@ public class AccountSharedServiceImpl implements AccountSharedService {
         }
         String rawPassword = passwordGenerator.generatePassword(10, passwordGenerationRules);
         account.setPassword(passwordEncoder.encode(rawPassword));
-        account.setStatus(Constants.STATUS.VALID);
+        account.setStatus(Status.INVALID.getCodeValue());
         accountRepository.save(account);
 
         if (imageId != null) {

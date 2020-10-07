@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="
-        http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd
-    ">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="jdbcTemplateForCodeList" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource" />
@@ -24,5 +20,17 @@
         <property name="labelColumn" value="code_name" />
     </bean>
     -->
+
+    <bean id="CL_STATUS"
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList"> <!-- (7) -->
+        <constructor-arg value="jp.co.stnet.cms.domain.model.common.Status" /> <!-- (8) -->
+    </bean>
+
+    <bean id="CL_FILESTATUS"
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList"> <!-- (7) -->
+        <constructor-arg value="jp.co.stnet.cms.domain.model.common.FileStatus" /> <!-- (8) -->
+    </bean>
+
+
 
 </beans>

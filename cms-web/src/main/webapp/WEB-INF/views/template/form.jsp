@@ -26,9 +26,7 @@
       <form:hidden path="version" />
       <!-- 必要に応じて隠しフィールドを追加する -->
 
-        <!-- ここにメインコンテンツを追加 -->
-
-    </form:form>
+      <!-- ここにメインコンテンツを追加 -->
 
     <!-- 操作ボタンを追加(メインコンテンツの中に追加する様に) -->
       <div class="row operation-button-block">
@@ -178,6 +176,8 @@
       </div>
 
 
+
+    </form:form>
 
 
 

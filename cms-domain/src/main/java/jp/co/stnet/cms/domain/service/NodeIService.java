@@ -1,15 +1,18 @@
 package jp.co.stnet.cms.domain.service;
 
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
+import jp.co.stnet.cms.domain.model.AbstractEntity;
+import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.AccessDeniedException;
+import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 
-public interface NodeIService<T, ID> {
-
+public interface NodeIService<T extends AbstractEntity<ID>, ID> {
 
     /**
      * IDで検索
      */
-    T findById(ID id);
+    T  findById(ID id);
 
 
     /**
@@ -19,6 +22,12 @@ public interface NodeIService<T, ID> {
 
     /**
      * １件の保存
+     * @param entity 更新するエンティティ
+     * @return 更新後のエンティティ
+     * @throws NoChangeBusinessException 既に登録されている内容と変更する箇所がない場合
+     * @throws OptimisticLockingFailureBusinessException 楽観的排他チェックで更新に失敗した場合
+     * @throws InvalidArgumentBusinessException 入力に不備がある場合
+     * @throws ResourceNotFoundException 検索条件に合致するエンティティが存在しない場合
      */
     T save(T entity);
 
@@ -41,5 +50,14 @@ public interface NodeIService<T, ID> {
      * １件の無効化
      */
     T invalid(ID id);
+
+    /**
+     * 権限チェックを行う。
+     * @param Operation 操作の種類(Constants.OPERATIONに登録された値)
+     * @param loggedInUser ログインユーザ情報
+     * @return true=操作する権限を持つ, false=操作する権限なし
+     * @throws AccessDeniedException @PostAuthorizeを用いてfalse時にスロー
+     */
+    Boolean hasAuthority(String Operation, LoggedInUser loggedInUser);
 
 }

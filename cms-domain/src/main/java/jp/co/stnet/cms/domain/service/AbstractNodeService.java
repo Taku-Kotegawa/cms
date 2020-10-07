@@ -1,11 +1,17 @@
 package jp.co.stnet.cms.domain.service;
 
+import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.domain.common.BeanUtils;
 import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.common.datatables.Column;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
 import jp.co.stnet.cms.domain.common.datatables.Order;
+import jp.co.stnet.cms.domain.common.exception.NoChangeBusinessException;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
+import jp.co.stnet.cms.domain.model.AbstractEntity;
+import jp.co.stnet.cms.domain.model.common.Status;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,17 +25,17 @@ import org.terasoluna.gfw.common.query.QueryEscapeUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.TypedQuery;
+import java.util.*;
 
+@Slf4j
 @Transactional
-public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> {
+public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> implements NodeIService<T, ID> {
 
     protected final Class<T> clazz;
-
     protected final Map<String, String> fieldMap;
-
+    @Autowired
+    Mapper beanMapper;
     @PersistenceContext
     EntityManager entityManager;
 
@@ -41,7 +47,56 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
     abstract protected JpaRepository<T, ID> getRepository();
 
     @Override
-    public abstract T invalid(ID id);
+    public T findById(ID id) {
+        return getRepository().findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001, id)));
+    }
+
+    @Override
+    public T save(T entity) {
+        if (entity.getId() != null) {
+            T before = getRepository().getOne(entity.getId());
+            // beanMapperを経由するのはPersistentBag対策
+            if (Objects.equals(entity, beanMapper.map(before, clazz))) {
+                throw new NoChangeBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2001)));
+            }
+        }
+
+        // 自動更新項目(createdBy, createdDate, lastModifiedBy, lastModifiedDate)を取得するため、DB更新(flush) + キャッシュクリア(detach)
+        entityManager.detach(getRepository().saveAndFlush(entity));
+        return getRepository().findById(entity.getId()).orElse(null);
+    }
+
+    @Override
+    public Iterable<T> save(Iterable<T> entities) {
+        List<T> saved = new ArrayList<>();
+        Iterator<T> iterator = entities.iterator();
+        while (iterator.hasNext()) {
+            saved.add(save(iterator.next()));
+        }
+        return saved;
+    }
+
+    @Override
+    public void delete(ID id) {
+        getRepository().deleteById(id);
+    }
+
+    @Override
+    public void delete(Iterable<T> entities) {
+        Iterator<T> iterator = entities.iterator();
+        while (iterator.hasNext()) {
+            delete(iterator.next().getId());
+        }
+    }
+
+
+    @Override
+    public T invalid(ID id) {
+        T before = findById(id);
+        before.setStatus(Status.INVALID.getCodeValue());
+        return save(before);
+    }
 
     @Override
     public Page<T> findPageByInput(DataTablesInput input) {
@@ -78,24 +133,25 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
                 }
                 if (isDate(column.getData())) {
                     sql.append("function('date_format', ");
-                    sql.append("c." + column.getData());
+                    sql.append("c." + convColumnName(column.getData()));
                     sql.append(", '%Y/%m/%d')");
                 } else if (isDateTime(column.getData())) {
                     sql.append("function('date_format', ");
-                    sql.append("c." + column.getData());
+                    sql.append("c." + convColumnName((column.getData())));
                     sql.append(", '%Y/%m/%d %T')");
 
-                } else if (isNumeric(substringLabel(column.getData()))) {
+                } else if (isNumeric(convColumnName(column.getData()))) {
                     sql.append("function('format', ");
-                    sql.append("c." + substringLabel(column.getData()));
+                    sql.append("c." + convColumnName(column.getData()));
                     sql.append(", 0)");
                 } else {
-                    sql.append("c." + substringLabel(column.getData()));
+                    sql.append("c." + convColumnName(column.getData()));
                 }
 
-                sql.append(" LIKE '");
-                sql.append(QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
-                sql.append("' ESCAPE '~'");
+                sql.append(" LIKE :");
+                sql.append(convColumnName(column.getData()));
+//                sql.append(QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
+                sql.append(" ESCAPE '~'");
             }
         }
 
@@ -108,18 +164,19 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
                     sql.append(" OR ");
                     if (isDate(column.getData())) {
                         sql.append("function('date_format', ");
-                        sql.append("c." + column.getData());
+                        sql.append("c." + convColumnName(column.getData()));
                         sql.append(", '%Y/%m/%d')");
                     } else if (isDateTime(column.getData())) {
                         sql.append("function('date_format', ");
-                        sql.append("c." + column.getData());
+                        sql.append("c." + convColumnName(column.getData()));
                         sql.append(", '%Y/%m/%d %T')");
                     } else {
-                        sql.append("c." + substringLabel(column.getData()));
+                        sql.append("c." + convColumnName(column.getData()));
                     }
-                    sql.append(" LIKE '");
-                    sql.append(QueryEscapeUtils.toContainingCondition(globalSearch));
-                    sql.append("' ESCAPE '~'");
+                    sql.append(" LIKE :globalSearch ESCAPE '~'");
+//                    sql.append(substringLabel(column.getData()));
+//                    sql.append(QueryEscapeUtils.toContainingCondition(globalSearch));
+//                    sql.append(" ESCAPE '~'");
                 }
             }
         }
@@ -128,17 +185,33 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
         List<String> orderClause = new ArrayList<>();
         for (Order order : input.getOrder()) {
             orderClause.add(
-                    "c." + substringLabel(input.getColumns().get(order.getColumn()).getData()) + " " + order.getDir());
+                    "c." + convColumnName(input.getColumns().get(order.getColumn()).getData()) + " " + order.getDir());
         }
         sql.append(" ORDER BY ");
         sql.append(StringUtils.join(orderClause, ','));
 
 
+        TypedQuery typedQuery;
         if (count == false) {
-            return entityManager.createQuery(sql.toString(), clazz);
+            System.out.println(sql.toString());
+            typedQuery = entityManager.createQuery(sql.toString(), clazz);
         } else {
-            return entityManager.createQuery(sql.toString(), Long.class);
+            typedQuery = entityManager.createQuery(sql.toString(), Long.class);
         }
+
+        // フィールドフィルタ
+        for (Column column : input.getColumns()) {
+            if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
+                typedQuery.setParameter(convColumnName(column.getData()), QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
+            }
+        }
+
+        // グローバルフィルタ
+        if (hasFieldFilter == false && !StringUtils.isEmpty(globalSearch)) {
+            typedQuery.setParameter("globalSearch", QueryEscapeUtils.toContainingCondition(globalSearch));
+        }
+
+        return typedQuery;
 
     }
 
@@ -179,7 +252,7 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
 //    }
 
 
-    private String substringLabel(String org) {
+    private String convColumnName(String org) {
         if (StringUtils.endsWith(org, "Label")) {
             return StringUtils.left(org, org.length() - 5);
         } else {
@@ -191,34 +264,5 @@ public abstract class AbstractNodeService<T, ID> implements NodeIService<T, ID> 
     protected Pageable getPageable(DataTablesInput input) {
         return PageRequest.of(input.getStart() / input.getLength(), input.getLength());
     }
-
-
-    @Override
-    public T findById(ID id) {
-        return getRepository().findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001, id)));
-    }
-
-
-    @Override
-    public T save(T entity) {
-        return getRepository().save(entity);
-    }
-
-    @Override
-    public Iterable<T> save(Iterable<T> entities) {
-        return getRepository().saveAll(entities);
-    }
-
-    @Override
-    public void delete(ID id) {
-        getRepository().deleteById(id);
-    }
-
-    @Override
-    public void delete(Iterable<T> entities) {
-        getRepository().deleteAll(entities);
-    }
-
 
 }

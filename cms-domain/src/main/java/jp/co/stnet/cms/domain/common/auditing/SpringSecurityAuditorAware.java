@@ -12,7 +12,14 @@ public class SpringSecurityAuditorAware implements AuditorAware<String> {
 
     @Override
     public Optional<String> getCurrentAuditor() {
-        LoggedInUser loggedInUser = (LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return Optional.of(loggedInUser.getUsername());
+
+        try {
+            LoggedInUser loggedInUser = (LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return Optional.of(loggedInUser.getUsername());
+
+        } catch (NullPointerException e) {
+            return Optional.of("unknown");
+
+        }
     }
 }
