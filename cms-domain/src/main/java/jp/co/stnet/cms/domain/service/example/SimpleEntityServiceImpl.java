@@ -3,6 +3,7 @@ package jp.co.stnet.cms.domain.service.example;
 import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.example.SimpleEntity;
+import jp.co.stnet.cms.domain.model.example.SimpleEntityMaxRev;
 import jp.co.stnet.cms.domain.model.example.SimpleEntityRevision;
 import jp.co.stnet.cms.domain.repository.example.SimpleEntityRepository;
 import jp.co.stnet.cms.domain.repository.example.SimpleEntityRevisionRepository;
@@ -17,7 +18,7 @@ import javax.transaction.Transactional;
 @Slf4j
 @Service
 @Transactional
-public class SimpleEntityServiceImpl extends AbstractNodeRevService<SimpleEntity, SimpleEntityRevision, Long> implements SimpleEntityService {
+public class SimpleEntityServiceImpl extends AbstractNodeRevService<SimpleEntity, SimpleEntityRevision, SimpleEntityMaxRev, Long> implements SimpleEntityService {
 
     @Autowired
     SimpleEntityRepository simpleEntityRepository;
@@ -29,7 +30,7 @@ public class SimpleEntityServiceImpl extends AbstractNodeRevService<SimpleEntity
     Mapper beanMapper;
 
     protected SimpleEntityServiceImpl() {
-        super(SimpleEntity.class, SimpleEntityRevision.class);
+        super(SimpleEntity.class, SimpleEntityRevision.class, SimpleEntityMaxRev.class);
     }
 
     @Override

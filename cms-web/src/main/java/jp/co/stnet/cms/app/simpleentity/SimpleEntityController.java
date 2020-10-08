@@ -3,7 +3,7 @@ package jp.co.stnet.cms.app.simpleentity;
 import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.common.StateMap;
-import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
+import jp.co.stnet.cms.domain.common.datatables.DataTablesInputDraft;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesOutput;
 import jp.co.stnet.cms.domain.common.datatables.OperationsUtil;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
@@ -11,6 +11,7 @@ import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.model.example.SimpleEntity;
+import jp.co.stnet.cms.domain.model.example.SimpleEntityRevision;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import jp.co.stnet.cms.domain.service.example.SimpleEntityService;
 import lombok.extern.slf4j.Slf4j;
@@ -82,14 +83,30 @@ public class SimpleEntityController {
      */
     @ResponseBody
     @GetMapping(value = "/list/json")
-    public DataTablesOutput<SimpleEntityListRow> getListJson(@Validated DataTablesInput input) {
+    public DataTablesOutput<SimpleEntityListRow> getListJson(@Validated DataTablesInputDraft input) {
 
         OperationsUtil op = new OperationsUtil("");
 
         List<SimpleEntityListRow> list = new ArrayList<>();
-        Page<SimpleEntity> simpleEntityPage = simpleEntityService.findPageByInput(input);
+        List<SimpleEntity> simpleEntityList = new ArrayList<>();
+        Long recordsFiltered = 0L;
 
-        for (SimpleEntity simpleEntity : simpleEntityPage.getContent()) {
+
+        if (input.getDraft() != null) { // ドラフト含む／含まないを切替
+            Page<SimpleEntity> simpleEntityPage = simpleEntityService.findPageByInput(input);
+            simpleEntityList.addAll(simpleEntityPage.getContent());
+            recordsFiltered = simpleEntityPage.getTotalElements();
+
+        } else {
+            Page<SimpleEntityRevision> simpleEntityPage2 = simpleEntityService.findMaxRevPageByInput(input);
+            for (SimpleEntityRevision simpleEntityRevision : simpleEntityPage2.getContent()) {
+                simpleEntityList.add(beanMapper.map(simpleEntityRevision, SimpleEntity.class));
+            }
+            recordsFiltered = simpleEntityPage2.getTotalElements();
+        }
+
+
+        for (SimpleEntity simpleEntity : simpleEntityList) {
             SimpleEntityListRow simpleEntityListRow = beanMapper.map(simpleEntity, SimpleEntityListRow.class);
             simpleEntityListRow.setOperations(op.getToggleButton(simpleEntity.getId().toString()));
             simpleEntityListRow.setDT_RowId(simpleEntity.getId().toString());
@@ -105,7 +122,7 @@ public class SimpleEntityController {
         output.setData(list);
         output.setDraw(input.getDraw());
         output.setRecordsTotal(0);
-        output.setRecordsFiltered(simpleEntityPage.getTotalElements());
+        output.setRecordsFiltered(recordsFiltered);
 
         return output;
     }

@@ -70,6 +70,12 @@
         });
 
         var table = $('#list').DataTable({
+
+          'ajax': {
+            'url': 'list/json',
+            'data': abc
+          },
+
           // 一覧に表示する項目とJSONの項目にマッピング
           'columns': [{
               data: 'id',
@@ -143,4 +149,12 @@
         addFieldFilter2(table)
 
       });
+
+function abc(params, settings) {
+  console.log(params);
+  params = flatten(params, settings);
+  params.draft = "true";
+  return params;
+}
+
 </script>

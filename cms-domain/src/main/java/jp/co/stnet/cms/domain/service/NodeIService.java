@@ -1,6 +1,9 @@
 package jp.co.stnet.cms.domain.service;
 
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
+import jp.co.stnet.cms.domain.common.exception.InvalidArgumentBusinessException;
+import jp.co.stnet.cms.domain.common.exception.NoChangeBusinessException;
+import jp.co.stnet.cms.domain.common.exception.OptimisticLockingFailureBusinessException;
 import jp.co.stnet.cms.domain.model.AbstractEntity;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import org.springframework.data.domain.Page;
@@ -37,6 +40,25 @@ public interface NodeIService<T extends AbstractEntity<ID>, ID> {
     Iterable<T> save(Iterable<T> entities);
 
     /**
+     * 1件の下書き保存
+     * @param entity
+     * @return
+     */
+    T saveDraft(T entity);
+
+    /**
+     * １件の無効化
+     */
+    T invalid(ID id);
+
+    /**
+     * 1件の有効化
+     * @param id
+     * @return
+     */
+    T valid(ID id);
+
+    /**
      * １件の削除
      */
     void delete(ID id);
@@ -45,11 +67,6 @@ public interface NodeIService<T extends AbstractEntity<ID>, ID> {
      * 複数件の削除
      */
     void delete(Iterable<T> entities);
-
-    /**
-     * １件の無効化
-     */
-    T invalid(ID id);
 
     /**
      * 権限チェックを行う。

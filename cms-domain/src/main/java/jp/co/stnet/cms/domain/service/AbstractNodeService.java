@@ -36,6 +36,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
     protected final Map<String, String> fieldMap;
     @Autowired
     Mapper beanMapper;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -78,6 +79,33 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
     }
 
     @Override
+    public T saveDraft(T entity) {
+        entity.setStatus(Status.DRAFT.getCodeValue());
+        return save(entity);
+    }
+
+    @Override
+    public T invalid(ID id) {
+        T before = findById(id);
+        if (before.getStatus().equals(Status.VALID.getCodeValue()) ) {
+            throw new IllegalStateException("ID: " + id.toString());
+        }
+        before.setStatus(Status.INVALID.getCodeValue());
+        return save(before);
+    }
+
+    @Override
+    public T valid(ID id) {
+        T before = findById(id);
+        if (before.getStatus().equals(Status.INVALID.getCodeValue()) ) {
+            throw new IllegalStateException("ID: " + id.toString());
+        }
+        before.setStatus(Status.VALID.getCodeValue());
+        return save(before);
+    }
+
+
+    @Override
     public void delete(ID id) {
         getRepository().deleteById(id);
     }
@@ -90,25 +118,21 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
         }
     }
 
-
-    @Override
-    public T invalid(ID id) {
-        T before = findById(id);
-        before.setStatus(Status.INVALID.getCodeValue());
-        return save(before);
-    }
-
     @Override
     public Page<T> findPageByInput(DataTablesInput input) {
 
         return new PageImpl<T>(
-                getJPQLQuery(input, false).getResultList(),
+                getJPQLQuery(input, false, clazz).getResultList(),
                 getPageable(input),
-                getJPQLQuery(input, true).getFirstResult());
+                getJPQLQuery(input, true, clazz).getFirstResult());
 
     }
 
-    protected Query getJPQLQuery(DataTablesInput input, boolean count) {
+    protected Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz) {
+        return getJPQLQuery(input, count, clazz, null);
+    }
+
+    protected Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz, Class maxRevClazz) {
 
         boolean hasFieldFilter = false;
 
@@ -122,14 +146,20 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
         sql.append(clazz.getSimpleName());
         sql.append(" c ");
 
+        if (maxRevClazz != null) {
+            sql.append(" INNER JOIN ");
+            sql.append(maxRevClazz.getSimpleName());
+            sql.append(" m ON m.rid = c.rid AND c.revType < 2 ");
+        }
+
         // フィールドフィルタ
         for (Column column : input.getColumns()) {
             if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
-                if (hasFieldFilter == true) {
-                    sql.append(" AND ");
-                } else {
+                if (hasFieldFilter == false) {
                     sql.append(" WHERE ");
                     hasFieldFilter = true;
+                } else {
+                    sql.append(" AND ");
                 }
                 if (isDate(column.getData())) {
                     sql.append("function('date_format', ");
@@ -230,26 +260,6 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
                 || "java.lang.Float".equals(fieldMap.get(fieldName))
                 || "java.lang.Double".equals(fieldMap.get(fieldName));
     }
-
-//    protected TypedQuery<T> getQuery(DataTablesInput input) {
-//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//        CriteriaQuery<T> q = cb.createQuery(clazz);
-//        Root<T> r = q.from(clazz);
-//        q.select(r);
-//
-//        q.where(
-//                cb.and(
-//                        cb.like(r.get("firstName"), "Taro")
-//                )
-//        );
-//
-//
-//        q.orderBy(
-//                cb.desc(r.get("firstName"))
-//        );
-//
-//        return entityManager.createQuery(q);
-//    }
 
 
     private String convColumnName(String org) {
