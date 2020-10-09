@@ -206,8 +206,10 @@ public class SimpleEntityController {
 
         // DBからデータ取得し、modelとformにセット
         SimpleEntity simpleEntity = simpleEntityService.findById(id);
-        beanMapper.map(simpleEntity, form);
         model.addAttribute("simpleEntity", simpleEntity);
+        if (form.getVersion() == null) {
+            beanMapper.map(simpleEntity, form);
+        }
 
         // 添付フィアルの情報をセット
         FileManaged fileManaged = fileManagedSharedService.findByUuid(simpleEntity.getAttachedFile01Uuid());
