@@ -23,18 +23,15 @@ public class Person extends AbstractEntity<Long> implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String status;
+
     private String name;
 
     private Integer age;
-
-
-    @Override
-    public void setStatus(String status) {
-
-    }
 
     @Override
     public boolean isNew() {
         return id == null;
     }
+
 }

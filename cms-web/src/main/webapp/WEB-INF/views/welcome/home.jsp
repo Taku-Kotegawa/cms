@@ -21,17 +21,17 @@
         アカウント情報
       </a>
 
-    <sec:authorize url="/unlock">
-      <div>
-        <a id="unlock" href="${f:h(pageContext.request.contextPath)}/unlock?form" class="btn-button mr-2">
-          ロック解除
-        </a>
-      </div>
-    </sec:authorize>
+      <sec:authorize url="/unlock">
+        <div>
+          <a id="unlock" href="${f:h(pageContext.request.contextPath)}/unlock?form" class="btn-button mr-2">
+            ロック解除
+          </a>
+        </div>
+      </sec:authorize>
 
-    <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">
-      <button id="logout" class="btn-button">ログアウト</button>
-    </form:form>
+      <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">
+        <button id="logout" class="btn-button">ログアウト</button>
+      </form:form>
     </div>
     <div class="row mb-5">
       <div class="col-36">
@@ -43,102 +43,17 @@
       <div class="col-36">
         <h4>管理者メニュー</h4>
         <ul>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/simpleentity/list">SimpleEntity List</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/admin/account/list">アカウント</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/admin/role/list">ロール</a></li>
         </ul>
-
-
       </div>
     </div>
-
-
   </div>
 
-
-
-  <div class="container-fluid">
-
-    <h2>Session</h2>
-    <table>
-      <%
-    Enumeration enum_session = session.getAttributeNames();
-    while(enum_session.hasMoreElements()) {
-      String key = (String)enum_session.nextElement();
-
-      out.println("<tr>");
-          out.println("<td>");
-          out.println(key);
-          out.println("</td>");
-          out.println("<td>");
-          out.println(session.getAttribute(key));
-          out.println("</td>");
-      out.println("</tr>");
-    }
-    %>
-    </table>
-
-
-    <h2>Request</h2>
-    <table>
-      <%
-    Enumeration enum_request = request.getAttributeNames();
-    while(enum_request.hasMoreElements()) {
-      String key = (String)enum_request.nextElement();
-
-      out.println("<tr>");
-          out.println("<td>");
-          out.println(key);
-          out.println("</td>");
-          out.println("<td>");
-          out.println(request.getAttribute(key));
-          out.println("</td>");
-      out.println("</tr>");
-    }
-    %>
-    </table>
-
-    <h2>application</h2>
-    <table>
-      <%
-    Enumeration enum_application = application.getAttributeNames();
-    while(enum_application.hasMoreElements()) {
-      String key = (String)enum_application.nextElement();
-
-      out.println("<tr>");
-          out.println("<td>");
-          out.println(key);
-          out.println("</td>");
-          out.println("<td>");
-          out.println(application.getAttribute(key));
-          out.println("</td>");
-      out.println("</tr>");
-    }
-    %>
-    </table>
-
-    <h2>config</h2>
-    <table>
-      <%
-    Enumeration enum_config = config.getInitParameterNames();
-    while(enum_config.hasMoreElements()) {
-      String key = (String)enum_config.nextElement();
-
-      out.println("<tr>");
-          out.println("<td>");
-          out.println(key);
-          out.println("</td>");
-          out.println("<td>");
-          out.println(config.getInitParameter(key));
-          out.println("</td>");
-      out.println("</tr>");
-    }
-    %>
-    </table>
-
-    <!-- ここより上にメインコンテンツを記入 -->
+  <!-- ここより上にメインコンテンツを記入 -->
   </div>
 </section>
-
 
 <footer class="main-footer">
   <div class="float-right d-none d-sm-block">

@@ -9,6 +9,7 @@ import jp.co.stnet.cms.domain.common.datatables.Order;
 import jp.co.stnet.cms.domain.common.exception.NoChangeBusinessException;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.AbstractEntity;
+import jp.co.stnet.cms.domain.model.StatusInterface;
 import jp.co.stnet.cms.domain.model.common.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Transactional
-public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> implements NodeIService<T, ID> {
+public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusInterface, ID> implements NodeIService<T, ID>  {
 
     protected final Class<T> clazz;
     protected final Map<String, String> fieldMap;
@@ -55,39 +59,34 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
 
     @Override
     public T save(T entity) {
+        T before;
         if (entity.getId() != null) {
-            T before = getRepository().getOne(entity.getId());
-            // beanMapperを経由するのはPersistentBag対策
+            before = getRepository().getOne(entity.getId());
             if (Objects.equals(entity, beanMapper.map(before, clazz))) {
                 throw new NoChangeBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2001)));
             }
         }
 
         // 自動更新項目(createdBy, createdDate, lastModifiedBy, lastModifiedDate)を取得するため、DB更新(flush) + キャッシュクリア(detach)
-        entityManager.detach(getRepository().saveAndFlush(entity));
+//        before = beanMapper.map(entity, clazz);
+        entity = getRepository().saveAndFlush(entity);
+        entityManager.detach(entity);
         return getRepository().findById(entity.getId()).orElse(null);
     }
 
     @Override
     public Iterable<T> save(Iterable<T> entities) {
         List<T> saved = new ArrayList<>();
-        Iterator<T> iterator = entities.iterator();
-        while (iterator.hasNext()) {
-            saved.add(save(iterator.next()));
+        for (T entity : entities) {
+            saved.add(save(entity));
         }
         return saved;
     }
 
     @Override
-    public T saveDraft(T entity) {
-        entity.setStatus(Status.DRAFT.getCodeValue());
-        return save(entity);
-    }
-
-    @Override
     public T invalid(ID id) {
         T before = findById(id);
-        if (before.getStatus().equals(Status.VALID.getCodeValue()) ) {
+        if (!before.getStatus().equals(Status.VALID.getCodeValue())) {
             throw new IllegalStateException("ID: " + id.toString());
         }
         before.setStatus(Status.INVALID.getCodeValue());
@@ -97,7 +96,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
     @Override
     public T valid(ID id) {
         T before = findById(id);
-        if (before.getStatus().equals(Status.INVALID.getCodeValue()) ) {
+        if (!before.getStatus().equals(Status.INVALID.getCodeValue())) {
             throw new IllegalStateException("ID: " + id.toString());
         }
         before.setStatus(Status.VALID.getCodeValue());
@@ -112,20 +111,17 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
 
     @Override
     public void delete(Iterable<T> entities) {
-        Iterator<T> iterator = entities.iterator();
-        while (iterator.hasNext()) {
-            delete(iterator.next().getId());
+        for (T entity : entities) {
+            delete(entity.getId());
         }
     }
 
     @Override
     public Page<T> findPageByInput(DataTablesInput input) {
-
         return new PageImpl<T>(
                 getJPQLQuery(input, false, clazz).getResultList(),
                 getPageable(input),
-                getJPQLQuery(input, true, clazz).getFirstResult());
-
+                (Long) getJPQLQuery(input, true, clazz).getSingleResult());
     }
 
     protected Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz) {
@@ -136,8 +132,8 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
 
         boolean hasFieldFilter = false;
 
-        StringBuffer sql = new StringBuffer();
-        if (count == false) {
+        StringBuilder sql = new StringBuilder();
+        if (!count) {
             sql.append("SELECT c FROM ");
         } else {
             sql.append("SELECT count(c) FROM ");
@@ -155,7 +151,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
         // フィールドフィルタ
         for (Column column : input.getColumns()) {
             if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
-                if (hasFieldFilter == false) {
+                if (!hasFieldFilter) {
                     sql.append(" WHERE ");
                     hasFieldFilter = true;
                 } else {
@@ -187,7 +183,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
 
         // グローバルフィルタ
         String globalSearch = input.getSearch().getValue();
-        if (hasFieldFilter == false && !StringUtils.isEmpty(globalSearch)) {
+        if (!hasFieldFilter && !StringUtils.isEmpty(globalSearch)) {
             sql.append(" WHERE 1 = 2 ");
             for (Column column : input.getColumns()) {
                 if (column.getSearchable()) {
@@ -220,11 +216,14 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
         sql.append(" ORDER BY ");
         sql.append(StringUtils.join(orderClause, ','));
 
+        // Limit
+
 
         TypedQuery typedQuery;
-        if (count == false) {
-            System.out.println(sql.toString());
+        if (!count) {
             typedQuery = entityManager.createQuery(sql.toString(), clazz);
+            typedQuery.setFirstResult(input.getStart());
+            typedQuery.setMaxResults(input.getLength());
         } else {
             typedQuery = entityManager.createQuery(sql.toString(), Long.class);
         }
@@ -237,7 +236,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID>, ID> impl
         }
 
         // グローバルフィルタ
-        if (hasFieldFilter == false && !StringUtils.isEmpty(globalSearch)) {
+        if (!hasFieldFilter && !StringUtils.isEmpty(globalSearch)) {
             typedQuery.setParameter("globalSearch", QueryEscapeUtils.toContainingCondition(globalSearch));
         }
 

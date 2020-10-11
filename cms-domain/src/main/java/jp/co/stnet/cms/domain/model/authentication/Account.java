@@ -1,6 +1,7 @@
 package jp.co.stnet.cms.domain.model.authentication;
 
 import jp.co.stnet.cms.domain.model.AbstractEntity;
+import jp.co.stnet.cms.domain.model.StatusInterface;
 import lombok.*;
 
 import javax.persistence.ElementCollection;
@@ -17,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class Account extends AbstractEntity<String> implements Serializable {
+public class Account extends AbstractEntity<String> implements Serializable, StatusInterface {
 
     /**
      * ユーザID

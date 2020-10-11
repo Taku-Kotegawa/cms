@@ -1,6 +1,7 @@
 package jp.co.stnet.cms.domain.common.datatables;
 
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 public class OperationsUtil {
@@ -14,6 +15,10 @@ public class OperationsUtil {
     private String LABEL_COPY = "複製";
     private String LABEL_LIST = "一覧に戻る";
     private String LABEL_UNLOCK = "ロック解除";
+    private String LABEL_CANCEL_DRAFT = "下書き取消";
+    private String LABEL_INVALID = "無効化";
+    private String LABEL_VALID = "無効解除";
+    private String LABEL_DOWNLOAD = "ダウンロード";
     private String URL_CREATE = "create?form";
     private String URL_VIEW = "{id}";
     private String URL_EDIT = "{id}/update?form";
@@ -21,10 +26,21 @@ public class OperationsUtil {
     private String URL_COPY = "create?form&copy={id}";
     private String URL_LIST = "list";
     private String URL_UNLOCK = "{id}/unlock";
+    private String URL_CANCEL_DRAFT = "{id}/cancel_draft";
+    private String URL_INVALID = "{id}/invalid";
+    private String URL_VALID = "{id}/valid";
+    private String URL_DOWNLOAD = "{id}/download";
 
     public OperationsUtil(String baseUrl) {
         if (baseUrl == null) {
             baseUrl = "";
+        } else {
+            if (!StringUtils.startsWith(baseUrl, "/")) {
+                baseUrl = "/" + baseUrl;
+            }
+            if (!StringUtils.endsWith(baseUrl, "/")) {
+                baseUrl = baseUrl + "/";
+            }
         }
         this.baseUrl = baseUrl;
     }
@@ -59,6 +75,22 @@ public class OperationsUtil {
         return baseUrl + convId(URL_UNLOCK, id);
     }
 
+    public String getCancelDraftUrl(String id) {
+        return baseUrl + convId(URL_CANCEL_DRAFT, id);
+    }
+
+    public String getInvalidUrl(String id) {
+        return baseUrl + convId(URL_INVALID, id);
+    }
+
+    public String getValidUrl(String id) {
+        return baseUrl + convId(URL_VALID, id);
+    }
+
+    public String getDownloadUrl(String uuid) {
+        return baseUrl + convId(URL_DOWNLOAD, uuid);
+    }
+
     // ------ Link<A> -----------------------------------------------
 
     public String getCreateLink() {
@@ -89,6 +121,17 @@ public class OperationsUtil {
         return link(getUnlockUrl(id), LABEL_UNLOCK);
     }
 
+    public String getCancelDraftLink(String id) {
+        return link(getCancelDraftUrl(id), LABEL_CANCEL_DRAFT);
+    }
+
+    public String getInvalidLink(String id) {
+        return link(getInvalidUrl(id), LABEL_INVALID);
+    }
+
+    public String getValidLink(String id) {
+        return link(getValidUrl(id), LABEL_VALID);
+    }
 
     // ------ Button Link<A> -----------------------------------------
 
@@ -120,6 +163,17 @@ public class OperationsUtil {
         return link(getUnlockUrl(id), LABEL_UNLOCK, BUTTON_CLASS);
     }
 
+    public String getCancelDraftButton(String id) {
+        return link(getCancelDraftUrl(id), LABEL_CANCEL_DRAFT, BUTTON_CLASS);
+    }
+
+    public String getInvalidButton(String id) {
+        return link(getInvalidUrl(id), LABEL_INVALID, BUTTON_CLASS);
+    }
+
+    public String getValidButton(String id) {
+        return link(getValidUrl(id), LABEL_VALID, BUTTON_CLASS);
+    }
 
     // ------ Toggle Button --------------------------------------
 
@@ -133,7 +187,7 @@ public class OperationsUtil {
         link.append("<div class=\"dropdown-menu\">");
         link.append("<a class=\"dropdown-item\" href=\"" + getViewUrl(id) + "\">" + LABEL_VIEW + "</a>");
         link.append("<a class=\"dropdown-item\" href=\"" + getCopyUrl(id) + "\">" + LABEL_COPY + "</a>");
-        link.append("<a class=\"dropdown-item\" href=\"" + getDeleteUrl(id) + "\">" + LABEL_DELETE + "</a>");
+        link.append("<a class=\"dropdown-item\" href=\"" + getInvalidUrl(id) + "\">" + LABEL_INVALID + "</a>");
         link.append("</div>");
         link.append("</div>");
 
@@ -153,8 +207,5 @@ public class OperationsUtil {
     private String link(String url, String label, String classVal) {
         return "<A HREF=\"" + url + "\" class=\"" + classVal + "\" >" + label + "</A>";
     }
-
-
-
 
 }

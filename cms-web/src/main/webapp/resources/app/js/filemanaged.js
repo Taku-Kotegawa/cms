@@ -108,3 +108,10 @@ function file_attach(element) {
     alert("アップロードに対応できていないブラウザです。");
   }
 }
+
+$(document).ready(function () {
+  // ManagedFileのイベント登録
+  $('.file-managed').change(function (event) {
+    file_attach($(this).get(0))
+  });
+});

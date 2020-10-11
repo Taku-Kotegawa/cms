@@ -25,6 +25,11 @@ public class SimpleEntityRevision extends AbstractRevisionEntity {
     private Long id;
 
     /**
+     * ステータス
+     */
+    private String status;
+
+    /**
      * テキストフィールド
      */
     private String text01;

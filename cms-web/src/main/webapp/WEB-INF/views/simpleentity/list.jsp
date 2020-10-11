@@ -18,6 +18,11 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
+    <div class="form-check-inline" style="width:100%">
+      <input id="draft" type="checkbox" checked="checked">
+      <label for="checkbox011">下書きを含む</label>
+    </div>
+
     <table id="list" class="table-sm table-striped">
       <thead>
         <tr class="filter">
@@ -73,7 +78,7 @@
 
           'ajax': {
             'url': 'list/json',
-            'data': abc
+            'data': myflatten
           },
 
           // 一覧に表示する項目とJSONの項目にマッピング
@@ -150,11 +155,10 @@
 
       });
 
-function abc(params, settings) {
-  console.log(params);
-  params = flatten(params, settings);
-  params.draft = "true";
-  return params;
-}
+      function myflatten(params, settings) {
+        params = flatten(params, settings);
+        params.draft = $('#draft')[0].checked;
+        return params;
+      }
 
 </script>

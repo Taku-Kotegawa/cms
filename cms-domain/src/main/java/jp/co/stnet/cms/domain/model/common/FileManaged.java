@@ -81,11 +81,6 @@ public class FileManaged extends AbstractEntity<Long> implements Serializable {
     }
 
     @Override
-    public void setStatus(String status) {
-
-    }
-
-    @Override
     public Long getId() {
         return fid;
     }
@@ -94,4 +89,5 @@ public class FileManaged extends AbstractEntity<Long> implements Serializable {
     public boolean isNew() {
         return fid == null;
     }
+
 }

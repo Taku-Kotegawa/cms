@@ -4,6 +4,7 @@ import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
 import jp.co.stnet.cms.domain.model.AbstractEntity;
 import jp.co.stnet.cms.domain.model.AbstractMaxRevEntity;
 import jp.co.stnet.cms.domain.model.AbstractRevisionEntity;
+import jp.co.stnet.cms.domain.model.StatusInterface;
 import jp.co.stnet.cms.domain.model.common.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Transactional
-public abstract class AbstractNodeRevService<T extends AbstractEntity<ID>, U extends AbstractRevisionEntity, V extends AbstractMaxRevEntity<ID>, ID> extends AbstractNodeService<T, ID> {
+public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & StatusInterface, U extends AbstractRevisionEntity, V extends AbstractMaxRevEntity<ID>, ID> extends AbstractNodeService<T, ID> implements NodeRevIService<T, U, ID> {
 
     private final Class<U> revClass;
 
@@ -25,12 +26,17 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID>, U ext
         this.maxRevClass = maxRevClass;
     }
 
-    abstract protected JpaRepository<U, ID> getRevisionRepository();
+    abstract protected JpaRepository<U, Long> getRevisionRepository();
 
     @Override
     public T save(T entity) {
         Boolean isNew = entity.isNew();
+        if (entity.getStatus() == null) {
+            entity.setStatus(Status.VALID.getCodeValue());
+        }
         T saved = super.save(entity);
+
+        // 本保存はリビジョンを保存する
         U rev = beanMapper.map(saved, revClass);
         rev.setRevType(isNew ? 0 : 1);
         getRevisionRepository().saveAndFlush(rev);
@@ -39,14 +45,28 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID>, U ext
         return saved;
     }
 
-    public T cancelDraft(T entity) {
-        T current = findById(entity.getId());
-        if (current.getStatus().equals(Status.DRAFT.getCodeValue())) {
-            throw new IllegalStateException("ID: " + entity.getId());
+    @Override
+    public T saveDraft(T entity) {
+        Boolean isNew = entity.isNew();
+        entity.setStatus(Status.DRAFT.getCodeValue());
+        return super.save(entity);
+        // 下書き保存はリビジョンを保存しない
+    }
+
+    @Override
+    public T cancelDraft(ID id) {
+        T current = findById(id);
+        if (!current.getStatus().equals(Status.DRAFT.getCodeValue())) {
+            throw new IllegalStateException("ID: " + id);
         }
-        U before = findMaxRevById(entity.getId());
-        beanMapper.map(before, entity);
-        return save(entity);
+        U before = findMaxRevById(id);
+        if (before == null) {
+            super.delete(id);
+            return null;
+        } else {
+            before.setVersion(current.getVersion());
+            return getRepository().saveAndFlush(beanMapper.map(before, clazz));
+        }
     }
 
     @Override
@@ -61,7 +81,8 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID>, U ext
 
     public U findMaxRevById(ID id) {
         V max = entityManager.find(maxRevClass, id);
-        return getRevisionRepository().findById(max.getId()).orElse(null);
+        if (max == null) { return null; }
+        return getRevisionRepository().findById(max.getRid()).orElse(null);
     }
 
     public void saveMaxRev(ID id, Long rid) {
@@ -72,12 +93,10 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID>, U ext
     }
 
     public Page<U> findMaxRevPageByInput(DataTablesInput input) {
-
         return new PageImpl<U>(
                 getJPQLQuery(input, false, revClass, maxRevClass).getResultList(),
                 getPageable(input),
-                getJPQLQuery(input, true, revClass, maxRevClass).getFirstResult());
-
+                (Long) getJPQLQuery(input, true, revClass, maxRevClass).getSingleResult());
     }
 
 

@@ -39,12 +39,6 @@ public interface NodeIService<T extends AbstractEntity<ID>, ID> {
      */
     Iterable<T> save(Iterable<T> entities);
 
-    /**
-     * 1件の下書き保存
-     * @param entity
-     * @return
-     */
-    T saveDraft(T entity);
 
     /**
      * １件の無効化

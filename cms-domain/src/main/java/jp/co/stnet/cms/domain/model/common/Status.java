@@ -25,4 +25,15 @@ public enum Status implements EnumCodeList.CodeListItem {
     public String getCodeValue() {
         return value;
     }
+
+
+    public static Status getByValue(String value) {
+        for (Status status : Status.values()) {
+            if (status.getCodeValue().equals(value)) {
+                return status;
+            }
+        }
+        return null;
+    }
+
 }

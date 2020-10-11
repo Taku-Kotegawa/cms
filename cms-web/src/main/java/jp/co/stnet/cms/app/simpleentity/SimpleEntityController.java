@@ -30,7 +30,6 @@ import org.terasoluna.gfw.common.message.ResultMessages;
 import org.terasoluna.gfw.web.token.transaction.TransactionTokenCheck;
 import org.terasoluna.gfw.web.token.transaction.TransactionTokenType;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.groups.Default;
 import java.util.ArrayList;
@@ -42,10 +41,10 @@ import java.util.List;
 @TransactionTokenCheck("simpleentity")
 public class SimpleEntityController {
 
-    private final String BASE_PATH = "/simpleentity/";
-    private final String JSP_LIST = "simpleentity/list";
-    private final String JSP_FORM = "simpleentity/form";
-    private final String JSP_VIEW = "simpleentity/view";
+    private final String BASE_PATH = "simpleentity";
+    private final String JSP_LIST = BASE_PATH + "/list";
+    private final String JSP_FORM = BASE_PATH + "/form";
+//    private final String JSP_VIEW = BASE_PATH + "/view";
 
     @Autowired
     SimpleEntityService simpleEntityService;
@@ -53,7 +52,7 @@ public class SimpleEntityController {
     @Autowired
     FileManagedSharedService fileManagedSharedService;
 
-    @Inject
+    @Autowired
     @Named("CL_STATUS")
     CodeList statusCodeList;
 
@@ -85,7 +84,7 @@ public class SimpleEntityController {
     @GetMapping(value = "/list/json")
     public DataTablesOutput<SimpleEntityListRow> getListJson(@Validated DataTablesInputDraft input) {
 
-        OperationsUtil op = new OperationsUtil("");
+        OperationsUtil op = new OperationsUtil(null);
 
         List<SimpleEntityListRow> list = new ArrayList<>();
         List<SimpleEntity> simpleEntityList = new ArrayList<>();
@@ -198,7 +197,8 @@ public class SimpleEntityController {
      */
     @GetMapping(value = "{id}/update", params = "form")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
-    public String updateForm(SimpleEntityForm form, Model model, @AuthenticationPrincipal LoggedInUser loggedInUser,
+    public String updateForm(SimpleEntityForm form, Model model,
+                             @AuthenticationPrincipal LoggedInUser loggedInUser,
                              @PathVariable("id") Long id) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
@@ -206,6 +206,16 @@ public class SimpleEntityController {
 
         // DBからデータ取得し、modelとformにセット
         SimpleEntity simpleEntity = simpleEntityService.findById(id);
+
+        // 状態=無効の場合参照画面に強制遷移
+        if (simpleEntity.getStatus().equals(Status.INVALID.getCodeValue())) {
+
+            ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0008);
+            model.addAttribute(messages);
+            return view(model,loggedInUser, id);
+
+        }
+
         model.addAttribute("simpleEntity", simpleEntity);
         if (form.getVersion() == null) {
             beanMapper.map(simpleEntity, form);
@@ -213,7 +223,7 @@ public class SimpleEntityController {
 
         // 添付フィアルの情報をセット
         FileManaged fileManaged = fileManagedSharedService.findByUuid(simpleEntity.getAttachedFile01Uuid());
-        model.addAttribute("imageFileManaged", fileManaged);
+        model.addAttribute("attachedFile01FileManaged", fileManaged);
 
         // ボタン・フィールドの状態を設定
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.UPDATE, simpleEntity).asMap());
@@ -284,7 +294,7 @@ public class SimpleEntityController {
         return "redirect:" + op.getListUrl();
     }
 
-    // ---------------- 無効化 ---------------------------------------------------------
+    // ---------------- 無効化 / 無効解除 ---------------------------------------------------------
 
     @GetMapping(value = "{id}/invalid")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
@@ -307,6 +317,28 @@ public class SimpleEntityController {
         return "redirect:" + op.getViewUrl(id.toString());
     }
 
+    @GetMapping(value = "{id}/valid")
+    @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
+    public String valid(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
+                          @PathVariable("id") Long id) {
+
+        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
+        simpleEntityService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
+
+        try {
+            simpleEntityService.valid(id);
+        } catch (BusinessException e) {
+            model.addAttribute(e.getResultMessages());
+        }
+
+        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0002);
+        redirect.addFlashAttribute(messages);
+
+        OperationsUtil op = new OperationsUtil(BASE_PATH);
+        return "redirect:" + op.getViewUrl(id.toString());
+    }
+
+
     // ---------------- 参照 ---------------------------------------------------------
 
     /**
@@ -324,7 +356,7 @@ public class SimpleEntityController {
 
         // 添付フィアルの情報をセット
         FileManaged fileManaged = fileManagedSharedService.findByUuid(simpleEntity.getAttachedFile01Uuid());
-        model.addAttribute("imageFileManaged", fileManaged);
+        model.addAttribute("attachedFile01FileManaged", fileManaged);
 
         // ボタン・フィールドの状態を設定
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
@@ -344,7 +376,7 @@ public class SimpleEntityController {
             @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        simpleEntityService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.DOWNLOAD, loggedInUser);
 
         FileManaged fileManaged = fileManagedSharedService.findByUuid(uuid);
         model.addAttribute(fileManaged);
@@ -370,6 +402,7 @@ public class SimpleEntityController {
         includeKeys.add(Constants.BUTTON.VIEW);
         includeKeys.add(Constants.BUTTON.SAVE);
         includeKeys.add(Constants.BUTTON.INVALID);
+        includeKeys.add(Constants.BUTTON.VALID);
         includeKeys.add(Constants.BUTTON.DELETE);
         includeKeys.add(Constants.BUTTON.UNLOCK);
 
@@ -411,6 +444,7 @@ public class SimpleEntityController {
 
             // スタータスが無効
             if (Status.INVALID.getCodeValue().equals(record.getStatus())) {
+                buttonState.setViewTrue(Constants.BUTTON.VALID);
                 buttonState.setViewTrue(Constants.BUTTON.DELETE);
             }
         }
@@ -439,6 +473,7 @@ public class SimpleEntityController {
         if (Constants.OPERATION.UPDATE.equals(operation)) {
             fieldState.setInputTrueAll();
             fieldState.setReadOnlyTrue("id");
+            fieldState.setViewTrue("status");
 
             // スタータスが無効
             if (Status.INVALID.toString().equals(record.getStatus())) {

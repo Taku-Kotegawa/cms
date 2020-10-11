@@ -2,6 +2,7 @@ package jp.co.stnet.cms.domain.model.example;
 
 
 import jp.co.stnet.cms.domain.model.AbstractEntity;
+import jp.co.stnet.cms.domain.model.StatusInterface;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -19,13 +20,16 @@ import java.util.List;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
-public class SimpleEntity extends AbstractEntity<Long> implements Serializable {
+public class SimpleEntity extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
     // SimpleEntityRevisionとフィールドを一致させること
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String status;
+
     /**
      * テキストフィールド
      */

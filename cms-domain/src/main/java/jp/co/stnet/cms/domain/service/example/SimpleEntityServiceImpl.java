@@ -48,4 +48,5 @@ public class SimpleEntityServiceImpl extends AbstractNodeRevService<SimpleEntity
         return true;
     }
 
+
 }

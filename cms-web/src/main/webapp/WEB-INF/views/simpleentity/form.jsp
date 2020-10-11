@@ -33,7 +33,7 @@
       <div class="row operation-button-block">
 
         <!-- 右寄せに配置 -->
-        <div class="col-36 text-right">
+        <div class="col-36">
 
           <c:set var="id" value="${simpleEntity.id}" />
 
@@ -55,10 +55,34 @@
               <c:if test="${buttonState.gotoUpdate__disabled}">disabled</c:if> >${op.getLABEL_EDIT()}</a>
           </c:if>
 
+          <!-- 下書き保存 -->
+          <c:if test="${buttonState.saveDraft__view}">
+            <button id="saveDraft" name="saveDraft" value="true" type="submit" class="btn btn-button mr-2" <c:if
+              test="${buttonState.saveDraft__disabled}">disabled</c:if>>下書き保存</button>
+          </c:if>
+
+          <!-- 下書き取消 -->
+          <c:if test="${buttonState.cancelDraft__view}">
+            <a id="cancelDraft" href="${pageContext.request.contextPath}${op.getCancelDraftUrl(id)}" class="btn btn-button mr-2"
+            <c:if test="${buttonState.cancelDraft__disabled}">disabled</c:if>>下書き削除</a>
+          </c:if>
+
           <!-- 保存 -->
           <c:if test="${buttonState.save__view}">
             <button id="save" name="save" type="submit" class="btn btn-button mr-2" <c:if
               test="${buttonState.save__disabled}">disabled</c:if>>保存</button>
+          </c:if>
+
+          <!-- 無効 -->
+          <c:if test="${buttonState.invalid__view}">
+            <a id="delete" href="${pageContext.request.contextPath}${op.getInvalidUrl(id)}" class="btn btn-button mr-2"
+              <c:if test="${buttonState.invalid__disabled}">disabled</c:if> >${op.getLABEL_INVALID()}</a>
+          </c:if>
+
+          <!-- 無効解除 -->
+          <c:if test="${buttonState.valid__view}">
+            <a id="delete" href="${pageContext.request.contextPath}${op.getValidUrl(id)}" class="btn btn-button mr-2"
+              <c:if test="${buttonState.valid__disabled}">disabled</c:if> >${op.getLABEL_VALID()}</a>
           </c:if>
 
           <!-- 削除 -->
@@ -71,6 +95,18 @@
       </div>
 
       <hr />
+
+      <div class="row mb-3">
+        <div class="col-12">
+          <!-- ラベル -->
+          <c:if test="${fieldState.status__view}">
+            <form:label path="text01">ステータス</form:label>
+            <div class="form-control__view">
+              ${f:h(CL_STATUS[simpleEntity.status])}
+            </div>
+          </c:if>
+        </div>
+      </div>
 
       <div class="row mb-3">
         <div class="col-12">
@@ -191,7 +227,9 @@
           <!-- 参照用-->
           <c:if test="${fieldState.text05__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.text05)}
+              <c:forEach var="item" items="${simpleEntity.text05}" varStatus="status">
+                <span>${f:h(item)}<c:if test="${!status.last}">,</c:if></span>
+              </c:forEach>
             </div>
           </c:if>
         </div>
@@ -220,7 +258,8 @@
           <!-- 参照用-->
           <c:if test="${fieldState.radio01__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.radio01)}
+              <c:if test="${simpleEntity.radio01}">[◯]はい [　]いいえ</c:if>
+              <c:if test="${!simpleEntity.radio01}">[　]はい [◯]いいえ</c:if>
             </div>
           </c:if>
         </div>
@@ -235,9 +274,9 @@
           <!-- 入力 -->
           <c:if test="${fieldState.radio02__input}">
             <div class="form-check-inline" style="width:100%">
-              <form:radiobutton path="radio02" cssClass="" cssErrorClass="is-invalid" value="true" />
+              <form:radiobutton path="radio02" cssClass="" cssErrorClass="is-invalid" value="はい" />
               <form:label path="radio02" for="radio021">はい</form:label>
-              <form:radiobutton path="radio02" cssClass="" cssErrorClass="is-invalid" value="false" />
+              <form:radiobutton path="radio02" cssClass="" cssErrorClass="is-invalid" value="いいえ" />
               <form:label path="radio02" for="radio022">いいえ</form:label>
             </div>
             <form:errors path="radio02" cssClass="invalid-feedback" />
@@ -276,7 +315,9 @@
           <!-- 参照用-->
           <c:if test="${fieldState.checkbox01__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.checkbox01)}
+              <c:if test="${simpleEntity.checkbox01 == 'yes'}">[レ]</c:if>
+              <c:if test="${simpleEntity.checkbox01 != 'yes'}">[　]</c:if>
+              利用規約に合意する
             </div>
           </c:if>
         </div>
@@ -302,7 +343,16 @@
           <!-- 参照用-->
           <c:if test="${fieldState.checkbox02__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.checkbox02)}
+              <!-- <c:forEach var="item" items="${simpleEntity.select02}" varStatus="status">
+                <span>${f:h(CL_STATUS[item])}<c:if test="${!status.last}">,</c:if></span>
+              </c:forEach> -->
+              <c:forEach var="item" items="${CL_STATUS}" varStatus="status">
+                <span>
+                  <c:if test="${simpleEntity.checkbox02.contains(item.key)}">[レ]</c:if>
+                  <c:if test="${!simpleEntity.checkbox02.contains(item.key)}">[　]</c:if>
+                  ${item.value}
+                </span>
+              </c:forEach>
             </div>
           </c:if>
         </div>
@@ -325,8 +375,8 @@
           </c:if>
           <!-- 参照用-->
           <c:if test="${fieldState.textarea01__view}">
-            <div class="form-control form-control__view">
-              ${f:h(simpleEntity.textarea01)}
+            <div class="">
+              ${f:br(f:h(simpleEntity.textarea01))}
             </div>
           </c:if>
         </div>
@@ -356,7 +406,7 @@
           <!-- 参照用-->
           <c:if test="${fieldState.date01__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.date01)}
+              ${f:h(simpleEntity.date01.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))}
             </div>
           </c:if>
         </div>
@@ -386,7 +436,7 @@
           <!-- 参照用-->
           <c:if test="${fieldState.datetime01__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.datetime01)}
+              ${f:h(simpleEntity.datetime01.format(DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm")))}
             </div>
           </c:if>
         </div>
@@ -413,7 +463,7 @@
           <!-- 参照用-->
           <c:if test="${fieldState.select01__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.select01)}
+              ${f:h(CL_STATUS[simpleEntity.select01])}
             </div>
           </c:if>
         </div>
@@ -441,7 +491,9 @@
           <!-- 参照用-->
           <c:if test="${fieldState.select02__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.select02)}
+              <c:forEach var="item" items="${simpleEntity.select02}" varStatus="status">
+                <span>${f:h(CL_STATUS[item])}<c:if test="${!status.last}">,</c:if></span>
+              </c:forEach>
             </div>
           </c:if>
         </div>
@@ -469,7 +521,7 @@
           <!-- 参照用-->
           <c:if test="${fieldState.select03__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.select03)}
+              ${f:h(CL_STATUS[simpleEntity.select03])}
             </div>
           </c:if>
         </div>
@@ -496,12 +548,13 @@
           <!-- 参照用-->
           <c:if test="${fieldState.select04__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.select04)}
+              <c:forEach var="item" items="${simpleEntity.select04}" varStatus="status">
+                <span>${f:h(CL_STATUS[item])}<c:if test="${!status.last}">,</c:if></span>
+              </c:forEach>
             </div>
           </c:if>
         </div>
       </div>
-
 
       <div class="row mb-3">
         <div class="col-12">
@@ -546,11 +599,11 @@
           </c:if>
           <!-- 入力 -->
           <c:if test="${fieldState.combobox02__input}">
-              <form:select path="combobox02" cssClass="select2-tags form-control"
-                  cssErrorClass="select2-tags form-control is-invalid">
-                <form:option value="" label="--Select--" />
-                <form:options items="${CL_STATUS}" />
-              </form:select>
+            <form:select path="combobox02" cssClass="select2-tags form-control"
+              cssErrorClass="select2-tags form-control is-invalid">
+              <form:option value="" label="--Select--" />
+              <form:options items="${CL_STATUS}" />
+            </form:select>
           </c:if>
           <!-- 隠しフィールド-->
           <c:if test="${fieldState.combobox02__hidden}">
@@ -559,7 +612,7 @@
           <!-- 参照用-->
           <c:if test="${fieldState.combobox02__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.combobox02)}
+              ${f:h(CL_STATUS[simpleEntity.combobox02])}
             </div>
           </c:if>
         </div>
@@ -574,8 +627,8 @@
           <!-- 入力 -->
           <c:if test="${fieldState.combobox03__input}">
             <form:select multiple="true" path="combobox03" cssClass="select2-tags form-control"
-              cssErrorClass="select2-tags form-control is-invalid" >
-                <form:options items="${CL_STATUS}" />
+              cssErrorClass="select2-tags form-control is-invalid">
+              <form:options items="${CL_STATUS}" />
             </form:select>
           </c:if>
           <!-- 隠しフィールド-->
@@ -585,7 +638,9 @@
           <!-- 参照用-->
           <c:if test="${fieldState.combobox03__view}">
             <div class="form-control form-control__view">
-              ${f:h(simpleEntity.combobox03)}
+              <c:forEach var="item" items="${simpleEntity.combobox03}" varStatus="status">
+                <span>${f:h(CL_STATUS[item])}<c:if test="${!status.last}">,</c:if></span>
+              </c:forEach>
             </div>
           </c:if>
         </div>
@@ -600,7 +655,7 @@
           </c:if>
           <!-- 入力 -->
           <c:if test="${fieldState.attachedFile01Uuid__input}">
-            <input id="image" type="file" class="form-control form-control-file file-managed"
+            <input id="attachedFile01" type="file" class="form-control form-control-file file-managed"
               　data-file-type="fileupload" data-extention-pattern="png jpg gif" <c:if
               test="${simpleEntityForm.attachedFile01Uuid != null}">style="display: none;"</c:if> />
           <form:errors path="attachedFile01Uuid" cssClass="invalid-feedback" />
@@ -613,7 +668,7 @@
           <div id="attachedFile01__attached-block" class="input-group">
             <span>
               <i class="far fa-file ml-2"></i>
-              <a href="${pageContext.request.contextPath}/admin/account/${imageFileManaged.uuid}/download"
+              <a href="${pageContext.request.contextPath}${op.getDownloadUrl(attachedFile01FileManaged.uuid)}"
                 target="_blank" class="link-attached">${attachedFile01FileManaged.originalFilename}</a>
               <c:if test="${fieldState.attachedFile01Uuid__input && !fieldState.attachedFile01Uuid__readonly}">
                 <i class="far fa-trash-alt" style="color: brown;" onclick="file_detach('attachedFile01')"></i>
@@ -623,14 +678,10 @@
           </div>
         </c:if>
       </div>
-
-
     </form:form>
 
     <br>
     <br>
-    <br>
-
 
     <!-- ここより上にメインコンテンツを記入 -->
   </div>

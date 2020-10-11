@@ -12,22 +12,26 @@ public final class Constants {
         public static final String UPDATE = "update";
         public static final String DELETE = "delete";
         public static final String INVALID = "invalid";
+        public static final String VALID = "valid";
         public static final String LIST = "list";
         public static final String VIEW = "view";
         public static final String UNLOCK = "unlock";
+        public static final String DOWNLOAD = "download";
     }
 
     public static final class BUTTON {
         public static final String GOTOLIST = "gotoList";
         public static final String GOTOUPDATE = "gotoUpdate";
         public static final String CREATE = "create";
-        public static final String SAVE_AS_DRAFT = "saveAsDraft";
+        public static final String SAVE_DRAFT = "saveDraft";
         public static final String CANCEL_DARFT = "cancelDraft";
         public static final String SAVE = "save";
         public static final String INVALID = "invalid";
+        public static final String VALID = "valid";
         public static final String DELETE = "delete";
         public static final String VIEW = "view";
         public static final String UNLOCK = "unlock";
+        public static final String DOWNLOAD = "download";
     }
 
 }

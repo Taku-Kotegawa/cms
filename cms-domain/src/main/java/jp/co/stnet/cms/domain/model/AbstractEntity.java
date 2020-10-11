@@ -39,5 +39,4 @@ public abstract class AbstractEntity<ID> implements Persistable<ID> {
     @Column(nullable = false)
     private LocalDateTime lastModifiedDate;
 
-    private String status;
 }
