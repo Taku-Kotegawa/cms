@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class SimpleEntityRevision extends AbstractRevisionEntity {
+public class SimpleEntityRevision extends AbstractRevisionEntity implements Serializable {
 
     // SimpleEntityとフィールドを一致させること
 

@@ -15,6 +15,7 @@ public class OperationsUtil {
     private String LABEL_COPY = "複製";
     private String LABEL_LIST = "一覧に戻る";
     private String LABEL_UNLOCK = "ロック解除";
+    private String LABEL_SAVE_DRAFT = "下書き保存";
     private String LABEL_CANCEL_DRAFT = "下書き取消";
     private String LABEL_INVALID = "無効化";
     private String LABEL_VALID = "無効解除";

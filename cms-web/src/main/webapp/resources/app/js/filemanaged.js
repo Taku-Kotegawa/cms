@@ -29,6 +29,8 @@ function file_attach(element) {
   var $upload_form = $upload_file.form;
   var $file_type = element.dataset.fileType;
 
+console.log(element.dataset);
+
   if (!$upload_file.value) {
     alert("アップロードファイルを指定してください。");
     return;

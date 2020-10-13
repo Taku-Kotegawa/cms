@@ -4,6 +4,7 @@ import jp.co.stnet.cms.domain.common.MimeTypes;
 import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
+import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.repository.common.FileManagedRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -102,7 +103,7 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
                         .originalFilename(file.getOriginalFilename())
                         .filemime(mimeType)
                         .filesize(file.getSize())
-                        .status(status)
+                        .status(Status.DRAFT.getCodeValue())
                         .uri(storeFile.getAbsolutePath().substring(STORE_BASEDIR.length()))
                         .build());
 

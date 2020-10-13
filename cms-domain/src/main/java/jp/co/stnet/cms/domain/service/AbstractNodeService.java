@@ -62,7 +62,8 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         T before;
         if (entity.getId() != null) {
             before = getRepository().getOne(entity.getId());
-            if (Objects.equals(entity, beanMapper.map(before, clazz))) {
+            T beforeCopy = beanMapper.map(before, clazz);
+            if (Objects.equals(entity, beforeCopy)) {
                 throw new NoChangeBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2001)));
             }
         }

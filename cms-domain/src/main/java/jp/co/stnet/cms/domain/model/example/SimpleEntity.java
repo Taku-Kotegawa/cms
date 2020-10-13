@@ -3,6 +3,7 @@ package jp.co.stnet.cms.domain.model.example;
 
 import jp.co.stnet.cms.domain.model.AbstractEntity;
 import jp.co.stnet.cms.domain.model.StatusInterface;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -115,6 +116,10 @@ public class SimpleEntity extends AbstractEntity<Long> implements Serializable, 
      * 添付ファイル(FileManaged)
      */
     private String attachedFile01Uuid;
+    /**
+     * 添付ファイル(FileManaged)
+     */
+    private FileManaged attachedFile01Managed;
 
     @Override
     public boolean isNew() {

@@ -2,6 +2,7 @@ package jp.co.stnet.cms.domain.model.common;
 
 import jp.co.stnet.cms.domain.model.AbstractEntity;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.MediaType;
 
@@ -17,6 +18,7 @@ import java.net.URLEncoder;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
+@EntityListeners(AuditingEntityListener.class)
 @Table(indexes = {@Index(columnList = "uuid, status")})
 public class FileManaged extends AbstractEntity<Long> implements Serializable {
 
@@ -38,13 +40,13 @@ public class FileManaged extends AbstractEntity<Long> implements Serializable {
     private String filetype;
 
     /**
-     * false: temporary, true: permanent
+     * false: temporary(0), true: permanent(1)
      */
     @Column(columnDefinition = "boolean default false")
-    private boolean status;
+    private String status;
+
 
     /**
-     *
      * @return
      */
     public MediaType getMediaType() {
@@ -53,7 +55,6 @@ public class FileManaged extends AbstractEntity<Long> implements Serializable {
     }
 
     /**
-     *
      * @return
      */
     public ContentDisposition getAttachmentContentDisposition() {
@@ -73,11 +74,7 @@ public class FileManaged extends AbstractEntity<Long> implements Serializable {
     }
 
     private boolean isOpenWindows() {
-        if (MediaType.APPLICATION_PDF_VALUE.equals(filemime)) {
-            return true;
-        } else {
-            return false;
-        }
+        return MediaType.APPLICATION_PDF_VALUE.equals(filemime);
     }
 
     @Override

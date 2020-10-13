@@ -199,7 +199,7 @@ public final class AdminAccountController {
                              @PathVariable("username") String username) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
+        accountService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
         // DBからデータ取得し、modelとformにセット
         Account account = accountService.findById(username);
@@ -212,11 +212,11 @@ public final class AdminAccountController {
         model.addAttribute("imageFileManaged", fileManaged);
 
         // ボタンの状態を設定
-        StateMap buttonState = getButtonStateMap(Constants.OPERATION.UPDATE, account);
+        StateMap buttonState = getButtonStateMap(Constants.OPERATION.SAVE, account);
         model.addAttribute("buttonState", buttonState.asMap());
 
         // フィールドの状態を設定
-        StateMap filedState = getFiledStateMap(Constants.OPERATION.UPDATE, account);
+        StateMap filedState = getFiledStateMap(Constants.OPERATION.SAVE, account);
         model.addAttribute("fieldState", filedState.asMap());
 
         return JSP_FORM;
@@ -235,7 +235,7 @@ public final class AdminAccountController {
                          @PathVariable("username") String username) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
+        accountService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
             return updateForm(form, model, loggedInUser, username);
@@ -355,7 +355,7 @@ public final class AdminAccountController {
                          @PathVariable("username") String username) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
+        accountService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
         // 存在しなければ例外
         Account account = accountService.findById(username);
@@ -377,7 +377,7 @@ public final class AdminAccountController {
             @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        accountService.hasAuthority(Constants.OPERATION.UPDATE, loggedInUser);
+        accountService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
         FileManaged fileManaged = fileManagedSharedService.findByUuid(uuid);
         model.addAttribute(fileManaged);
@@ -417,7 +417,7 @@ public final class AdminAccountController {
         }
 
         // 編集
-        if (Constants.OPERATION.UPDATE.equals(operation)) {
+        if (Constants.OPERATION.SAVE.equals(operation)) {
 
             if (Status.VALID.getCodeValue().equals(record.getStatus())) {
                 buttonState.setViewTrue(Constants.BUTTON.SAVE);
@@ -470,7 +470,7 @@ public final class AdminAccountController {
         }
 
         // 編集
-        if (Constants.OPERATION.UPDATE.equals(operation)) {
+        if (Constants.OPERATION.SAVE.equals(operation)) {
             fieldState.setInputTrueAll();
             fieldState.setReadOnlyTrue("username");
 

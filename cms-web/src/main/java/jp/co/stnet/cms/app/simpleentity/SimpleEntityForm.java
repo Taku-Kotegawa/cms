@@ -1,5 +1,6 @@
 package jp.co.stnet.cms.app.simpleentity;
 
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -101,9 +102,13 @@ public class SimpleEntityForm implements Serializable {
      */
     private List<String> combobox03;
     /**
-     * 添付ファイル(FileManaged)
+     * 添付ファイル(FileManaged UUID)
      */
     private String attachedFile01Uuid;
+    /**
+     * 添付ファイル(FileManaged)
+     */
+    private FileManaged attachedFile01Managed;
 
     public interface Create {
     }

@@ -9,10 +9,12 @@ public final class Constants {
 
     public static final class OPERATION {
         public static final String CREATE = "create";
-        public static final String UPDATE = "update";
+        public static final String SAVE = "save";
         public static final String DELETE = "delete";
         public static final String INVALID = "invalid";
         public static final String VALID = "valid";
+        public static final String SAVE_DRAFT = "saveDraft";
+        public static final String CANCEL_DRAFT = "cancelDraft";
         public static final String LIST = "list";
         public static final String VIEW = "view";
         public static final String UNLOCK = "unlock";
@@ -24,7 +26,7 @@ public final class Constants {
         public static final String GOTOUPDATE = "gotoUpdate";
         public static final String CREATE = "create";
         public static final String SAVE_DRAFT = "saveDraft";
-        public static final String CANCEL_DARFT = "cancelDraft";
+        public static final String CANCEL_DRAFT = "cancelDraft";
         public static final String SAVE = "save";
         public static final String INVALID = "invalid";
         public static final String VALID = "valid";
