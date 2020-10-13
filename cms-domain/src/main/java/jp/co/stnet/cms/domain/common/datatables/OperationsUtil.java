@@ -178,22 +178,7 @@ public class OperationsUtil {
 
     // ------ Toggle Button --------------------------------------
 
-    public String getToggleButton(String id) {
 
-        StringBuffer link = new StringBuffer();
-        link.append("<div class=\"btn-group\">");
-        link.append("<a href=\"" + getEditUrl(id) + "\" class=\"btn btn-button btn-sm\" style=\"white-space: nowrap\">" + LABEL_EDIT + "</a>");
-        link.append("<button type=\"button\" class=\"btn btn-button btn-sm dropdown-toggle dropdown-toggle-split\"data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">");
-        link.append("</button>");
-        link.append("<div class=\"dropdown-menu\">");
-        link.append("<a class=\"dropdown-item\" href=\"" + getViewUrl(id) + "\">" + LABEL_VIEW + "</a>");
-        link.append("<a class=\"dropdown-item\" href=\"" + getCopyUrl(id) + "\">" + LABEL_COPY + "</a>");
-        link.append("<a class=\"dropdown-item\" href=\"" + getInvalidUrl(id) + "\">" + LABEL_INVALID + "</a>");
-        link.append("</div>");
-        link.append("</div>");
-
-        return link.toString();
-    }
 
     // ------ private function --------------------------------------
 

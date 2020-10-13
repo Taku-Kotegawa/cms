@@ -30,7 +30,6 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
 
     @Override
     public T save(T entity) {
-        Boolean isNew = entity.isNew();
         if (entity.getStatus() == null) {
             entity.setStatus(Status.VALID.getCodeValue());
         }
@@ -38,7 +37,7 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
 
         // 本保存はリビジョンを保存する
         U rev = beanMapper.map(saved, revClass);
-        rev.setRevType(isNew ? 0 : 1);
+        rev.setRevType(entity.isNew() ? 0 : 1);
         getRevisionRepository().saveAndFlush(rev);
         saveMaxRev(saved.getId(), rev.getRid());
 
@@ -47,7 +46,6 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
 
     @Override
     public T saveDraft(T entity) {
-        Boolean isNew = entity.isNew();
         entity.setStatus(Status.DRAFT.getCodeValue());
         return super.save(entity);
         // 下書き保存はリビジョンを保存しない
@@ -81,7 +79,9 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
 
     public U findMaxRevById(ID id) {
         V max = entityManager.find(maxRevClass, id);
-        if (max == null) { return null; }
+        if (max == null) {
+            return null;
+        }
         return getRevisionRepository().findById(max.getRid()).orElse(null);
     }
 
@@ -98,6 +98,5 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
                 getPageable(input),
                 (Long) getJPQLQuery(input, true, revClass, maxRevClass).getSingleResult());
     }
-
 
 }

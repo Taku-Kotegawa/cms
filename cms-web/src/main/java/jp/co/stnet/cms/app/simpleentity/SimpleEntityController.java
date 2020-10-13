@@ -8,7 +8,6 @@ import jp.co.stnet.cms.domain.common.datatables.DataTablesOutput;
 import jp.co.stnet.cms.domain.common.datatables.OperationsUtil;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
-import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.model.example.SimpleEntity;
 import jp.co.stnet.cms.domain.model.example.SimpleEntityRevision;
@@ -64,8 +63,6 @@ public class SimpleEntityController {
         return new SimpleEntityForm();
     }
 
-    // ---------------- 一覧 -----------------------------------------------------
-
     /**
      * 一覧画面の表示
      */
@@ -104,10 +101,9 @@ public class SimpleEntityController {
             recordsFiltered = simpleEntityPage2.getTotalElements();
         }
 
-
         for (SimpleEntity simpleEntity : simpleEntityList) {
             SimpleEntityListRow simpleEntityListRow = beanMapper.map(simpleEntity, SimpleEntityListRow.class);
-            simpleEntityListRow.setOperations(op.getToggleButton(simpleEntity.getId().toString()));
+            simpleEntityListRow.setOperations(getToggleButton(simpleEntity.getId().toString(), op));
             simpleEntityListRow.setDT_RowId(simpleEntity.getId().toString());
 
             // ステータスラベル
@@ -125,7 +121,26 @@ public class SimpleEntityController {
         return output;
     }
 
-    // ---------------- 新規登録 -----------------------------------------------------
+    private String getToggleButton(String id, OperationsUtil op) {
+
+        StringBuffer link = new StringBuffer();
+        link.append("<div class=\"btn-group\">");
+        link.append("<a href=\"" + op.getEditUrl(id) + "\" class=\"btn btn-button btn-sm\" style=\"white-space: nowrap\">" + op.getLABEL_EDIT() + "</a>");
+        link.append("<button type=\"button\" class=\"btn btn-button btn-sm dropdown-toggle dropdown-toggle-split\"data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">");
+        link.append("</button>");
+        link.append("<div class=\"dropdown-menu\">");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getViewUrl(id) + "\">" + op.getLABEL_VIEW() + "</a>");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getCopyUrl(id) + "\">" + op.getLABEL_COPY() + "</a>");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getInvalidUrl(id) + "\">" + op.getLABEL_INVALID() + "</a>");
+        link.append("</div>");
+        link.append("</div>");
+
+        return link.toString();
+    }
+
+    protected OperationsUtil op() {
+        return new OperationsUtil(BASE_PATH);
+    }
 
     /**
      * 新規作成画面を開く
@@ -137,7 +152,6 @@ public class SimpleEntityController {
                              @AuthenticationPrincipal LoggedInUser loggedInUser,
                              @RequestParam(value = "copy", required = false) Long copy) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
         if (copy != null) {
@@ -148,10 +162,9 @@ public class SimpleEntityController {
 
         form.setAttachedFile01Managed(fileManagedSharedService.findByUuid(form.getAttachedFile01Uuid()));
 
-        // ボタン・フィールドの状態を設定
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, null).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.CREATE, null).asMap());
-        model.addAttribute("op", new OperationsUtil(BASE_PATH));
+        model.addAttribute("op", op());
 
         return JSP_FORM;
     }
@@ -168,7 +181,6 @@ public class SimpleEntityController {
                          @AuthenticationPrincipal LoggedInUser loggedInUser,
                          @RequestParam(value = "saveDraft", required = false) String saveDraft) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
@@ -182,6 +194,7 @@ public class SimpleEntityController {
             if ("true".equals(saveDraft)) {
                 simpleEntityService.saveDraft(simpleEntity);
             } else {
+                simpleEntity.setStatus(Status.VALID.getCodeValue());
                 simpleEntityService.save(simpleEntity);
             }
         } catch (BusinessException e) {
@@ -189,14 +202,10 @@ public class SimpleEntityController {
             return createForm(form, model, loggedInUser, null);
         }
 
-        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0001);
-        redirect.addFlashAttribute(messages);
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0001));
 
-        OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getEditUrl(simpleEntity.getId().toString());
+        return "redirect:" + op().getEditUrl(simpleEntity.getId().toString());
     }
-
-    // ---------------- 編集 ---------------------------------------------------------
 
     /**
      * 編集画面を開く
@@ -207,34 +216,27 @@ public class SimpleEntityController {
                              @AuthenticationPrincipal LoggedInUser loggedInUser,
                              @PathVariable("id") Long id) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
-        // DBからデータ取得し、modelとformにセット
         SimpleEntity simpleEntity = simpleEntityService.findById(id);
+        model.addAttribute("simpleEntity", simpleEntity);
 
-        // 状態=無効の場合参照画面に強制遷移
+        // 状態=無効の場合、参照画面に強制遷移
         if (simpleEntity.getStatus().equals(Status.INVALID.getCodeValue())) {
-            ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0008);
-            model.addAttribute(messages);
+            model.addAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0008));
             return view(model, loggedInUser, id);
         }
 
-        model.addAttribute("simpleEntity", simpleEntity);
+        // 入力チェック再表示の場合、formの情報をDBの値で上書きしない
         if (form.getVersion() == null) {
             beanMapper.map(simpleEntity, form);
         }
 
-        // 添付フィアルの情報をセット
         form.setAttachedFile01Managed(fileManagedSharedService.findByUuid(form.getAttachedFile01Uuid()));
 
-//        FileManaged fileManaged = fileManagedSharedService.findByUuid(form.getAttachedFile01Uuid());
-//        model.addAttribute("attachedFile01FileManaged", fileManaged);
-
-        // ボタン・フィールドの状態を設定
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.SAVE, simpleEntity).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.SAVE, simpleEntity).asMap());
-        model.addAttribute("op", new OperationsUtil(BASE_PATH));
+        model.addAttribute("op", op());
 
         return JSP_FORM;
     }
@@ -250,10 +252,8 @@ public class SimpleEntityController {
                          RedirectAttributes redirect,
                          @AuthenticationPrincipal LoggedInUser loggedInUser,
                          @PathVariable("id") Long id,
-                         @RequestParam(value = "saveDraft", required = false) String saveDraft
-    ) {
+                         @RequestParam(value = "saveDraft", required = false) String saveDraft) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
@@ -274,14 +274,10 @@ public class SimpleEntityController {
             return updateForm(form, model, loggedInUser, id);
         }
 
-        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0004);
-        redirect.addFlashAttribute(messages);
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0004));
 
-        OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getEditUrl(simpleEntity.getId().toString());
+        return "redirect:" + op().getEditUrl(simpleEntity.getId().toString());
     }
-
-    // ---------------- 削除 ---------------------------------------------------------
 
     /**
      * 削除
@@ -290,7 +286,6 @@ public class SimpleEntityController {
     public String delete(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                          @PathVariable("id") Long id) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
 
         try {
@@ -299,61 +294,60 @@ public class SimpleEntityController {
             model.addAttribute(e.getResultMessages());
         }
 
-        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0007);
-        redirect.addFlashAttribute(messages);
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0007));
 
-        OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getListUrl();
+        return "redirect:" + op().getListUrl();
     }
 
-    // ---------------- 無効化 / 無効解除 ---------------------------------------------------------
-
+    /**
+     * 無効化
+     */
     @GetMapping(value = "{id}/invalid")
     public String invalid(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                           @PathVariable("id") Long id) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
 
+        SimpleEntity entity = null;
         try {
-            simpleEntityService.invalid(id);
+            entity = simpleEntityService.invalid(id);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
         }
 
-        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0002);
-        redirect.addFlashAttribute(messages);
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
 
-        OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getViewUrl(id.toString());
+        return "redirect:" + op().getViewUrl(id.toString());
     }
 
+    /**
+     * 無効解除
+     */
     @GetMapping(value = "{id}/valid")
     public String valid(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                         @PathVariable("id") Long id) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
-        simpleEntityService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
+        simpleEntityService.hasAuthority(Constants.OPERATION.VALID, loggedInUser);
 
+        SimpleEntity entity = null;
         try {
-            simpleEntityService.valid(id);
+            entity = simpleEntityService.valid(id);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
         }
 
-        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0002);
-        redirect.addFlashAttribute(messages);
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
 
-        OperationsUtil op = new OperationsUtil(BASE_PATH);
-        return "redirect:" + op.getEditUrl(id.toString());
+        return "redirect:" + op().getEditUrl(id.toString());
     }
 
-
+    /**
+     * 下書き取消
+     */
     @GetMapping(value = "{id}/cancel_draft")
     public String cancelDraft(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                               @PathVariable("id") Long id) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.CANCEL_DRAFT, loggedInUser);
 
         SimpleEntity entity = null;
@@ -363,20 +357,14 @@ public class SimpleEntityController {
             model.addAttribute(e.getResultMessages());
         }
 
-        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_CM_FW_0002);
-        redirect.addFlashAttribute(messages);
-
-        OperationsUtil op = new OperationsUtil(BASE_PATH);
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
 
         if (entity != null) {
-            return "redirect:" + op.getEditUrl(id.toString());
+            return "redirect:" + op().getEditUrl(id.toString());
         } else {
-            return "redirect:" + op.getListUrl();
+            return "redirect:" + op().getListUrl();
         }
-
     }
-
-    // ---------------- 参照 ---------------------------------------------------------
 
     /**
      * 参照画面の表示
@@ -385,48 +373,37 @@ public class SimpleEntityController {
     public String view(Model model, @AuthenticationPrincipal LoggedInUser loggedInUser,
                        @PathVariable("id") Long id) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
 
         SimpleEntity simpleEntity = simpleEntityService.findById(id);
         model.addAttribute("simpleEntity", simpleEntity);
 
         simpleEntity.setAttachedFile01Managed(fileManagedSharedService.findByUuid(simpleEntity.getAttachedFile01Uuid()));
-        // 添付フィアルの情報をセット
-//        FileManaged fileManaged = fileManagedSharedService.findByUuid(simpleEntity.getAttachedFile01Uuid());
-//        model.addAttribute("attachedFile01FileManaged", fileManaged);
 
-        // ボタン・フィールドの状態を設定
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
-        model.addAttribute("op", new OperationsUtil(BASE_PATH));
+        model.addAttribute("op", op());
 
         return JSP_FORM;
     }
 
-
-    // ---------------- ダウンロード -----------------------------------------------
-
+    /**
+     * ダウンロード
+     */
     @GetMapping("{uuid}/download")
     public String download(
             Model model,
             @PathVariable("uuid") String uuid,
             @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
-        // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         simpleEntityService.hasAuthority(Constants.OPERATION.DOWNLOAD, loggedInUser);
 
-        FileManaged fileManaged = fileManagedSharedService.findByUuid(uuid);
-        model.addAttribute(fileManaged);
+        model.addAttribute(fileManagedSharedService.findByUuid(uuid));
         return "fileManagedDownloadView";
     }
 
-    // ---------------- 共通(private) -----------------------------------------------
-
     /**
-     * @param operation
-     * @param record
-     * @return
+     * ボタンの状態設定
      */
     private StateMap getButtonStateMap(String operation, SimpleEntity record) {
 
@@ -502,14 +479,14 @@ public class SimpleEntityController {
     }
 
     /**
-     * @param operation
-     * @param record
-     * @return
+     * フィールドの状態設定
      */
     private StateMap getFiledStateMap(String operation, SimpleEntity record) {
-        List<String> excludeKeys = new ArrayList<>();
 
         // 常設の隠しフィールドは状態管理しない
+        List<String> excludeKeys = new ArrayList<>();
+        excludeKeys.add("id");
+        excludeKeys.add("version");
 
         StateMap fieldState = new StateMap(SimpleEntityForm.class, new ArrayList<>(), excludeKeys);
 
@@ -521,7 +498,6 @@ public class SimpleEntityController {
         // 編集
         if (Constants.OPERATION.SAVE.equals(operation)) {
             fieldState.setInputTrueAll();
-            fieldState.setReadOnlyTrue("id");
             fieldState.setViewTrue("status");
 
             // スタータスが無効

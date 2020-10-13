@@ -93,14 +93,14 @@ public final class AdminAccountController {
     @GetMapping(value = "/list/json")
     public DataTablesOutput<AccountListBean> getListJson(@Validated DataTablesInput input) {
 
-        OperationsUtil op = new OperationsUtil("");
+        OperationsUtil op = new OperationsUtil(null);
 
         List<AccountListBean> list = new ArrayList<>();
         Page<Account> accountPage = accountService.findPageByInput(input);
 
         for (Account account : accountPage.getContent()) {
             AccountListBean accountListBean = beanMapper.map(account, AccountListBean.class);
-            accountListBean.setOperations(op.getToggleButton(account.getUsername()));
+            accountListBean.setOperations(getToggleButton(account.getUsername(), op));
             accountListBean.setDT_RowId(account.getUsername());
 
             // ステータスラベル
@@ -118,6 +118,23 @@ public final class AdminAccountController {
         output.setRecordsFiltered(accountPage.getTotalElements());
 
         return output;
+    }
+
+    private String getToggleButton(String id, OperationsUtil op) {
+
+        StringBuffer link = new StringBuffer();
+        link.append("<div class=\"btn-group\">");
+        link.append("<a href=\"" + op.getEditUrl(id) + "\" class=\"btn btn-button btn-sm\" style=\"white-space: nowrap\">" + op.getLABEL_EDIT() + "</a>");
+        link.append("<button type=\"button\" class=\"btn btn-button btn-sm dropdown-toggle dropdown-toggle-split\"data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">");
+        link.append("</button>");
+        link.append("<div class=\"dropdown-menu\">");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getViewUrl(id) + "\">" + op.getLABEL_VIEW() + "</a>");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getCopyUrl(id) + "\">" + op.getLABEL_COPY() + "</a>");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getInvalidUrl(id) + "\">" + op.getLABEL_INVALID() + "</a>");
+        link.append("</div>");
+        link.append("</div>");
+
+        return link.toString();
     }
 
     // ---------------- 新規登録 -----------------------------------------------------

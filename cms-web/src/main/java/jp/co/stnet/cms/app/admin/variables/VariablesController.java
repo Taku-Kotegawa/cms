@@ -73,6 +73,7 @@ public class VariablesController {
     }
 
 
+
     /**
      * 一覧画面の表示
      */
@@ -113,7 +114,7 @@ public class VariablesController {
 
         for (Variable variables : variablesList) {
             VariablesListRow variablesListRow = beanMapper.map(variables, VariablesListRow.class);
-            variablesListRow.setOperations(op.getToggleButton(variables.getId().toString()));
+            variablesListRow.setOperations(null);
             variablesListRow.setDT_RowId(variables.getId().toString());
 
             // ステータスラベル

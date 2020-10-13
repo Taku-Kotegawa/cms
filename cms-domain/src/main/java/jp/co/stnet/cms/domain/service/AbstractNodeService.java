@@ -37,7 +37,9 @@ import java.util.Objects;
 public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusInterface, ID> implements NodeIService<T, ID>  {
 
     protected final Class<T> clazz;
+
     protected final Map<String, String> fieldMap;
+
     @Autowired
     Mapper beanMapper;
 
@@ -59,20 +61,23 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T save(T entity) {
-        T before;
-        if (entity.getId() != null) {
-            before = getRepository().getOne(entity.getId());
-            T beforeCopy = beanMapper.map(before, clazz);
-            if (Objects.equals(entity, beforeCopy)) {
+        if (!entity.isNew()) {
+            T current = findById(entity.getId());
+            T currentCopy = beanMapper.map(current, clazz);
+
+            // 下書き保存時、本保存から変更がなければ保存しない(ステータスを変更チェックの対象から除外)
+            if (current.getStatus().equals(Status.VALID.getCodeValue())
+                    && entity.getStatus().equals(Status.DRAFT.getCodeValue())) {
+                currentCopy.setStatus(Status.DRAFT.getCodeValue());
+            }
+
+            if (Objects.equals(entity, currentCopy)) {
                 throw new NoChangeBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2001)));
             }
         }
-
-        // 自動更新項目(createdBy, createdDate, lastModifiedBy, lastModifiedDate)を取得するため、DB更新(flush) + キャッシュクリア(detach)
-//        before = beanMapper.map(entity, clazz);
         entity = getRepository().saveAndFlush(entity);
         entityManager.detach(entity);
-        return getRepository().findById(entity.getId()).orElse(null);
+        return getRepository().findById(Objects.requireNonNull(entity.getId())).orElse(null);
     }
 
     @Override
@@ -86,24 +91,23 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T invalid(ID id) {
-        T before = findById(id);
-        if (!before.getStatus().equals(Status.VALID.getCodeValue())) {
+        T entity = findById(id);
+        if (!entity.getStatus().equals(Status.VALID.getCodeValue())) {
             throw new IllegalStateException("ID: " + id.toString());
         }
-        before.setStatus(Status.INVALID.getCodeValue());
-        return save(before);
+        entity.setStatus(Status.INVALID.getCodeValue());
+        return save(entity);
     }
 
     @Override
     public T valid(ID id) {
-        T before = findById(id);
-        if (!before.getStatus().equals(Status.INVALID.getCodeValue())) {
+        T entity = findById(id);
+        if (!entity.getStatus().equals(Status.INVALID.getCodeValue())) {
             throw new IllegalStateException("ID: " + id.toString());
         }
-        before.setStatus(Status.VALID.getCodeValue());
-        return save(before);
+        entity.setStatus(Status.VALID.getCodeValue());
+        return save(entity);
     }
-
 
     @Override
     public void delete(ID id) {
@@ -160,24 +164,23 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 }
                 if (isDate(column.getData())) {
                     sql.append("function('date_format', ");
-                    sql.append("c." + convColumnName(column.getData()));
+                    sql.append("c." + convertColumnName(column.getData()));
                     sql.append(", '%Y/%m/%d')");
                 } else if (isDateTime(column.getData())) {
                     sql.append("function('date_format', ");
-                    sql.append("c." + convColumnName((column.getData())));
+                    sql.append("c." + convertColumnName((column.getData())));
                     sql.append(", '%Y/%m/%d %T')");
 
-                } else if (isNumeric(convColumnName(column.getData()))) {
+                } else if (isNumeric(convertColumnName(column.getData()))) {
                     sql.append("function('format', ");
-                    sql.append("c." + convColumnName(column.getData()));
+                    sql.append("c." + convertColumnName(column.getData()));
                     sql.append(", 0)");
                 } else {
-                    sql.append("c." + convColumnName(column.getData()));
+                    sql.append("c." + convertColumnName(column.getData()));
                 }
 
                 sql.append(" LIKE :");
-                sql.append(convColumnName(column.getData()));
-//                sql.append(QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
+                sql.append(convertColumnName(column.getData()));
                 sql.append(" ESCAPE '~'");
             }
         }
@@ -191,19 +194,16 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                     sql.append(" OR ");
                     if (isDate(column.getData())) {
                         sql.append("function('date_format', ");
-                        sql.append("c." + convColumnName(column.getData()));
+                        sql.append("c." + convertColumnName(column.getData()));
                         sql.append(", '%Y/%m/%d')");
                     } else if (isDateTime(column.getData())) {
                         sql.append("function('date_format', ");
-                        sql.append("c." + convColumnName(column.getData()));
+                        sql.append("c." + convertColumnName(column.getData()));
                         sql.append(", '%Y/%m/%d %T')");
                     } else {
-                        sql.append("c." + convColumnName(column.getData()));
+                        sql.append("c." + convertColumnName(column.getData()));
                     }
                     sql.append(" LIKE :globalSearch ESCAPE '~'");
-//                    sql.append(substringLabel(column.getData()));
-//                    sql.append(QueryEscapeUtils.toContainingCondition(globalSearch));
-//                    sql.append(" ESCAPE '~'");
                 }
             }
         }
@@ -212,14 +212,12 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         List<String> orderClause = new ArrayList<>();
         for (Order order : input.getOrder()) {
             orderClause.add(
-                    "c." + convColumnName(input.getColumns().get(order.getColumn()).getData()) + " " + order.getDir());
+                    "c." + convertColumnName(input.getColumns().get(order.getColumn()).getData()) + " " + order.getDir());
         }
         sql.append(" ORDER BY ");
         sql.append(StringUtils.join(orderClause, ','));
 
         // Limit
-
-
         TypedQuery typedQuery;
         if (!count) {
             typedQuery = entityManager.createQuery(sql.toString(), clazz);
@@ -232,7 +230,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         // フィールドフィルタ
         for (Column column : input.getColumns()) {
             if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
-                typedQuery.setParameter(convColumnName(column.getData()), QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
+                typedQuery.setParameter(convertColumnName(column.getData()), QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
             }
         }
 
@@ -261,8 +259,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 || "java.lang.Double".equals(fieldMap.get(fieldName));
     }
 
-
-    private String convColumnName(String org) {
+    protected String convertColumnName(String org) {
         if (StringUtils.endsWith(org, "Label")) {
             return StringUtils.left(org, org.length() - 5);
         } else {
