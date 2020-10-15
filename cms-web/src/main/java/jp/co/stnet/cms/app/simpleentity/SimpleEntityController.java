@@ -128,10 +128,7 @@ public class SimpleEntityController {
         return null;
     }
 
-
-
-
-        private String getToggleButton(String id, OperationsUtil op) {
+    private String getToggleButton(String id, OperationsUtil op) {
 
         StringBuffer link = new StringBuffer();
         link.append("<div class=\"btn-group\">");
@@ -406,7 +403,7 @@ public class SimpleEntityController {
 
         } else {
             // リビジョン番号指定
-            simpleEntity = beanMapper.map(simpleEntityService.findById(rev), SimpleEntity.class);
+            simpleEntity = beanMapper.map(simpleEntityService.findByRid(rev), SimpleEntity.class);
         }
 
         model.addAttribute("simpleEntity", simpleEntity);

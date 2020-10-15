@@ -29,10 +29,17 @@ public interface NodeRevIService<T extends AbstractEntity<ID>, U extends Abstrac
     Page<U> findMaxRevPageByInput(DataTablesInput input);
 
     /**
-     *
+     *　有効な最新リビジョンを取得
      * @param id
      * @return
      */
     U findByIdLatestRev(ID id);
+
+    /**
+     * リビジョン番号で取得
+     * @param rid
+     * @return
+     */
+    U findByRid(Long rid);
 
 }

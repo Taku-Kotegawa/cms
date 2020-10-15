@@ -697,6 +697,9 @@
               </c:if>
             </div>
           </div>
+
+
+
         </div>
       </div>
 
@@ -711,23 +714,7 @@
 
 <%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
 
-
 <style>
-  .dropdown-menu.combobox {
-    overflow: auto;
-    max-height: 250px;
-    min-width: 100%;
-    padding: 0;
-  }
-
-  .dropdown-menu.combobox li.autocomplete {
-    padding: .2rem .4rem;
-    min-height: 1.5rem;
-  }
-
-  .dropdown-menu.combobox li.autocomplete:hover {
-    background-color: lightgray;
-  }
 </style>
 
 <script>
