@@ -2,7 +2,6 @@ package jp.co.stnet.cms.app.common.downloadview;
 
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-@Slf4j
 @Component
 public class FileManagedDownloadView extends AbstractFileDownloadView {
 
@@ -36,6 +34,5 @@ public class FileManagedDownloadView extends AbstractFileDownloadView {
         FileManaged fileManaged = (FileManaged) model.get("fileManaged");
         response.setContentType(fileManaged.getFilemime());
         response.setHeader("Content-Disposition", fileManaged.getAttachmentContentDisposition().toString());
-        log.info(response.toString());
     }
 }

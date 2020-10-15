@@ -1,16 +1,19 @@
 package jp.co.stnet.cms.domain.service;
 
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
+import jp.co.stnet.cms.domain.common.exception.IllegalStateBusinessException;
+import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.AbstractEntity;
 import jp.co.stnet.cms.domain.model.AbstractMaxRevEntity;
 import jp.co.stnet.cms.domain.model.AbstractRevisionEntity;
 import jp.co.stnet.cms.domain.model.StatusInterface;
 import jp.co.stnet.cms.domain.model.common.Status;
+import jp.co.stnet.cms.domain.repository.NodeRevRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
+import org.terasoluna.gfw.common.message.ResultMessages;
 
 @Slf4j
 @Transactional
@@ -26,7 +29,7 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
         this.maxRevClass = maxRevClass;
     }
 
-    abstract protected JpaRepository<U, Long> getRevisionRepository();
+    abstract protected NodeRevRepository<U, ID> getRevisionRepository();
 
     @Override
     public T save(T entity) {
@@ -55,7 +58,7 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
     public T cancelDraft(ID id) {
         T current = findById(id);
         if (!current.getStatus().equals(Status.DRAFT.getCodeValue())) {
-            throw new IllegalStateException("ID: " + id);
+            throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2005)));
         }
         U before = findMaxRevById(id);
         if (before == null) {
@@ -97,6 +100,14 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
                 getJPQLQuery(input, false, revClass, maxRevClass).getResultList(),
                 getPageable(input),
                 (Long) getJPQLQuery(input, true, revClass, maxRevClass).getSingleResult());
+    }
+
+    public U findByIdLatestRev(ID id) {
+        return getRevisionRepository().findByIdLatestRev(id);
+    }
+
+    public U findByRid(Long rid) {
+        return getRevisionRepository().findById(rid).orElse(null);
     }
 
 }

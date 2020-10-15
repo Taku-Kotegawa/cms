@@ -21,12 +21,18 @@ public interface NodeRevIService<T extends AbstractEntity<ID>, U extends Abstrac
      */
     T cancelDraft(ID id);
 
-
     /**
      *
      * @param input
      * @return
      */
     Page<U> findMaxRevPageByInput(DataTablesInput input);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    U findByIdLatestRev(ID id);
 
 }

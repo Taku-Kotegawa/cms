@@ -11,7 +11,7 @@ $.extend($.fn.dataTable.defaults, {
     'serverSide': true,
 
     // 遅延読込
-    "deferRender": true,
+    // "deferRender": true,
 
     // 処理中
     'processing': true,
@@ -231,5 +231,18 @@ $.fn.dataTable.ext.buttons.createnew = {
     titleAttr: '新規作成',
     action: function (e, dt, node, config) {
         window.location.href = "create?form";
+    }
+};
+
+
+/**
+ * CSVダウンロード(サーバサイド処理)
+ */
+$.fn.dataTable.ext.buttons.csvdownload = {
+    text: '<i class="fas fa-file-download"></i>',
+    titleAttr: 'CSVダウンロード',
+    action: function (e, dt, node, config) {
+        var data = dt.ajax.params();
+        window.open('list/csv?' + $.param(data), '_blank');
     }
 };

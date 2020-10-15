@@ -6,6 +6,7 @@ import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.common.datatables.Column;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
 import jp.co.stnet.cms.domain.common.datatables.Order;
+import jp.co.stnet.cms.domain.common.exception.IllegalStateBusinessException;
 import jp.co.stnet.cms.domain.common.exception.NoChangeBusinessException;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.AbstractEntity;
@@ -27,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +36,7 @@ import java.util.Objects;
 
 @Slf4j
 @Transactional
-public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusInterface, ID> implements NodeIService<T, ID>  {
+public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusInterface, ID> implements NodeIService<T, ID> {
 
     protected final Class<T> clazz;
 
@@ -48,7 +50,12 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     protected AbstractNodeService(Class<T> clazz) {
         this.clazz = clazz;
-        this.fieldMap = BeanUtils.getFileds(clazz, "");
+        this.fieldMap = BeanUtils.getFileds(this.clazz, null);
+    }
+
+    protected AbstractNodeService() {
+        this.clazz = (Class<T>)((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        this.fieldMap = BeanUtils.getFileds(this.clazz, null);
     }
 
     abstract protected JpaRepository<T, ID> getRepository();
@@ -93,7 +100,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     public T invalid(ID id) {
         T entity = findById(id);
         if (!entity.getStatus().equals(Status.VALID.getCodeValue())) {
-            throw new IllegalStateException("ID: " + id.toString());
+            throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2003)));
         }
         entity.setStatus(Status.INVALID.getCodeValue());
         return save(entity);
@@ -103,7 +110,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     public T valid(ID id) {
         T entity = findById(id);
         if (!entity.getStatus().equals(Status.INVALID.getCodeValue())) {
-            throw new IllegalStateException("ID: " + id.toString());
+            throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2004)));
         }
         entity.setStatus(Status.VALID.getCodeValue());
         return save(entity);

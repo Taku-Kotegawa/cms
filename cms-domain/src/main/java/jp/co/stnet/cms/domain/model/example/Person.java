@@ -2,12 +2,11 @@ package jp.co.stnet.cms.domain.model.example;
 
 
 import jp.co.stnet.cms.domain.model.AbstractEntity;
+import jp.co.stnet.cms.domain.model.StatusInterface;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -17,7 +16,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class Person extends AbstractEntity<Long> implements Serializable {
+@EntityListeners(AuditingEntityListener.class)
+public class Person extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

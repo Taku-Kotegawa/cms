@@ -91,6 +91,12 @@ public class MessageKeys {
     public static final String W_CM_FW_2001 = "w.cm.fw.2001";
     /** w.cm.fw.2002=同じ値が既に登録されています。({0} = {1}) */
     public static final String W_CM_FW_2002 = "w.cm.fw.2002";
+    /** w.cm.fw.2003=データの状態が有効でなければ無効化できません。下書きの場合は取り消してから無効化してください。 */
+    public static final String W_CM_FW_2003 = "w.cm.fw.2003";
+    /** w.cm.fw.2004=データの状態が無効でなければ無効解除できません。 */
+    public static final String W_CM_FW_2004 = "w.cm.fw.2004";
+    /** w.cm.fw.2005=データの状態が下書きでなければ下書き取消はできません。 */
+    public static final String W_CM_FW_2005 = "w.cm.fw.2005";
     /** e.cm.fw.8001=楽観的排他制御により登録に失敗しました。画面を開き直して登録をやり直して下さい。 */
     public static final String E_CM_FW_8001 = "e.cm.fw.8001";
     /** e.cm.fw.9001=登録に失敗しました。({0}) */

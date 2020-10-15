@@ -101,18 +101,23 @@
             },
             {
               data: 'text01',
+              render: $.fn.dataTable.render.text(),
             },
             {
               data: 'text02',
+              render: $.fn.dataTable.render.text(),
             },
             {
               data: 'text03',
+              render: $.fn.dataTable.render.text(),
             },
             {
               data: 'text04',
+              render: $.fn.dataTable.render.text(),
             },
             {
               data: 'text05',
+              render: $.fn.dataTable.render.text(),
             },
             {
               data: 'statusLabel',
@@ -131,7 +136,7 @@
           ],
 
           // ボタンの表示
-          'buttons': ['colvis', 'stateClear', 'createnew'],
+          'buttons': ['colvis', 'stateClear', 'csvdownload', 'createnew'],
 
           // データロード後処理
           'initComplete': function (settings, json) {
@@ -153,12 +158,23 @@
         // 項目単位フィルタを追加(列の並び順対応版)
         addFieldFilter2(table)
 
+
+        $('#draft').change().on('change', function (e, s) {
+          localStorage.dataTables_Draft = e.target.checked;
+          table.draw();
+          fnColumns(table);
+        });
+
+        if (localStorage.dataTables_Draft == 'false') {
+          $('#draft')[0].checked = false;
+          table.draw();
+        }
+
       });
 
-      function myflatten(params, settings) {
-        params = flatten(params, settings);
-        params.draft = $('#draft')[0].checked;
-        return params;
-      }
-
+  function myflatten(params, settings) {
+    params = flatten(params, settings);
+    params.draft = $('#draft')[0].checked;
+    return params;
+  }
 </script>
