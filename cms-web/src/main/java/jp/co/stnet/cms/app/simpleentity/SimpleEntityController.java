@@ -145,7 +145,7 @@ public class SimpleEntityController {
         List<SimpleEntityCsvBean> list = new ArrayList<>();
         List<SimpleEntity> simpleEntityList = new ArrayList<>();
 
-        if (input.getDraft()) { // 下書き含む最新
+        if (input.getDraft() == null || input.getDraft()) { // 下書き含む最新
             Page<SimpleEntity> simpleEntityPage = simpleEntityService.findPageByInput(input);
             simpleEntityList.addAll(simpleEntityPage.getContent());
 

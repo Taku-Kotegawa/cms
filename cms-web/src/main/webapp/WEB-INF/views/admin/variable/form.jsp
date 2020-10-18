@@ -26,8 +26,8 @@
       <!-- 操作ボタンを追加(メインコンテンツの中に追加する様に) -->
       <div class="row operation-button-block">
 
-        <!-- 右寄せに配置 -->
-        <div class="col-12">
+        <!-- 左寄せに配置 -->
+        <div class="col-18">
 
           <c:set var="id" value="${variable.id}" />
 
@@ -68,16 +68,18 @@
               test="${buttonState.save__disabled}">disabled</c:if>>保存</button>
           </c:if>
 
-          <!-- 無効 -->
-          <c:if test="${buttonState.invalid__view}">
-            <a id="delete" href="${pageContext.request.contextPath}${op.getInvalidUrl(id)}" class="btn btn-button mr-2"
-              <c:if test="${buttonState.invalid__disabled}">disabled</c:if> >${op.getLABEL_INVALID()}</a>
-          </c:if>
-
           <!-- 無効解除 -->
           <c:if test="${buttonState.valid__view}">
             <a id="delete" href="${pageContext.request.contextPath}${op.getValidUrl(id)}" class="btn btn-button mr-2"
               <c:if test="${buttonState.valid__disabled}">disabled</c:if> >${op.getLABEL_VALID()}</a>
+          </c:if>
+        </div>
+        <!-- 左寄せに配置 -->
+        <div class="col-18 text-right">
+          <!-- 無効 -->
+          <c:if test="${buttonState.invalid__view}">
+            <a id="delete" href="${pageContext.request.contextPath}${op.getInvalidUrl(id)}" class="btn btn-button mr-2"
+              <c:if test="${buttonState.invalid__disabled}">disabled</c:if> >${op.getLABEL_INVALID()}</a>
           </c:if>
 
           <!-- 削除 -->
@@ -85,7 +87,6 @@
             <a id="delete" href="${pageContext.request.contextPath}${op.getDeleteUrl(id)}" class="btn btn-button mr-2"
               <c:if test="${buttonState.delete__disabled}">disabled</c:if> >${op.getLABEL_DELETE()}</a>
           </c:if>
-
         </div>
       </div>
 
@@ -113,8 +114,11 @@
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.type__input}">
-                <form:input path="type" cssClass="form-control" cssErrorClass="form-control is-invalid"
-                  disabled="${fieldState.type__disabled}" readonly="${fieldState.type__readonly}" />
+                <form:select path="type" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                  disabled="${fieldState.type__disabled}" >
+                  <form:option value="" label="--Select--" />
+                  <form:options items="${CL_VARIABLETYPE}" />
+                </form:select>
                 <form:errors path="type" cssClass="invalid-feedback" />
               </c:if>
               <!-- 隠しフィールド-->
@@ -157,7 +161,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value1__input || fieldState.value1__view}">
-                <form:label path="value1">値1</form:label>
+                <form:label path="value1">${fieldLabel.value1}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value1__input}">
@@ -179,7 +183,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value2__input || fieldState.value2__view}">
-                <form:label path="value2">値2</form:label>
+                <form:label path="value2">${fieldLabel.value2}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value2__input}">
@@ -201,7 +205,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value3__input || fieldState.value3__view}">
-                <form:label path="value3">値3</form:label>
+                <form:label path="value3">${fieldLabel.value3}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value3__input}">
@@ -226,7 +230,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value4__input || fieldState.value4__view}">
-                <form:label path="value4">値4</form:label>
+                <form:label path="value4">${fieldLabel.value4}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value4__input}">
@@ -248,7 +252,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value5__input || fieldState.value5__view}">
-                <form:label path="value5">値5</form:label>
+                <form:label path="value5">${fieldLabel.value5}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value5__input}">
@@ -270,7 +274,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value6__input || fieldState.value6__view}">
-                <form:label path="value6">値6</form:label>
+                <form:label path="value6">${fieldLabel.value6}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value6__input}">
@@ -295,7 +299,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value7__input || fieldState.value7__view}">
-                <form:label path="value7">値7</form:label>
+                <form:label path="value7">${fieldLabel.value7}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value7__input}">
@@ -317,7 +321,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value8__input || fieldState.value8__view}">
-                <form:label path="value8">値8</form:label>
+                <form:label path="value8">${fieldLabel.value8}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value8__input}">
@@ -339,7 +343,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value9__input || fieldState.value9__view}">
-                <form:label path="value9">値9</form:label>
+                <form:label path="value9">${fieldLabel.value9}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value9__input}">
@@ -364,7 +368,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value10__input || fieldState.value10__view}">
-                <form:label path="value10">値10</form:label>
+                <form:label path="value10">${fieldLabel.value10}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value10__input}">
@@ -390,7 +394,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date1__input || fieldState.date1__view}">
-                <form:label path="date1">日付1</form:label>
+                <form:label path="date1">${fieldLabel.date1}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date1__input}">
@@ -417,7 +421,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date2__input || fieldState.date2__view}">
-                <form:label path="date2">日付2</form:label>
+                <form:label path="date2">${fieldLabel.date2}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date2__input}">
@@ -444,7 +448,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date3__input || fieldState.date3__view}">
-                <form:label path="date3">日付3</form:label>
+                <form:label path="date3">${fieldLabel.date3}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date3__input}">
@@ -471,7 +475,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date4__input || fieldState.date4__view}">
-                <form:label path="date4">日付4</form:label>
+                <form:label path="date4">${fieldLabel.date4}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date4__input}">
@@ -498,7 +502,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date5__input || fieldState.date5__view}">
-                <form:label path="date5">日付5</form:label>
+                <form:label path="date5">${fieldLabel.date5}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date5__input}">
@@ -528,7 +532,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint1__input || fieldState.valint1__view}">
-                <form:label path="valint1">整数1</form:label>
+                <form:label path="valint1">${fieldLabel.valint1}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint1__input}">
@@ -550,7 +554,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint2__input || fieldState.valint2__view}">
-                <form:label path="valint2">整数2</form:label>
+                <form:label path="valint2">${fieldLabel.valint2}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint2__input}">
@@ -572,7 +576,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint3__input || fieldState.valint3__view}">
-                <form:label path="valint3">整数3</form:label>
+                <form:label path="valint3">${fieldLabel.valint3}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint3__input}">
@@ -594,7 +598,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint4__input || fieldState.valint4__view}">
-                <form:label path="valint4">整数4</form:label>
+                <form:label path="valint4">${fieldLabel.valint4}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint4__input}">
@@ -616,7 +620,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint5__input || fieldState.valint5__view}">
-                <form:label path="valint5">整数5</form:label>
+                <form:label path="valint5">${fieldLabel.valint5}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint5__input}">
@@ -641,7 +645,7 @@
             <div class="col-24">
               <!-- ラベル -->
               <c:if test="${fieldState.textarea__input || fieldState.textarea__view}">
-                <form:label path="textarea">テキストエリア</form:label>
+                <form:label path="textarea">${fieldLabel.textarea}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.textarea__input}">
@@ -666,7 +670,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.file1Uuid__input || fieldState.file1Uuid__view}">
-                <form:label path="file1Uuid">ファイル1</form:label>
+                <form:label path="file1Uuid">${fieldLabel.file1}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.file1Uuid__input}">
@@ -704,10 +708,10 @@
           </div>
 
           <div class="row mb-3">
-            <div class="col-24">
+            <div class="col-36">
               <!-- ラベル -->
               <c:if test="${fieldState.remark__input || fieldState.remark__view}">
-                <form:label path="remark">備考</form:label>
+                <form:label path="remark">${fieldLabel.remark}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.remark__input}">
@@ -757,6 +761,12 @@
 
     $('.datetime').datetimepicker({
       format: '',
+    });
+
+    $('#type').on('change', function(e) {
+      console.log(e.currentTarget.value);
+      var url = location.pathname + "?form&variable_type=" + e.currentTarget.value;
+      location.href = url;
     });
 
     $("#myInput").on("keyup", function () {

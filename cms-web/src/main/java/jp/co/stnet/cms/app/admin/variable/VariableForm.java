@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.terasoluna.gfw.common.codelist.ExistInCodeList;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -48,7 +49,7 @@ public class VariableForm implements Serializable {
      * タイプ
      */
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9 -/:-@\\[-\\`\\{-\\~]*$")
+    @ExistInCodeList(codeListId = "CL_VARIABLETYPE")
     private String type;
 
     /**

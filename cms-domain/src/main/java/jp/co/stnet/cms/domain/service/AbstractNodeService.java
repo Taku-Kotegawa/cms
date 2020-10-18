@@ -57,7 +57,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     }
 
     protected AbstractNodeService() {
-        this.clazz = (Class<T>)((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        this.clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         this.fieldMap = BeanUtils.getFileds(this.clazz, null);
     }
 

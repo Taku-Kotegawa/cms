@@ -18,10 +18,10 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
-    <div class="form-check-inline" style="width:100%">
+    <!-- <div class="form-check-inline" style="width:100%">
       <input id="draft" type="checkbox" checked="checked">
       <label for="checkbox011">下書きを含む</label>
-    </div>
+    </div> -->
 
     <table id="list" class="table-sm table-striped">
       <thead>
@@ -186,7 +186,7 @@
 
   function myflatten(params, settings) {
     params = flatten(params, settings);
-    params.draft = $('#draft')[0].checked;
+//    params.draft = $('#draft')[0].checked;
     return params;
   }
 </script>

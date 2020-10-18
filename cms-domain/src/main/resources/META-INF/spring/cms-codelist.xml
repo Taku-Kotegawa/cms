@@ -22,15 +22,18 @@
     -->
 
     <bean id="CL_STATUS"
-          class="org.terasoluna.gfw.common.codelist.EnumCodeList"> <!-- (7) -->
-        <constructor-arg value="jp.co.stnet.cms.domain.model.common.Status" /> <!-- (8) -->
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList">
+        <constructor-arg value="jp.co.stnet.cms.domain.model.common.Status" />
     </bean>
 
     <bean id="CL_FILESTATUS"
-          class="org.terasoluna.gfw.common.codelist.EnumCodeList"> <!-- (7) -->
-        <constructor-arg value="jp.co.stnet.cms.domain.model.common.FileStatus" /> <!-- (8) -->
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList">
+        <constructor-arg value="jp.co.stnet.cms.domain.model.common.FileStatus" />
     </bean>
 
-
+    <bean id="CL_VARIABLETYPE"
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList">
+        <constructor-arg value="jp.co.stnet.cms.domain.model.common.VariableType" />
+    </bean>
 
 </beans>

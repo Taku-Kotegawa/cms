@@ -3,6 +3,7 @@ package jp.co.stnet.cms.app.admin.variable;
 import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.common.StateMap;
+import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInputDraft;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesOutput;
 import jp.co.stnet.cms.domain.common.datatables.OperationsUtil;
@@ -11,8 +12,10 @@ import jp.co.stnet.cms.domain.common.scheduled.CsvUtils;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.model.common.Variable;
+import jp.co.stnet.cms.domain.model.common.VariableType;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import jp.co.stnet.cms.domain.service.common.VariableService;
+import jp.co.stnet.cms.domain.service.common.VariableSharedService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,7 +35,9 @@ import org.terasoluna.gfw.web.token.transaction.TransactionTokenType;
 import javax.inject.Named;
 import javax.validation.groups.Default;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -47,6 +52,9 @@ public class VariableController {
 
     @Autowired
     VariableService variableService;
+
+    @Autowired
+    VariableSharedService variableSharedService;
 
     @Autowired
     FileManagedSharedService fileManagedSharedService;
@@ -88,7 +96,7 @@ public class VariableController {
         Long recordsFiltered = 0L;
 
 
-        if (input.getDraft()) { // 下書き含む最新
+        if (input.getDraft() == null || input.getDraft()) { // 下書き含む最新
             Page<Variable> variablePage = variableService.findPageByInput(input);
             variableList.addAll(variablePage.getContent());
             recordsFiltered = variablePage.getTotalElements();
@@ -197,9 +205,12 @@ public class VariableController {
     public String createForm(VariableForm form,
                              Model model,
                              @AuthenticationPrincipal LoggedInUser loggedInUser,
-                             @RequestParam(value = "copy", required = false) Long copy) {
+                             @RequestParam(value = "copy", required = false) Long copy,
+                             @RequestParam(value = "variable_type", required = false) String variableType) {
 
         variableService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
+
+        form.setType(variableType);
 
         if (copy != null) {
             Variable source = variableService.findById(copy);
@@ -211,6 +222,7 @@ public class VariableController {
             form.setFile1Managed(fileManagedSharedService.findByUuid(form.getFile1Uuid()));
         }
 
+        model.addAttribute("fieldLabel", getFieldLabel(variableType));
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, null).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.CREATE, null).asMap());
         model.addAttribute("op", op());
@@ -233,7 +245,7 @@ public class VariableController {
         variableService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
-            return createForm(form, model, loggedInUser, null);
+            return createForm(form, model, loggedInUser, null, form.getType());
         }
 
         Variable variable = beanMapper.map(form, Variable.class);
@@ -248,13 +260,55 @@ public class VariableController {
             }
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
-            return createForm(form, model, loggedInUser, null);
+            return createForm(form, model, loggedInUser, null, form.getType());
         }
 
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0001));
 
         return "redirect:" + op().getEditUrl(variable.getId().toString());
     }
+
+    private Map<String, String> getFieldLabel(String code) {
+        Map<String, String> labels = new HashMap<>();
+        labels.put("value1", "値１");
+        labels.put("value2", "値２");
+        labels.put("value3", "値３");
+        labels.put("value4", "値４");
+        labels.put("value5", "値５");
+        labels.put("value6", "値６");
+        labels.put("value7", "値７");
+        labels.put("value8", "値８");
+        labels.put("value9", "値９");
+        labels.put("value10", "値１０");
+        labels.put("valint1", "数値１");
+        labels.put("valint2", "数値２");
+        labels.put("valint3", "数値３");
+        labels.put("valint4", "数値４");
+        labels.put("valint5", "数値５");
+        labels.put("date1", "日付１");
+        labels.put("date2", "日付２");
+        labels.put("date3", "日付３");
+        labels.put("date4", "日付４");
+        labels.put("date5", "日付５");
+        labels.put("textarea", "テキストエリア");
+        labels.put("file1", "ファイル");
+        labels.put("remark", "備考");
+
+        List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), code);
+        if (variables.size() > 0 && variables.get(0).getTextarea() != null) {
+            String[] t = variables.get(0).getTextarea().split(",");
+            for (int i = 0; i < t.length; i++) {
+                String[] v = t[i].split("=");
+                if (v.length == 2) {
+                    labels.put(v[0].trim(), StringUtils.stripToEmpty(v[1]));
+                } else if (v.length == 1) {
+                    labels.put(v[0].trim(), "");
+                }
+            }
+        }
+        return labels;
+    }
+
 
     /**
      * 編集画面を開く
@@ -285,6 +339,7 @@ public class VariableController {
             form.setFile1Managed(fileManagedSharedService.findByUuid(form.getFile1Uuid()));
         }
 
+        model.addAttribute("fieldLabel", getFieldLabel(form.getType()));
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.SAVE, variable).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.SAVE, variable).asMap());
         model.addAttribute("op", op());
@@ -452,6 +507,7 @@ public class VariableController {
             variable.setFile1Managed(fileManagedSharedService.findByUuid(variable.getFile1Uuid()));
         }
 
+        model.addAttribute("fieldLabel", getFieldLabel(variable.getType()));
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, variable).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.VIEW, variable).asMap());
         model.addAttribute("op", op());
@@ -585,7 +641,8 @@ public class VariableController {
         if (Constants.OPERATION.SAVE.equals(operation)) {
             fieldState.setInputTrueAll();
             fieldState.setViewTrue("status");
-            fieldState.setReadOnlyTrue("type");
+            fieldState.setDisabledTrue("type");
+            fieldState.setHiddenTrue("type");
             fieldState.setReadOnlyTrue("code");
 
             // スタータスが無効

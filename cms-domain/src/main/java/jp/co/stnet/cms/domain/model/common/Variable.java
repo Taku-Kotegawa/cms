@@ -149,6 +149,7 @@ public class Variable extends AbstractEntity<Long> implements Serializable, Stat
     /**
      * テキストエリア
      */
+    @Column(columnDefinition = "TEXT")
     private String textarea;
 
     /**
@@ -163,7 +164,6 @@ public class Variable extends AbstractEntity<Long> implements Serializable, Stat
      * 備考
      */
     private String remark;
-
 
     @Override
     public boolean isNew() {
