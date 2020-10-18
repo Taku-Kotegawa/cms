@@ -93,21 +93,21 @@ public class VariableController {
 
         List<VariableListRow> list = new ArrayList<>();
         List<Variable> variableList = new ArrayList<>();
-        Long recordsFiltered = 0L;
+        long recordsFiltered = 0L;
 
 
-        if (input.getDraft() == null || input.getDraft()) { // 下書き含む最新
-            Page<Variable> variablePage = variableService.findPageByInput(input);
-            variableList.addAll(variablePage.getContent());
-            recordsFiltered = variablePage.getTotalElements();
+//        if (input.getDraft() == null || input.getDraft()) { // 下書き含む最新
+        Page<Variable> variablePage = variableService.findPageByInput(input);
+        variableList.addAll(variablePage.getContent());
+        recordsFiltered = variablePage.getTotalElements();
 
-        } else {
+//        } else {
 //            Page<VariableRevision> variablePage2 = variableService.findMaxRevPageByInput(input);
 //            for (VariableRevision variableRevision : variablePage2.getContent()) {
 //                variableList.add(beanMapper.map(variableRevision, Variable.class));
 //            }
 //            recordsFiltered = variablePage2.getTotalElements();
-        }
+//        }
 
         for (Variable variable : variableList) {
             VariableListRow variableListRow = beanMapper.map(variable, VariableListRow.class);
@@ -154,16 +154,16 @@ public class VariableController {
         List<VariableCsvBean> list = new ArrayList<>();
         List<Variable> variableList = new ArrayList<>();
 
-        if (input.getDraft()) { // 下書き含む最新
-            Page<Variable> variablePage = variableService.findPageByInput(input);
-            variableList.addAll(variablePage.getContent());
+//        if (input.getDraft()) { // 下書き含む最新
+        Page<Variable> variablePage = variableService.findPageByInput(input);
+        variableList.addAll(variablePage.getContent());
 
-        } else {
+//        } else {
 //            Page<VariableRevision> variablePage2 = variableService.findMaxRevPageByInput(input);
 //            for (VariableRevision variableRevision : variablePage2.getContent()) {
 //                variableList.add(beanMapper.map(variableRevision, Variable.class));
 //            }
-        }
+//        }
 
         for (Variable variable : variableList) {
             VariableCsvBean row = beanMapper.map(variable, VariableCsvBean.class);
@@ -251,13 +251,13 @@ public class VariableController {
         Variable variable = beanMapper.map(form, Variable.class);
 
         try {
-            if ("true".equals(saveDraft)) {
+//            if ("true".equals(saveDraft)) {
 //                variable.setStatus(Status.VALID.getCodeValue());
 //                variableService.saveDraft(variable);
-            } else {
-                variable.setStatus(Status.VALID.getCodeValue());
-                variableService.save(variable);
-            }
+//            } else {
+            variable.setStatus(Status.VALID.getCodeValue());
+            variableService.save(variable);
+//            }
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
             return createForm(form, model, loggedInUser, null, form.getType());
@@ -267,48 +267,6 @@ public class VariableController {
 
         return "redirect:" + op().getEditUrl(variable.getId().toString());
     }
-
-    private Map<String, String> getFieldLabel(String code) {
-        Map<String, String> labels = new HashMap<>();
-        labels.put("value1", "値１");
-        labels.put("value2", "値２");
-        labels.put("value3", "値３");
-        labels.put("value4", "値４");
-        labels.put("value5", "値５");
-        labels.put("value6", "値６");
-        labels.put("value7", "値７");
-        labels.put("value8", "値８");
-        labels.put("value9", "値９");
-        labels.put("value10", "値１０");
-        labels.put("valint1", "数値１");
-        labels.put("valint2", "数値２");
-        labels.put("valint3", "数値３");
-        labels.put("valint4", "数値４");
-        labels.put("valint5", "数値５");
-        labels.put("date1", "日付１");
-        labels.put("date2", "日付２");
-        labels.put("date3", "日付３");
-        labels.put("date4", "日付４");
-        labels.put("date5", "日付５");
-        labels.put("textarea", "テキストエリア");
-        labels.put("file1", "ファイル");
-        labels.put("remark", "備考");
-
-        List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), code);
-        if (variables.size() > 0 && variables.get(0).getTextarea() != null) {
-            String[] t = variables.get(0).getTextarea().split(",");
-            for (int i = 0; i < t.length; i++) {
-                String[] v = t[i].split("=");
-                if (v.length == 2) {
-                    labels.put(v[0].trim(), StringUtils.stripToEmpty(v[1]));
-                } else if (v.length == 1) {
-                    labels.put(v[0].trim(), "");
-                }
-            }
-        }
-        return labels;
-    }
-
 
     /**
      * 編集画面を開く
@@ -369,12 +327,12 @@ public class VariableController {
         Variable variable = beanMapper.map(form, Variable.class);
 
         try {
-            if ("true".equals(saveDraft)) {
+//            if ("true".equals(saveDraft)) {
 //                variableService.saveDraft(variable);
-            } else {
-                variable.setStatus(Status.VALID.getCodeValue());
-                variableService.save(variable);
-            }
+//            } else {
+            variable.setStatus(Status.VALID.getCodeValue());
+            variableService.save(variable);
+//            }
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
             return updateForm(form, model, loggedInUser, id);
@@ -488,18 +446,18 @@ public class VariableController {
         variableService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
 
         Variable variable = null;
-        if (rev == null) {
-            // 下書きを含む最新
-            variable = variableService.findById(id);
+//        if (rev == null) {
+        // 下書きを含む最新
+        variable = variableService.findById(id);
 
-        } else if (rev == 0) {
-            // 有効な最新リビジョン
+//        } else if (rev == 0) {
+        // 有効な最新リビジョン
 //            variable = beanMapper.map(variableService.findByIdLatestRev(id), Variable.class);
 
-        } else {
-            // リビジョン番号指定
+//        } else {
+        // リビジョン番号指定
 //            variable = beanMapper.map(variableService.findByRid(rev), Variable.class);
-        }
+//        }
 
         model.addAttribute("variable", variable);
 
@@ -657,6 +615,47 @@ public class VariableController {
         }
 
         return fieldState;
+    }
+
+    private Map<String, String> getFieldLabel(String code) {
+        Map<String, String> labels = new HashMap<>();
+        labels.put("value1", "値１");
+        labels.put("value2", "値２");
+        labels.put("value3", "値３");
+        labels.put("value4", "値４");
+        labels.put("value5", "値５");
+        labels.put("value6", "値６");
+        labels.put("value7", "値７");
+        labels.put("value8", "値８");
+        labels.put("value9", "値９");
+        labels.put("value10", "値１０");
+        labels.put("valint1", "数値１");
+        labels.put("valint2", "数値２");
+        labels.put("valint3", "数値３");
+        labels.put("valint4", "数値４");
+        labels.put("valint5", "数値５");
+        labels.put("date1", "日付１");
+        labels.put("date2", "日付２");
+        labels.put("date3", "日付３");
+        labels.put("date4", "日付４");
+        labels.put("date5", "日付５");
+        labels.put("textarea", "テキストエリア");
+        labels.put("file1", "ファイル");
+        labels.put("remark", "備考");
+
+        List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), code);
+        if (variables.size() > 0 && variables.get(0).getTextarea() != null) {
+            String[] t = variables.get(0).getTextarea().split(",");
+            for (int i = 0; i < t.length; i++) {
+                String[] v = t[i].split("=");
+                if (v.length == 2) {
+                    labels.put(v[0].trim(), StringUtils.stripToEmpty(v[1]));
+                } else if (v.length == 1) {
+                    labels.put(v[0].trim(), "");
+                }
+            }
+        }
+        return labels;
     }
 
 }
