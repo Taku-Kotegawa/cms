@@ -33105,6 +33105,9 @@ select.form-control.is-invalid + span.select2 .select2-selection {
 
 .callout ul {
   margin-bottom: 0;
+  -webkit-padding-start: 20px;
+     -moz-padding-start: 20px;
+          padding-inline-start: 20px;
 }
 
 .page-link:focus {

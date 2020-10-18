@@ -239,10 +239,22 @@ $.fn.dataTable.ext.buttons.createnew = {
  * CSVダウンロード(サーバサイド処理)
  */
 $.fn.dataTable.ext.buttons.csvdownload = {
-    text: '<i class="fas fa-file-download"></i>',
+    text: '<i class="fas fa-file-download"></i> C',
     titleAttr: 'CSVダウンロード',
     action: function (e, dt, node, config) {
         var data = dt.ajax.params();
         window.open('list/csv?' + $.param(data), '_blank');
+    }
+};
+
+/**
+ * CSVダウンロード(サーバサイド処理)
+ */
+$.fn.dataTable.ext.buttons.tsvdownload = {
+    text: '<i class="fas fa-file-download"></i> T',
+    titleAttr: 'TSVダウンロード',
+    action: function (e, dt, node, config) {
+        var data = dt.ajax.params();
+        window.open('list/tsv?' + $.param(data), '_blank');
     }
 };

@@ -52,6 +52,7 @@ public class StrongPasswordValidator implements
         String newPassword = (String) beanWrapper
                 .getPropertyValue(newPasswordPropertyName);
 
+        newPassword = newPassword == null ? "" : newPassword;
         RuleResult result = characteristicPasswordValidator
                 .validate(PasswordData.newInstance(newPassword, username, null));
 

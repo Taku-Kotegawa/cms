@@ -4,7 +4,7 @@
   <div class="container">
     <div class="row mb-2">
       <div class="col-18">
-        <h4>Simple Entity List</h4>
+        <h4>変数一覧</h4>
       </div>
       <div class="col-18 text-right">
       </div>
@@ -28,30 +28,30 @@
         <tr class="filter">
           <th class="text-center px-1" data-filter="disable"></th>
           <th data-filter="disable"></th>
-          <!-- (1) Start -->
-          <th data-filter="disable"></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <!-- (1) End -->
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
         </tr>
         <tr class="title">
           <th class="text-center px-0"></th>
           <th class="text-center">操作</th>
-          <!-- (2) Start -->
-          <th class="text-center">#</th>
-          <th class="text-center">テキスト</th>
-          <th class="text-center">テキスト(数値・整数)</th>
-          <th class="text-center">テキスト(数値・小数あり)</th>
-          <th class="text-center">テキスト(真偽値)</th>
-          <th class="text-center">URL</th>
-          <th>ステータス</th>
-          <th class="text-center">最終更新日時</th>
-          <!-- (2) End -->
+                <th class="text-center">ID</th>
+                <th class="text-center">バージョン</th>
+                <th class="text-center">ステータス</th>
+                <th class="text-center">タイプ</th>
+                <th class="text-center">コード</th>
+                <th class="text-center">値1</th>
+                <th class="text-center">値2</th>
+                <th class="text-center">値3</th>
+                <th class="text-center">値4</th>
+                <th class="text-center">値5</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -100,40 +100,46 @@
               orderable: false,
               searchable: false,
             },
-          //<!-- (3) Start -->
             {
               data: 'id',
-            },
-            {
-              data: 'text01',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'text02',
-              render: $.fn.dataTable.render.text(),
-            },
-            {
-              data: 'text03',
-              render: $.fn.dataTable.render.text(),
-            },
-            {
-              data: 'text04',
-              render: $.fn.dataTable.render.text(),
-            },
-            {
-              data: 'text05',
+              data: 'version',
               render: $.fn.dataTable.render.text(),
             },
             {
               data: 'statusLabel',
-              className: 'text-center',
-              // orderable: false,
-              // searchable: false,
+              render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'lastModifiedDate',
+              data: 'type',
+              render: $.fn.dataTable.render.text(),
             },
-          //<!-- (3) End -->
+            {
+              data: 'code',
+              render: $.fn.dataTable.render.text(),
+            },
+            {
+              data: 'value1',
+              render: $.fn.dataTable.render.text(),
+            },
+            {
+              data: 'value2',
+              render: $.fn.dataTable.render.text(),
+            },
+            {
+              data: 'value3',
+              render: $.fn.dataTable.render.text(),
+            },
+            {
+              data: 'value4',
+              render: $.fn.dataTable.render.text(),
+            },
+            {
+              data: 'value5',
+              render: $.fn.dataTable.render.text(),
+            },
           ],
 
           // 初期ソート
@@ -180,11 +186,7 @@
 
   function myflatten(params, settings) {
     params = flatten(params, settings);
-    if ($('#draft')[0] == undefined) {
-        params.draft = true;
-    } else {
-        params.draft = $('#draft')[0].checked
-    }
+    params.draft = $('#draft')[0].checked;
     return params;
   }
 </script>

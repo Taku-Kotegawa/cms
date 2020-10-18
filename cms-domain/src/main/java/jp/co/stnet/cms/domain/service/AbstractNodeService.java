@@ -8,17 +8,20 @@ import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
 import jp.co.stnet.cms.domain.common.datatables.Order;
 import jp.co.stnet.cms.domain.common.exception.IllegalStateBusinessException;
 import jp.co.stnet.cms.domain.common.exception.NoChangeBusinessException;
+import jp.co.stnet.cms.domain.common.exception.OptimisticLockingFailureBusinessException;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.AbstractEntity;
 import jp.co.stnet.cms.domain.model.StatusInterface;
 import jp.co.stnet.cms.domain.model.common.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 import org.terasoluna.gfw.common.message.ResultMessages;
@@ -82,7 +85,15 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 throw new NoChangeBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2001)));
             }
         }
-        entity = getRepository().saveAndFlush(entity);
+
+        try {
+            entity = getRepository().saveAndFlush(entity);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new OptimisticLockingFailureBusinessException(ResultMessages.error().add(MessageKeys.E_CM_FW_8001));
+        } catch (DataIntegrityViolationException e) {
+            throw new OptimisticLockingFailureBusinessException(ResultMessages.error().add(MessageKeys.E_CM_FW_8002, e.getMessage()));
+        }
+
         entityManager.detach(entity);
         return getRepository().findById(Objects.requireNonNull(entity.getId())).orElse(null);
     }
@@ -98,7 +109,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T invalid(ID id) {
-        T entity = findById(id);
+        T entity = beanMapper.map(findById(id), clazz);
         if (!entity.getStatus().equals(Status.VALID.getCodeValue())) {
             throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2003)));
         }
@@ -108,7 +119,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T valid(ID id) {
-        T entity = findById(id);
+        T entity = beanMapper.map(findById(id), clazz);
         if (!entity.getStatus().equals(Status.INVALID.getCodeValue())) {
             throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2004)));
         }

@@ -64,6 +64,7 @@ public class OldPasswordValidator implements
     private boolean checkOldPasswordMacheWithCurrentPassword(
             String oldPassword, String currentPassword,
             ConstraintValidatorContext context) {
+        oldPassword = oldPassword == null ? "" : oldPassword;
         if (passwordEncoder.matches(oldPassword, currentPassword)) {
             return true;
         } else {

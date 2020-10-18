@@ -1,44 +1,61 @@
-package jp.co.stnet.cms.domain.model.common;
+package jp.co.stnet.cms.app.admin.variable;
 
-
-import jp.co.stnet.cms.domain.model.AbstractEntity;
-import jp.co.stnet.cms.domain.model.StatusInterface;
-import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@Entity
-@Table(indexes = { @Index(name = "IDX_VARIABLE1", columnList = "type,code", unique = true) })
+/**
+ * 変数管理の編集画面のBean
+ *
+ * @author Automatically generated
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = false) //falseに設定すること
-@EntityListeners(AuditingEntityListener.class)
-public class Variable extends AbstractEntity<Long> implements Serializable, StatusInterface {
+public class VariableForm implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /**
+     * Serial Version UID
+     */
+    private static final long serialVersionUID = 2601462768185636865L;
+
+    /**
+     * ID
+     */
     private Long id;
 
+    /**
+     * バージョン
+     */
+    private Long version;
+
+    /**
+     * ステータス
+     */
     private String status;
+
 
     /**
      * タイプ
      */
     @NotNull
+    @Pattern(regexp = "^[a-zA-Z0-9 -/:-@\\[-\\`\\{-\\~]*$")
     private String type;
 
     /**
      * コード
      */
     @NotNull
+    @Pattern(regexp = "^[a-zA-Z0-9 -/:-@\\[-\\`\\{-\\~]*$")
     private String code;
 
     /**
@@ -156,7 +173,9 @@ public class Variable extends AbstractEntity<Long> implements Serializable, Stat
      */
     private String file1Uuid;
 
-    @Transient
+    /**
+     * ファイル1
+     */
     private FileManaged file1Managed;
 
     /**
@@ -165,9 +184,10 @@ public class Variable extends AbstractEntity<Long> implements Serializable, Stat
     private String remark;
 
 
-    @Override
-    public boolean isNew() {
-        return getId() == null;
+    public interface Create {
+    }
+
+    public interface Update {
     }
 
 }

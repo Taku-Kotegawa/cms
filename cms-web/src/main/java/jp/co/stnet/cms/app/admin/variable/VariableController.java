@@ -1,4 +1,4 @@
-package jp.co.stnet.cms.app.simpleentity;
+package jp.co.stnet.cms.app.admin.variable;
 
 import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.domain.common.Constants;
@@ -10,10 +10,9 @@ import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.common.scheduled.CsvUtils;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.Status;
-import jp.co.stnet.cms.domain.model.example.SimpleEntity;
-import jp.co.stnet.cms.domain.model.example.SimpleEntityRevision;
+import jp.co.stnet.cms.domain.model.common.Variable;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
-import jp.co.stnet.cms.domain.service.example.SimpleEntityService;
+import jp.co.stnet.cms.domain.service.common.VariableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,17 +36,17 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("simpleentity")
-@TransactionTokenCheck("simpleentity")
-public class SimpleEntityController {
+@RequestMapping("admin/variable")
+@TransactionTokenCheck("variable")
+public class VariableController {
 
-    private final String BASE_PATH = "simpleentity";
+    private final String BASE_PATH = "admin/variable";
     private final String JSP_LIST = BASE_PATH + "/list";
     private final String JSP_FORM = BASE_PATH + "/form";
     private final String JSP_VIEW = BASE_PATH + "/view";
 
     @Autowired
-    SimpleEntityService simpleEntityService;
+    VariableService variableService;
 
     @Autowired
     FileManagedSharedService fileManagedSharedService;
@@ -60,8 +59,8 @@ public class SimpleEntityController {
     Mapper beanMapper;
 
     @ModelAttribute
-    private SimpleEntityForm setUp() {
-        return new SimpleEntityForm();
+    private VariableForm setUp() {
+        return new VariableForm();
     }
 
     /**
@@ -80,40 +79,40 @@ public class SimpleEntityController {
      */
     @ResponseBody
     @GetMapping(value = "/list/json")
-    public DataTablesOutput<SimpleEntityListRow> listJson(@Validated DataTablesInputDraft input) {
+    public DataTablesOutput<VariableListRow> listJson(@Validated DataTablesInputDraft input) {
 
         OperationsUtil op = new OperationsUtil(null);
 
-        List<SimpleEntityListRow> list = new ArrayList<>();
-        List<SimpleEntity> simpleEntityList = new ArrayList<>();
+        List<VariableListRow> list = new ArrayList<>();
+        List<Variable> variableList = new ArrayList<>();
         Long recordsFiltered = 0L;
 
 
         if (input.getDraft()) { // 下書き含む最新
-            Page<SimpleEntity> simpleEntityPage = simpleEntityService.findPageByInput(input);
-            simpleEntityList.addAll(simpleEntityPage.getContent());
-            recordsFiltered = simpleEntityPage.getTotalElements();
+            Page<Variable> variablePage = variableService.findPageByInput(input);
+            variableList.addAll(variablePage.getContent());
+            recordsFiltered = variablePage.getTotalElements();
 
         } else {
-            Page<SimpleEntityRevision> simpleEntityPage2 = simpleEntityService.findMaxRevPageByInput(input);
-            for (SimpleEntityRevision simpleEntityRevision : simpleEntityPage2.getContent()) {
-                simpleEntityList.add(beanMapper.map(simpleEntityRevision, SimpleEntity.class));
-            }
-            recordsFiltered = simpleEntityPage2.getTotalElements();
+//            Page<VariableRevision> variablePage2 = variableService.findMaxRevPageByInput(input);
+//            for (VariableRevision variableRevision : variablePage2.getContent()) {
+//                variableList.add(beanMapper.map(variableRevision, Variable.class));
+//            }
+//            recordsFiltered = variablePage2.getTotalElements();
         }
 
-        for (SimpleEntity simpleEntity : simpleEntityList) {
-            SimpleEntityListRow simpleEntityListRow = beanMapper.map(simpleEntity, SimpleEntityListRow.class);
-            simpleEntityListRow.setOperations(getToggleButton(simpleEntity.getId().toString(), op));
-            simpleEntityListRow.setDT_RowId(simpleEntity.getId().toString());
+        for (Variable variable : variableList) {
+            VariableListRow variableListRow = beanMapper.map(variable, VariableListRow.class);
+            variableListRow.setOperations(getToggleButton(variable.getId().toString(), op));
+            variableListRow.setDT_RowId(variable.getId().toString());
 
             // ステータスラベル
-            simpleEntityListRow.setStatusLabel(Status.getByValue(simpleEntity.getStatus()).getCodeLabel());
+            variableListRow.setStatusLabel(Status.getByValue(variable.getStatus()).getCodeLabel());
 
-            list.add(simpleEntityListRow);
+            list.add(variableListRow);
         }
 
-        DataTablesOutput<SimpleEntityListRow> output = new DataTablesOutput<>();
+        DataTablesOutput<VariableListRow> output = new DataTablesOutput<>();
         output.setData(list);
         output.setDraw(input.getDraw());
         output.setRecordsTotal(0);
@@ -126,7 +125,8 @@ public class SimpleEntityController {
     public String listCsv(@Validated DataTablesInputDraft input, Model model) {
         setModelForCsv(input, model);
         model.addAttribute("csvConfig", CsvUtils.getCsvDefault());
-        model.addAttribute("csvFileName", "SimpleEntity.csv");
+        model.addAttribute("csvFileName", "Variable.csv");
+//        model.addAttribute("handler", VariableCsvBean.getHandler());
         return "csvDownloadView";
     }
 
@@ -134,7 +134,8 @@ public class SimpleEntityController {
     public String listTsv(@Validated DataTablesInputDraft input, Model model) {
         setModelForCsv(input, model);
         model.addAttribute("csvConfig", CsvUtils.getTsvDefault());
-        model.addAttribute("csvFileName", "SimpleEntity.tsv");
+        model.addAttribute("csvFileName", "Variable.tsv");
+//        model.addAttribute("handler", VariableCsvBean.getHandler());
         return "csvDownloadView";
     }
 
@@ -142,28 +143,28 @@ public class SimpleEntityController {
         input.setStart(0);
         input.setLength(Constants.CSV.MAX_LENGTH);
 
-        List<SimpleEntityCsvBean> list = new ArrayList<>();
-        List<SimpleEntity> simpleEntityList = new ArrayList<>();
+        List<VariableCsvBean> list = new ArrayList<>();
+        List<Variable> variableList = new ArrayList<>();
 
         if (input.getDraft()) { // 下書き含む最新
-            Page<SimpleEntity> simpleEntityPage = simpleEntityService.findPageByInput(input);
-            simpleEntityList.addAll(simpleEntityPage.getContent());
+            Page<Variable> variablePage = variableService.findPageByInput(input);
+            variableList.addAll(variablePage.getContent());
 
         } else {
-            Page<SimpleEntityRevision> simpleEntityPage2 = simpleEntityService.findMaxRevPageByInput(input);
-            for (SimpleEntityRevision simpleEntityRevision : simpleEntityPage2.getContent()) {
-                simpleEntityList.add(beanMapper.map(simpleEntityRevision, SimpleEntity.class));
-            }
+//            Page<VariableRevision> variablePage2 = variableService.findMaxRevPageByInput(input);
+//            for (VariableRevision variableRevision : variablePage2.getContent()) {
+//                variableList.add(beanMapper.map(variableRevision, Variable.class));
+//            }
         }
 
-        for (SimpleEntity simpleEntity : simpleEntityList) {
-            SimpleEntityCsvBean row = beanMapper.map(simpleEntity, SimpleEntityCsvBean.class);
-            row.setStatusLabel(Status.getByValue(simpleEntity.getStatus()).getCodeLabel());
+        for (Variable variable : variableList) {
+            VariableCsvBean row = beanMapper.map(variable, VariableCsvBean.class);
+            row.setStatusLabel(Status.getByValue(variable.getStatus()).getCodeLabel());
             list.add(row);
         }
 
         model.addAttribute("exportCsvData", list);
-        model.addAttribute("class", SimpleEntityCsvBean.class);
+        model.addAttribute("class", VariableCsvBean.class);
     }
 
 
@@ -193,22 +194,21 @@ public class SimpleEntityController {
      */
     @GetMapping(value = "create", params = "form")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
-    public String createForm(SimpleEntityForm form,
+    public String createForm(VariableForm form,
                              Model model,
                              @AuthenticationPrincipal LoggedInUser loggedInUser,
                              @RequestParam(value = "copy", required = false) Long copy) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
         if (copy != null) {
-            SimpleEntity source = simpleEntityService.findById(copy);
+            Variable source = variableService.findById(copy);
             beanMapper.map(source, form);
             form.setId(null);
         }
 
-        // TODO 削除
-        if (form.getAttachedFile01Uuid() != null) {
-            form.setAttachedFile01Managed(fileManagedSharedService.findByUuid(form.getAttachedFile01Uuid()));
+        if (form.getFile1Uuid() != null) {
+            form.setFile1Managed(fileManagedSharedService.findByUuid(form.getFile1Uuid()));
         }
 
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, null).asMap());
@@ -223,28 +223,28 @@ public class SimpleEntityController {
      */
     @PostMapping(value = "create")
     @TransactionTokenCheck
-    public String create(@Validated({SimpleEntityForm.Create.class, Default.class}) SimpleEntityForm form,
+    public String create(@Validated({VariableForm.Create.class, Default.class}) VariableForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
                          @AuthenticationPrincipal LoggedInUser loggedInUser,
                          @RequestParam(value = "saveDraft", required = false) String saveDraft) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
             return createForm(form, model, loggedInUser, null);
         }
 
-        SimpleEntity simpleEntity = beanMapper.map(form, SimpleEntity.class);
+        Variable variable = beanMapper.map(form, Variable.class);
 
         try {
             if ("true".equals(saveDraft)) {
-                simpleEntity.setStatus(Status.VALID.getCodeValue());
-                simpleEntityService.saveDraft(simpleEntity);
+//                variable.setStatus(Status.VALID.getCodeValue());
+//                variableService.saveDraft(variable);
             } else {
-                simpleEntity.setStatus(Status.VALID.getCodeValue());
-                simpleEntityService.save(simpleEntity);
+                variable.setStatus(Status.VALID.getCodeValue());
+                variableService.save(variable);
             }
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
@@ -253,7 +253,7 @@ public class SimpleEntityController {
 
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0001));
 
-        return "redirect:" + op().getEditUrl(simpleEntity.getId().toString());
+        return "redirect:" + op().getEditUrl(variable.getId().toString());
     }
 
     /**
@@ -261,33 +261,32 @@ public class SimpleEntityController {
      */
     @GetMapping(value = "{id}/update", params = "form")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
-    public String updateForm(SimpleEntityForm form, Model model,
+    public String updateForm(VariableForm form, Model model,
                              @AuthenticationPrincipal LoggedInUser loggedInUser,
                              @PathVariable("id") Long id) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
-        SimpleEntity simpleEntity = simpleEntityService.findById(id);
-        model.addAttribute("simpleEntity", simpleEntity);
+        Variable variable = variableService.findById(id);
+        model.addAttribute("variable", variable);
 
         // 状態=無効の場合、参照画面に強制遷移
-        if (simpleEntity.getStatus().equals(Status.INVALID.getCodeValue())) {
+        if (variable.getStatus().equals(Status.INVALID.getCodeValue())) {
             model.addAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0008));
             return view(model, loggedInUser, id, null);
         }
 
         // 入力チェック再表示の場合、formの情報をDBの値で上書きしない
         if (form.getVersion() == null) {
-            beanMapper.map(simpleEntity, form);
+            beanMapper.map(variable, form);
         }
 
-        // TODO 削除
-        if (form.getAttachedFile01Uuid() != null) {
-            form.setAttachedFile01Managed(fileManagedSharedService.findByUuid(form.getAttachedFile01Uuid()));
+        if (form.getFile1Uuid() != null) {
+            form.setFile1Managed(fileManagedSharedService.findByUuid(form.getFile1Uuid()));
         }
 
-        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.SAVE, simpleEntity).asMap());
-        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.SAVE, simpleEntity).asMap());
+        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.SAVE, variable).asMap());
+        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.SAVE, variable).asMap());
         model.addAttribute("op", op());
 
         return JSP_FORM;
@@ -298,7 +297,7 @@ public class SimpleEntityController {
      */
     @PostMapping(value = "{id}/update")
     @TransactionTokenCheck
-    public String update(@Validated({SimpleEntityForm.Update.class, Default.class}) SimpleEntityForm form,
+    public String update(@Validated({VariableForm.Update.class, Default.class}) VariableForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
@@ -306,20 +305,20 @@ public class SimpleEntityController {
                          @PathVariable("id") Long id,
                          @RequestParam(value = "saveDraft", required = false) String saveDraft) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
             return updateForm(form, model, loggedInUser, id);
         }
 
-        SimpleEntity simpleEntity = beanMapper.map(form, SimpleEntity.class);
+        Variable variable = beanMapper.map(form, Variable.class);
 
         try {
             if ("true".equals(saveDraft)) {
-                simpleEntityService.saveDraft(simpleEntity); // TODO 置き換え
+//                variableService.saveDraft(variable);
             } else {
-                simpleEntity.setStatus(Status.VALID.getCodeValue());
-                simpleEntityService.save(simpleEntity);
+                variable.setStatus(Status.VALID.getCodeValue());
+                variableService.save(variable);
             }
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
@@ -328,7 +327,7 @@ public class SimpleEntityController {
 
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0004));
 
-        return "redirect:" + op().getEditUrl(simpleEntity.getId().toString());
+        return "redirect:" + op().getEditUrl(variable.getId().toString());
     }
 
     /**
@@ -338,10 +337,10 @@ public class SimpleEntityController {
     public String delete(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                          @PathVariable("id") Long id) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
 
         try {
-            simpleEntityService.delete(id);
+            variableService.delete(id);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
         }
@@ -358,12 +357,12 @@ public class SimpleEntityController {
     public String invalid(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                           @PathVariable("id") Long id) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
 
-        SimpleEntity entity = simpleEntityService.findById(id);
+        Variable entity = variableService.findById(id);
 
         try {
-            entity = simpleEntityService.invalid(id);
+            entity = variableService.invalid(id);
         } catch (BusinessException e) {
             redirect.addFlashAttribute(e.getResultMessages());
             return "redirect:" + op().getEditUrl(id.toString());
@@ -374,7 +373,6 @@ public class SimpleEntityController {
         return "redirect:" + op().getViewUrl(id.toString());
     }
 
-    // TODO メソッド削除
     /**
      * 無効解除
      */
@@ -382,12 +380,12 @@ public class SimpleEntityController {
     public String valid(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                         @PathVariable("id") Long id) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.VALID, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.VALID, loggedInUser);
 
-        SimpleEntity entity = simpleEntityService.findById(id);
+        Variable entity = variableService.findById(id);
 
         try {
-            entity = simpleEntityService.valid(id);
+            entity = variableService.valid(id);
         } catch (BusinessException e) {
             redirect.addFlashAttribute(e.getResultMessages());
             return "redirect:" + op().getViewUrl(id.toString());
@@ -398,31 +396,31 @@ public class SimpleEntityController {
         return "redirect:" + op().getEditUrl(id.toString());
     }
 
-    /**
-     * 下書き取消
-     */
-    @GetMapping(value = "{id}/cancel_draft")
-    public String cancelDraft(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
-                              @PathVariable("id") Long id) {
-
-        simpleEntityService.hasAuthority(Constants.OPERATION.CANCEL_DRAFT, loggedInUser);
-
-        SimpleEntity entity = null;
-        try {
-            entity = simpleEntityService.cancelDraft(id);
-        } catch (BusinessException e) {
-            redirect.addFlashAttribute(e.getResultMessages());
-            return "redirect:" + op().getEditUrl(id.toString());
-        }
-
-        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
-
-        if (entity != null) {
-            return "redirect:" + op().getEditUrl(id.toString());
-        } else {
-            return "redirect:" + op().getListUrl();
-        }
-    }
+//    /**
+//     * 下書き取消
+//     */
+//    @GetMapping(value = "{id}/cancel_draft")
+//    public String cancelDraft(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
+//                              @PathVariable("id") Long id) {
+//
+//        variableService.hasAuthority(Constants.OPERATION.CANCEL_DRAFT, loggedInUser);
+//
+//        Variable entity = null;
+//        try {
+//            entity = variableService.cancelDraft(id);
+//        } catch (BusinessException e) {
+//            redirect.addFlashAttribute(e.getResultMessages());
+//            return "redirect:" + op().getEditUrl(id.toString());
+//        }
+//
+//        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
+//
+//        if (entity != null) {
+//            return "redirect:" + op().getEditUrl(id.toString());
+//        } else {
+//            return "redirect:" + op().getListUrl();
+//        }
+//    }
 
     /**
      * 参照画面の表示
@@ -432,33 +430,30 @@ public class SimpleEntityController {
                        @PathVariable("id") Long id,
                        @RequestParam(value = "rev", required = false) Long rev) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
 
-        // SimpleEntity simpleEntity = simpleEntityService.findById(id);　// TODO 置き換え
-
-        SimpleEntity simpleEntity;
-        if ( rev == null) {
+        Variable variable = null;
+        if (rev == null) {
             // 下書きを含む最新
-            simpleEntity = simpleEntityService.findById(id);
+            variable = variableService.findById(id);
 
         } else if (rev == 0) {
             // 有効な最新リビジョン
-            simpleEntity = beanMapper.map(simpleEntityService.findByIdLatestRev(id), SimpleEntity.class);
+//            variable = beanMapper.map(variableService.findByIdLatestRev(id), Variable.class);
 
         } else {
             // リビジョン番号指定
-            simpleEntity = beanMapper.map(simpleEntityService.findByRid(rev), SimpleEntity.class);
+//            variable = beanMapper.map(variableService.findByRid(rev), Variable.class);
         }
 
-        model.addAttribute("simpleEntity", simpleEntity);
+        model.addAttribute("variable", variable);
 
-        // TODO 削除
-        if (simpleEntity.getAttachedFile01Uuid() != null) {
-            simpleEntity.setAttachedFile01Managed(fileManagedSharedService.findByUuid(simpleEntity.getAttachedFile01Uuid()));
+        if (variable.getFile1Uuid() != null) {
+            variable.setFile1Managed(fileManagedSharedService.findByUuid(variable.getFile1Uuid()));
         }
 
-        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
-        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
+        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, variable).asMap());
+        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.VIEW, variable).asMap());
         model.addAttribute("op", op());
 
         return JSP_FORM;
@@ -473,7 +468,7 @@ public class SimpleEntityController {
             @PathVariable("uuid") String uuid,
             @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.DOWNLOAD, loggedInUser);
+        variableService.hasAuthority(Constants.OPERATION.DOWNLOAD, loggedInUser);
 
         model.addAttribute(fileManagedSharedService.findByUuid(uuid));
         return "fileManagedDownloadView";
@@ -482,10 +477,10 @@ public class SimpleEntityController {
     /**
      * ボタンの状態設定
      */
-    private StateMap getButtonStateMap(String operation, SimpleEntity record) {
+    private StateMap getButtonStateMap(String operation, Variable record) {
 
         if (record == null) {
-            record = new SimpleEntity();
+            record = new Variable();
         }
 
         List<String> includeKeys = new ArrayList<>();
@@ -497,8 +492,8 @@ public class SimpleEntityController {
         includeKeys.add(Constants.BUTTON.VALID);
         includeKeys.add(Constants.BUTTON.DELETE);
         includeKeys.add(Constants.BUTTON.UNLOCK);
-        includeKeys.add(Constants.BUTTON.SAVE_DRAFT); // TODO 削除
-        includeKeys.add(Constants.BUTTON.CANCEL_DRAFT); // TODO 削除
+//        includeKeys.add(Constants.BUTTON.SAVE_DRAFT);
+//        includeKeys.add(Constants.BUTTON.CANCEL_DRAFT);
 
         StateMap buttonState = new StateMap(Default.class, includeKeys, new ArrayList<>());
 
@@ -508,21 +503,21 @@ public class SimpleEntityController {
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
             buttonState.setViewTrue(Constants.BUTTON.SAVE);
-            buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT); // TODO 削除
+//            buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
         }
 
         // 編集
         if (Constants.OPERATION.SAVE.equals(operation)) {
 
             if (Status.DRAFT.getCodeValue().equals(record.getStatus())) {
-                buttonState.setViewTrue(Constants.BUTTON.CANCEL_DRAFT); // TODO 削除
-                buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT); // TODO 削除
+//                buttonState.setViewTrue(Constants.BUTTON.CANCEL_DRAFT);
+//                buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
                 buttonState.setViewTrue(Constants.BUTTON.SAVE);
                 buttonState.setViewTrue(Constants.BUTTON.VIEW);
             }
 
             if (Status.VALID.getCodeValue().equals(record.getStatus())) {
-                buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT); // TODO 削除
+//                buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
                 buttonState.setViewTrue(Constants.BUTTON.SAVE);
                 buttonState.setViewTrue(Constants.BUTTON.VIEW);
                 buttonState.setViewTrue(Constants.BUTTON.INVALID);
@@ -559,14 +554,27 @@ public class SimpleEntityController {
     /**
      * フィールドの状態設定
      */
-    private StateMap getFiledStateMap(String operation, SimpleEntity record) {
+    private StateMap getFiledStateMap(String operation, Variable record) {
 
         // 常設の隠しフィールドは状態管理しない
         List<String> excludeKeys = new ArrayList<>();
         excludeKeys.add("id");
         excludeKeys.add("version");
+        excludeKeys.add("file1Managed");
+        excludeKeys.add("file1Managed-createdBy");
+        excludeKeys.add("file1Managed-fid");
+        excludeKeys.add("file1Managed-filemime");
+        excludeKeys.add("file1Managed-filesize");
+        excludeKeys.add("file1Managed-filetype");
+        excludeKeys.add("file1Managed-lastModifiedBy");
+        excludeKeys.add("file1Managed-lastModifiedDate");
+        excludeKeys.add("file1Managed-originalFilename");
+        excludeKeys.add("file1Managed-status");
+        excludeKeys.add("file1Managed-uri");
+        excludeKeys.add("file1Managed-uuid");
+        excludeKeys.add("file1Managed-version");
 
-        StateMap fieldState = new StateMap(SimpleEntityForm.class, new ArrayList<>(), excludeKeys);
+        StateMap fieldState = new StateMap(VariableForm.class, new ArrayList<>(), excludeKeys);
 
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
@@ -577,6 +585,8 @@ public class SimpleEntityController {
         if (Constants.OPERATION.SAVE.equals(operation)) {
             fieldState.setInputTrueAll();
             fieldState.setViewTrue("status");
+            fieldState.setReadOnlyTrue("type");
+            fieldState.setReadOnlyTrue("code");
 
             // スタータスが無効
             if (Status.INVALID.toString().equals(record.getStatus())) {

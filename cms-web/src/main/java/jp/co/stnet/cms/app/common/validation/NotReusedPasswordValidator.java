@@ -99,6 +99,8 @@ public class NotReusedPasswordValidator implements
     private boolean checkNewPasswordDifferentFromCurrentPassword(
             String newPassword, String currentPassword,
             ConstraintValidatorContext context) {
+
+        newPassword = newPassword == null ? "" : newPassword;
         if (!passwordEncoder.matches(newPassword, currentPassword)) {
             return true;
         } else {
@@ -127,6 +129,7 @@ public class NotReusedPasswordValidator implements
                     .getPassword()));
         }
 
+        newPassword = newPassword == null ? "" : newPassword;
         PasswordData passwordData = PasswordData.newInstance(newPassword,
                 username, historyData);
         RuleResult result = encodedPasswordHistoryValidator

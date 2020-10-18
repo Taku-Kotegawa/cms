@@ -46,6 +46,8 @@
           <li> <a href="${f:h(pageContext.request.contextPath)}/simpleentity/list">SimpleEntity List</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/admin/account/list">アカウント</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/admin/role/list">ロール</a></li>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/person/list">Person</a></li>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/variable/list">Variable</a></li>
         </ul>
       </div>
     </div>

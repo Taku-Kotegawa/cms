@@ -4,7 +4,7 @@
   <div class="container">
     <div class="row mb-2">
       <div class="col-18">
-        <h4>Simple Entity List</h4>
+        <h4>従業員一覧</h4>
       </div>
       <div class="col-18 text-right">
       </div>
@@ -18,40 +18,29 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
-    <div class="form-check-inline" style="width:100%">
-      <input id="draft" type="checkbox" checked="checked">
-      <label for="checkbox011">下書きを含む</label>
-    </div>
-
     <table id="list" class="table-sm table-striped">
       <thead>
         <tr class="filter">
           <th class="text-center px-1" data-filter="disable"></th>
           <th data-filter="disable"></th>
-          <!-- (1) Start -->
-          <th data-filter="disable"></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <!-- (1) End -->
+
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+
         </tr>
         <tr class="title">
           <th class="text-center px-0"></th>
           <th class="text-center">操作</th>
-          <!-- (2) Start -->
-          <th class="text-center">#</th>
-          <th class="text-center">テキスト</th>
-          <th class="text-center">テキスト(数値・整数)</th>
-          <th class="text-center">テキスト(数値・小数あり)</th>
-          <th class="text-center">テキスト(真偽値)</th>
-          <th class="text-center">URL</th>
-          <th>ステータス</th>
-          <th class="text-center">最終更新日時</th>
-          <!-- (2) End -->
+
+                <th class="text-center">ID</th>
+                <th class="text-center">バージョン</th>
+                <th class="text-center">ステータス</th>
+                <th class="text-center">氏名</th>
+                <th class="text-center">年齢</th>
+
         </tr>
       </thead>
       <tbody></tbody>
@@ -100,40 +89,27 @@
               orderable: false,
               searchable: false,
             },
-          //<!-- (3) Start -->
+
             {
               data: 'id',
-            },
-            {
-              data: 'text01',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'text02',
-              render: $.fn.dataTable.render.text(),
-            },
-            {
-              data: 'text03',
-              render: $.fn.dataTable.render.text(),
-            },
-            {
-              data: 'text04',
-              render: $.fn.dataTable.render.text(),
-            },
-            {
-              data: 'text05',
+              data: 'version',
               render: $.fn.dataTable.render.text(),
             },
             {
               data: 'statusLabel',
-              className: 'text-center',
-              // orderable: false,
-              // searchable: false,
+              render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'lastModifiedDate',
+              data: 'name',
+              render: $.fn.dataTable.render.text(),
             },
-          //<!-- (3) End -->
+            {
+              data: 'age',
+              render: $.fn.dataTable.render.text(),
+            },
           ],
 
           // 初期ソート

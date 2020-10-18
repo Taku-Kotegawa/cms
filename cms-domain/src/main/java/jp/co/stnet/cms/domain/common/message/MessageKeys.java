@@ -99,6 +99,8 @@ public class MessageKeys {
     public static final String W_CM_FW_2005 = "w.cm.fw.2005";
     /** e.cm.fw.8001=楽観的排他制御により登録に失敗しました。画面を開き直して登録をやり直して下さい。 */
     public static final String E_CM_FW_8001 = "e.cm.fw.8001";
+    /** e.cm.fw.8002=制約違反によりテーブル更新に失敗しました。({0}) */
+    public static final String E_CM_FW_8002 = "e.cm.fw.8002";
     /** e.cm.fw.9001=登録に失敗しました。({0}) */
     public static final String E_CM_FW_9001 = "e.cm.fw.9001";
 }

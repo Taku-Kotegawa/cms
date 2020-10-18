@@ -36,4 +36,8 @@ public final class Constants {
         public static final String DOWNLOAD = "download";
     }
 
+    public static final class CSV {
+        public static final Integer MAX_LENGTH = 99999;
+    }
+
 }

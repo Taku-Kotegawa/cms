@@ -18,11 +18,6 @@ public class VariableServiceImpl extends AbstractNodeService<Variable,  Long> im
     @Autowired
     VariableRepository variableRepository;
 
-
-    protected VariableServiceImpl() {
-        super(Variable.class);
-    }
-
     @Override
     protected JpaRepository<Variable, Long> getRepository() {
         return variableRepository;
@@ -30,6 +25,9 @@ public class VariableServiceImpl extends AbstractNodeService<Variable,  Long> im
 
     @Override
     public Boolean hasAuthority(String Operation, LoggedInUser loggedInUser) {
+
+        // TODO 権限チェックの追加
         return true;
+
     }
 }

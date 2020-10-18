@@ -1,30 +1,28 @@
-package jp.co.stnet.cms.app.admin.variables;
+package jp.co.stnet.cms.app.person;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.terasoluna.gfw.common.codelist.ExistInCodeList;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
- * 変数管理の編集画面のBean
- *
+ * 従業員管理の編集画面のBean
  * @author Automatically generated
+ *
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VariablesForm implements Serializable {
-
+public class PersonForm implements Serializable {
+ 
     /**
      * Serial Version UID
      */
-    private static final long serialVersionUID = 8254599239709457334L;
+    private static final long serialVersionUID = 8595643245585576896L;
 
     // TODO validation をカスタマイズ
 
@@ -40,36 +38,28 @@ public class VariablesForm implements Serializable {
     private Long version;
 
     /**
-     * カテゴリ
+     * ステータス
      */
-    @NotNull
-    @Pattern(regexp = "^[A-Z]*$")
-    private String category;
+    private String status;
+
 
     /**
-     * タイプ
+     * 氏名
      */
     @NotNull
-    @Pattern(regexp = "^[A-Z]*$")
-    private String type;
+    private String name;
 
     /**
-     * 値
+     * 年齢
      */
     @NotNull
-    @ExistInCodeList(codeListId = "CL_ORDERSTATUS")
-    private String value;
+    private Integer age;
 
-    /**
-     * 備考
-     */
-    private String remark;
 
     public interface Create {
     }
 
     public interface Update {
     }
-
 
 }

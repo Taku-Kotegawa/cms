@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
+
+    <configuration>
+        <custom-converters>
+            <converter
+                type="jp.co.stnet.cms.domain.common.converter.LocalDateToLocalDateTimeConverter">
+                <class-a>java.time.LocalDate</class-a>
+                <class-b>java.time.LocalDateTime</class-b>
+            </converter>
+            <converter
+                type="jp.co.stnet.cms.domain.common.converter.LocalDateTimeToLocalDateConverter">
+                <class-a>java.time.LocalDateTime</class-a>
+                <class-b>java.time.LocalDate</class-b>
+            </converter>
+            <converter
+                type="jp.co.stnet.cms.domain.common.converter.DateToLocalDateTimeConverter">
+                <class-a>java.util.Date</class-a>
+                <class-b>java.time.LocalDateTime</class-b>
+            </converter>
+            <converter
+                    type="jp.co.stnet.cms.domain.common.converter.LocalDateToDateConverter">
+                <class-a>java.time.LocalDate</class-a>
+                <class-b>java.util.Date</class-b>
+            </converter>
+            <converter
+                type="jp.co.stnet.cms.domain.common.converter.LocalDateTimeToDateConverter">
+                <class-a>java.time.LocalDateTime</class-a>
+                <class-b>java.util.Date</class-b>
+            </converter>
+        </custom-converters>
+    </configuration>
+</mappings>
