@@ -1,7 +1,6 @@
 package jp.co.stnet.cms.domain.common.message;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.util.regex.Pattern;
@@ -9,10 +8,11 @@ import java.util.regex.Pattern;
 public class MessageKeysGen {
     public static void main(String[] args) throws IOException {
         // message properties file
-        InputStream inputStream = new FileInputStream("cms-web/src/main/resources/i18n/application-messages.properties");
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        String[] messageProperties = {"cms-web/src/main/resources/i18n/application-messages.properties", "cms-web/src/main/resources/ValidationMessages.properties"};
+
         Class<?> targetClazz = MessageKeys.class;
+
         File output = new File("cms-domain/src/main/java/"
                 + targetClazz.getName().replaceAll(Pattern.quote("."), "/")
                 + ".java");
@@ -27,23 +27,38 @@ public class MessageKeysGen {
             pw.println("public class " + targetClazz.getSimpleName() + " {");
 
             String line;
-            while ((line = br.readLine()) != null) {
-                String[] vals = line.split("=", 2);
-                if (vals.length > 1) {
-                    String key = vals[0].trim();
-                    String value = vals[1].trim();
-                    pw.println("    /** " + key + "=" + value + " */");
-                    pw.println("    public static final String "
-                            + key.toUpperCase().replaceAll(Pattern.quote("."),
-                            "_").replaceAll(Pattern.quote("-"), "_")
-                            + " = \"" + key + "\";");
+
+            for(int i = 0; i < messageProperties.length ;i++) {
+
+                InputStream inputStream = new FileInputStream(messageProperties[i]);
+                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+
+                while ((line = br.readLine()) != null) {
+
+                    // コメント行を読み飛ばす
+                    if (line.startsWith("#")) {
+                        continue;
+                    }
+
+                    String[] vals = line.split("=", 2);
+                    if (vals.length > 1) {
+                        String key = vals[0].trim();
+                        String value = vals[1].trim();
+                        pw.println("    /** " + key + "=" + value + " */");
+                        pw.println("    public static final String "
+                                + key.toUpperCase().replaceAll(Pattern.quote("."),
+                                "_").replaceAll(Pattern.quote("-"), "_")
+                                + " = \"" + key + "\";");
+                    }
                 }
+                br.close();
+
             }
+
             pw.println("}");
             pw.flush();
         } finally {
-            IOUtils.closeQuietly(br);
-            IOUtils.closeQuietly(pw);
+            pw.close();
         }
     }
 }
