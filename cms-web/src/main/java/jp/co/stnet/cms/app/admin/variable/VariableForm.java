@@ -1,5 +1,6 @@
 package jp.co.stnet.cms.app.admin.variable;
 
+import jp.co.stnet.cms.app.admin.variable.VariableForm.Create;
 import jp.co.stnet.cms.app.common.validation.ExistInVariable;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ExistInVariable
+@ExistInVariable(groups = Create.class)
 public class VariableForm implements Serializable {
 
     /**

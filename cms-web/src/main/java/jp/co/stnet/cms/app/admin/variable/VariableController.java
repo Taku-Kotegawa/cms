@@ -1,6 +1,8 @@
 package jp.co.stnet.cms.app.admin.variable;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.app.admin.variable.VariableForm.Create;
+import jp.co.stnet.cms.app.admin.variable.VariableForm.Update;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.common.StateMap;
 import jp.co.stnet.cms.domain.common.StringUtils;
@@ -87,7 +89,7 @@ public class VariableController {
      */
     @ResponseBody
     @GetMapping(value = "/list/json")
-    public DataTablesOutput<VariableListRow> listJson(@Validated DataTablesInputDraft input) {
+    public DataTablesOutput<VariableListRow> listJson(@Validated() DataTablesInputDraft input) {
 
         OperationsUtil op = new OperationsUtil(null);
 
@@ -235,7 +237,7 @@ public class VariableController {
      */
     @PostMapping(value = "create")
     @TransactionTokenCheck
-    public String create(@Validated({VariableForm.Create.class, Default.class}) VariableForm form,
+    public String create(@Validated({Create.class, Default.class}) VariableForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
@@ -310,7 +312,7 @@ public class VariableController {
      */
     @PostMapping(value = "{id}/update")
     @TransactionTokenCheck
-    public String update(@Validated({VariableForm.Update.class, Default.class}) VariableForm form,
+    public String update(@Validated({Update.class, Default.class}) VariableForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,

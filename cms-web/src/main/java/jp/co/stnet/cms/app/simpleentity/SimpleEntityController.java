@@ -1,6 +1,8 @@
 package jp.co.stnet.cms.app.simpleentity;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.app.simpleentity.SimpleEntityForm.Create;
+import jp.co.stnet.cms.app.simpleentity.SimpleEntityForm.Update;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.common.StateMap;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInputDraft;
@@ -223,7 +225,7 @@ public class SimpleEntityController {
      */
     @PostMapping(value = "create")
     @TransactionTokenCheck
-    public String create(@Validated({SimpleEntityForm.Create.class, Default.class}) SimpleEntityForm form,
+    public String create(@Validated({Create.class, Default.class}) SimpleEntityForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
@@ -298,7 +300,7 @@ public class SimpleEntityController {
      */
     @PostMapping(value = "{id}/update")
     @TransactionTokenCheck
-    public String update(@Validated({SimpleEntityForm.Update.class, Default.class}) SimpleEntityForm form,
+    public String update(@Validated({Update.class, Default.class}) SimpleEntityForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
