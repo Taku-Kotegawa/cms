@@ -96,18 +96,18 @@ public class VariableController {
         Long recordsFiltered = 0L;
 
 
-        if (input.getDraft() == null || input.getDraft()) { // 下書き含む最新
+//        if (input.getDraft() == null || input.getDraft()) { // 下書き含む最新
             Page<Variable> variablePage = variableService.findPageByInput(input);
             variableList.addAll(variablePage.getContent());
             recordsFiltered = variablePage.getTotalElements();
 
-        } else {
+//        } else {
 //            Page<VariableRevision> variablePage2 = variableService.findMaxRevPageByInput(input);
 //            for (VariableRevision variableRevision : variablePage2.getContent()) {
 //                variableList.add(beanMapper.map(variableRevision, Variable.class));
 //            }
 //            recordsFiltered = variablePage2.getTotalElements();
-        }
+//        }
 
         for (Variable variable : variableList) {
             VariableListRow variableListRow = beanMapper.map(variable, VariableListRow.class);
@@ -154,16 +154,16 @@ public class VariableController {
         List<VariableCsvBean> list = new ArrayList<>();
         List<Variable> variableList = new ArrayList<>();
 
-        if (input.getDraft()) { // 下書き含む最新
+//        if (input.getDraft()) { // 下書き含む最新
             Page<Variable> variablePage = variableService.findPageByInput(input);
             variableList.addAll(variablePage.getContent());
 
-        } else {
+//        } else {
 //            Page<VariableRevision> variablePage2 = variableService.findMaxRevPageByInput(input);
 //            for (VariableRevision variableRevision : variablePage2.getContent()) {
 //                variableList.add(beanMapper.map(variableRevision, Variable.class));
 //            }
-        }
+//        }
 
         for (Variable variable : variableList) {
             VariableCsvBean row = beanMapper.map(variable, VariableCsvBean.class);
