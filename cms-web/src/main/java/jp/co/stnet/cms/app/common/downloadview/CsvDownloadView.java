@@ -20,8 +20,6 @@ public class CsvDownloadView extends AbstractFileDownloadView {
     @Override
     protected void addResponseHeader(Map<String, Object> model, HttpServletRequest request,
                                      HttpServletResponse response) {
-
-
         response.setHeader("Content-Disposition", String.format("attachment; filename=%s", model.get("csvFileName")));
         response.setContentType("text/plain");
     }

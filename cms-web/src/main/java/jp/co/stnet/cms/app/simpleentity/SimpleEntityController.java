@@ -140,6 +140,16 @@ public class SimpleEntityController {
         return "csvDownloadView";
     }
 
+    @GetMapping(value = "/list/excel")
+    public String listExcel(@Validated DataTablesInputDraft input, Model model) {
+
+        input.setStart(0);
+        input.setLength(Constants.CSV.MAX_LENGTH);
+        model.addAttribute("list", simpleEntityService.findPageByInput(input).getContent());
+        model.addAttribute("excelFileName", "SimpleEntity.xlsx");
+        return "excelDownloadView";
+    }
+
     private void setModelForCsv(DataTablesInputDraft input, Model model) {
         input.setStart(0);
         input.setLength(Constants.CSV.MAX_LENGTH);

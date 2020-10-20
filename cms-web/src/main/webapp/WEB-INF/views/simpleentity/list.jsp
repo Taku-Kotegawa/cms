@@ -142,7 +142,7 @@
           ],
 
           // ボタンの表示
-          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'createnew'],
+          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'exceldownload', 'createnew'],
 
           // データロード後処理
           'initComplete': function (settings, json) {

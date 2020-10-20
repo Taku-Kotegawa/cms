@@ -258,3 +258,15 @@ $.fn.dataTable.ext.buttons.tsvdownload = {
         window.open('list/tsv?' + $.param(data), '_blank');
     }
 };
+
+/**
+ * CSVダウンロード(サーバサイド処理)
+ */
+$.fn.dataTable.ext.buttons.exceldownload = {
+    text: '<i class="fas fa-file-download"></i> E',
+    titleAttr: 'Excelダウンロード',
+    action: function (e, dt, node, config) {
+        var data = dt.ajax.params();
+        window.open('list/excel?' + $.param(data), '_blank');
+    }
+};

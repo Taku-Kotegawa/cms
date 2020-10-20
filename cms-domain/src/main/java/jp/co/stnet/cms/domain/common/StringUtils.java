@@ -41,4 +41,12 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     };
 
 
+    public static String nvl(Object o) {
+        if (o == null) {
+            return "";
+        } else {
+            return o.toString();
+        }
+    }
+
 }
