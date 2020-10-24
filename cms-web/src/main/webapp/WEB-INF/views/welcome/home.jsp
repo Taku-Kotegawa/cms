@@ -48,6 +48,7 @@
           <li> <a href="${f:h(pageContext.request.contextPath)}/admin/role/list">ロール</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/person/list">Person</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/admin/variable/list">Variable</a></li>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/select/list">Select</a></li>
         </ul>
       </div>
     </div>
