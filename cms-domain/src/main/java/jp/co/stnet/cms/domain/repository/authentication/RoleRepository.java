@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, String> {
 
-    @Query(nativeQuery = true, value = "select distinct permissions_permission from Role_Permission where Role_role in (:roles)")
+    @Query(nativeQuery = true, value = "select distinct permissions_permission from role_permission where role_role in (:roles)")
     List<String> findPermissions(@Param("roles") List<String> roles);
 
 }
