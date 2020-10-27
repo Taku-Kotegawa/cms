@@ -30,8 +30,7 @@
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
                 <entry key="hibernate.hbm2ddl.auto" value="update" />
                 <entry key="hibernate.dialect.storage_engine" value="innodb" />
-                <entry key="hibernate.ejb.naming_strategy"
-                    value="org.hibernate.cfg.ImprovedNamingStrategy" />
+                <entry key="hibernate.physical_naming_strategy" value="jp.co.stnet.cms.domain.common.namingstrategy.CustomPhysicalNamingStrategy" />
                 <entry key="hibernate.connection.charSet" value="UTF-8" />
                 <entry key="hibernate.show_sql" value="false" />
                 <entry key="hibernate.format_sql" value="false" />
