@@ -11,7 +11,7 @@ public class CustomPhysicalNamingStrategy implements PhysicalNamingStrategy {
         final String replacement = "$1_$2";
         final String newName = identifier.getText()
                 .replaceAll(regex, replacement)
-                .toLowerCase();
+                .toUpperCase();
         return Identifier.toIdentifier(newName);
     }
 

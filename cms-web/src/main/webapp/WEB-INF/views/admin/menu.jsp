@@ -21,18 +21,25 @@
       <li class="mb-2">
         <i class="fas fa-angle-right"></i>
         <a href="${f:h(pageContext.request.contextPath)}/admin/account/list">
-          <i class="fas fa-angle-righ mr-2"></i>アカウント管理
+          アカウント管理
         </a>
       </li>
+
+      <sec:authorize url="/unlock">
+        <li class="mb-2">
+          <i class="fas fa-angle-right"></i>
+          <a id="unlock" href="${f:h(pageContext.request.contextPath)}/unlock?form">
+            ロック解除
+          </a>
+        </li>
+      </sec:authorize>
 
       <li class="mb-2">
         <i class="fas fa-angle-right"></i>
-        <a href="${f:h(pageContext.request.contextPath)}/admin/account/list">
-          <i class="fas fa-angle-righ mr-2"></i>アカウント管理
+        <a href="${f:h(pageContext.request.contextPath)}/admin/variable/list">
+          変数管理
         </a>
       </li>
-
-
 
     </ul>
 

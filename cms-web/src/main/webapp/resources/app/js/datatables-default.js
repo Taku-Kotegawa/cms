@@ -13,8 +13,8 @@ $.extend($.fn.dataTable.defaults, {
     // 遅延読込
     // "deferRender": true,
 
-    // 処理中
-    'processing': true,
+    // 処理中の表示
+    'processing': false,
 
     // データ取得先のURLの初期値設定
     // flattenはSpringMVCでデータを受け取るためのクエリパラメータの変換処理

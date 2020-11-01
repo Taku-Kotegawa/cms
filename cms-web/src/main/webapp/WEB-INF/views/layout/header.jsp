@@ -37,16 +37,30 @@
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <!-- <span class="dropdown-item dropdown-header"></span> -->
+
+                <a href="${f:h(pageContext.request.contextPath)}/account/" class="dropdown-item">
+                    <i class="fas fa-database mr-2"></i>アカウント情報
+                </a>
+
+                <div class="dropdown-divider"></div>
+                  <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">
+                    <button id="logout" class="dropdown-item"><i class="fas fa-database mr-2"></i>ログアウト</button>
+                  </form:form>
+
                 <div class="dropdown-divider"></div>
                 <a href="${f:h(pageContext.request.contextPath)}/admin/" class="dropdown-item">
                     <i class="fas fa-database mr-2"></i>管理メニュー
                 </a>
+
                 <div class="dropdown-divider"></div>
                 <a href="${f:h(pageContext.request.contextPath)}/simpleentity/list" class="dropdown-item">
                     <i class="fas fa-database mr-2"></i>サンプル
                 </a>
+
+
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item dropdown-footer"></a>
+
             </div>
         </li>
     </ul>

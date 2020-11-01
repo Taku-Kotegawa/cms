@@ -17,37 +17,11 @@
     <!-- ここより下にメインコンテンツを記入 -->
 
     <div class="row">
-      <a id="info" href="${f:h(pageContext.request.contextPath)}/account/" class="btn-button mr-2">
-        アカウント情報
-      </a>
-
-      <sec:authorize url="/unlock">
-        <div>
-          <a id="unlock" href="${f:h(pageContext.request.contextPath)}/unlock?form" class="btn-button mr-2">
-            ロック解除
-          </a>
-        </div>
-      </sec:authorize>
-
-      <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">
-        <button id="logout" class="btn-button">ログアウト</button>
-      </form:form>
-    </div>
-    <div class="row mb-5">
       <div class="col-36">
-      </div>
-    </div>
-
-
-    <div class="row">
-      <div class="col-36">
-        <h4>管理者メニュー</h4>
+        <h4>メニュー</h4>
         <ul>
           <li> <a href="${f:h(pageContext.request.contextPath)}/simpleentity/list">SimpleEntity List</a></li>
-          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/account/list">アカウント</a></li>
-          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/role/list">ロール</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/person/list">Person</a></li>
-          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/variable/list">Variable</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/select/list">Select</a></li>
         </ul>
       </div>

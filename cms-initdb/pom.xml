@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -12,24 +13,42 @@
     <artifactId>cms-initdb</artifactId>
 
     <profiles>
-<!--        <profile>-->
-<!--            <id>local-postgres</id>-->
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
-<!--            <properties>-->
-<!--                <db.encoding>UTF8</db.encoding>-->
-<!--                <db.basedir>${project.basedir}/src/main/sqls/postgres</db.basedir>-->
-<!--                <db.url>jdbc:postgresql://127.0.0.1:5432/projectName</db.url>-->
-<!--                <db.username>postgres</db.username>-->
-<!--                <db.password>P0stgres</db.password>-->
-<!--                <db.driver>org.postgresql.Driver</db.driver>-->
-<!--                <db.groupId>org.postgresql</db.groupId>-->
-<!--                <db.artifactId>postgresql</db.artifactId>-->
-<!--                <db.version>${postgresql.version}</db.version>-->
-<!--                <db.delimiterType>row</db.delimiterType>-->
-<!--            </properties>-->
-<!--        </profile>-->
+        <profile>
+            <id>local-mysql</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <db.encoding>UTF8</db.encoding>
+                <db.basedir>${project.basedir}/src/main/sqls/mysql</db.basedir>
+                <db.url>jdbc:mysql://localhost:3306/cms?serverTimezone=JST</db.url>
+                <db.username>cmsuser</db.username>
+                <db.password>cmspassword</db.password>
+                <db.driver>com.mysql.cj.jdbc.Driver</db.driver>
+                <db.groupId>mysql</db.groupId>
+                <db.artifactId>mysql-connector-java</db.artifactId>
+                <db.version>${mysql-connector-java.version}</db.version>
+                <db.delimiterType>row</db.delimiterType>
+            </properties>
+        </profile>
+        <!--            <profile>-->
+        <!--            <id>local-postgres</id>-->
+        <!--            <activation>-->
+        <!--                <activeByDefault>true</activeByDefault>-->
+        <!--            </activation>-->
+        <!--            <properties>-->
+        <!--                <db.encoding>UTF8</db.encoding>-->
+        <!--                <db.basedir>${project.basedir}/src/main/sqls/postgres</db.basedir>-->
+        <!--                <db.url>jdbc:postgresql://127.0.0.1:5432/projectName</db.url>-->
+        <!--                <db.username>postgres</db.username>-->
+        <!--                <db.password>P0stgres</db.password>-->
+        <!--                <db.driver>org.postgresql.Driver</db.driver>-->
+        <!--                <db.groupId>org.postgresql</db.groupId>-->
+        <!--                <db.artifactId>postgresql</db.artifactId>-->
+        <!--                <db.version>${postgresql.version}</db.version>-->
+        <!--                <db.delimiterType>row</db.delimiterType>-->
+        <!--            </properties>-->
+        <!--        </profile>-->
         <profile>
             <id>oracle</id>
             <properties>

@@ -165,7 +165,8 @@
         <encoding>UTF-8</encoding>
         <java-version>1.8</java-version>
     </properties>
-<modules>  <module>cms-env</module>
+<modules>
+    <module>cms-env</module>
     <module>cms-domain</module>
     <module>cms-web</module>
     <module>cms-initdb</module>
