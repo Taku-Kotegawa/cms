@@ -171,5 +171,6 @@
     <module>cms-web</module>
     <module>cms-initdb</module>
     <module>cms-selenium</module>
+    <module>cms-batch</module>
   </modules>
 </project>
