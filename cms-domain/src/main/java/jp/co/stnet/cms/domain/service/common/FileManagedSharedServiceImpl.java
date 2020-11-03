@@ -138,6 +138,11 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
     }
 
+    @Override
+    public String getFileStoreBaseDir() {
+        return STORE_BASEDIR + "/";
+    }
+
     private File mkdirs(String filePath) {
         File uploadDir = new File(filePath);
         if (!uploadDir.exists()) {

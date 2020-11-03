@@ -136,7 +136,7 @@
     <bean id="usernameRule" class="org.passay.UsernameRule"/>
 
     <bean id="encodedPasswordHistoryRule"
-          class="jp.co.stnet.cms.app.common.validation.rule.EncodedPasswordHistoryRule">
+          class="jp.co.stnet.cms.domain.common.validation.rule.EncodedPasswordHistoryRule">
         <constructor-arg name="passwordEncoder" ref="passwordEncoder"/>
     </bean>
 

@@ -1,28 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <artifactId>cms</artifactId>
-        <groupId>jp.co.stnet.cms</groupId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
-    <groupId>jp.co.stnet.cms</groupId>
     <artifactId>cms-batch</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
-    <name>TERASOLUNA Batch Framework for Java (5.x) Blank Project</name>
-    <description>Batch Blank Project using TERASOLUNA Batch Framework for Java (5.x)</description>
-    <inceptionYear>2017</inceptionYear>
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>manual</distribution>
-        </license>
-    </licenses>
+    <packaging>jar</packaging>
+    <parent>
+        <groupId>jp.co.stnet.cms</groupId>
+        <artifactId>cms</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
     <repositories>
         <!-- === TERASOLUNA Batch RELEASES Repository === -->
@@ -87,6 +74,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cms-domain</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.terasoluna.batch</groupId>
             <artifactId>terasoluna-batch</artifactId>
         </dependency>
@@ -109,16 +101,47 @@
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.h2database</groupId>-->
+<!--            <artifactId>h2</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.postgresql</groupId>-->
+<!--            <artifactId>postgresql</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
+
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.dozermapper</groupId>
+            <artifactId>dozer-core</artifactId>
+            <version>6.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.dozermapper</groupId>
+            <artifactId>dozer-spring4</artifactId>
+            <version>6.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-vfs2</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -169,6 +192,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <exclude-property/>
+                <exclude-log/>
             </properties>
         </profile>
 

@@ -99,11 +99,8 @@
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
           p:basenames="i18n/application-messages" />
 
-    <bean id="validator" class="org.springframework.batch.item.validator.SpringValidator"
-          p:validator-ref="beanValidator"/>
-
-    <bean id="beanValidator"
-          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+<!--    <bean id="validator" class="org.springframework.batch.item.validator.SpringValidator"-->
+<!--          p:validator-ref="beanValidator"/>-->
 
     <bean id="jobSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="jobDataSource" >
@@ -123,4 +120,10 @@
 
     <bean id="jobResourcelessTransactionManager"
           class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
+
+    <bean id="beanMapper" class="com.github.dozermapper.spring.DozerBeanMapperFactoryBean">
+        <property name="mappingFiles"
+                  value="classpath*:/META-INF/dozer/**/*-mapping.xml" />
+    </bean>
+
 </beans>

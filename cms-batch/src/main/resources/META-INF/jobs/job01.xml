@@ -12,17 +12,17 @@
 
     <import resource="classpath:META-INF/spring/job-base-context.xml"/>
 
-    <context:component-scan base-package="jp.co.stnet.cms.job01" />
-    <mybatis:scan           base-package="jp.co.stnet.cms.job01" factory-ref="jobSqlSessionFactory"/>
+    <context:component-scan base-package="jp.co.stnet.cms.batch.job01" />
+    <mybatis:scan base-package="jp.co.stnet.cms.batch.job01" factory-ref="jobSqlSessionFactory"/>
 
     <bean id="employeeReader" class="org.springframework.batch.item.support.ListItemReader" scope="step">
         <constructor-arg>
-            <list value-type="jp.co.stnet.cms.job01.Employee">
-                <bean class="jp.co.stnet.cms.job01.Employee" p:empId="1" p:empName="scott" />
-                <bean class="jp.co.stnet.cms.job01.Employee" p:empId="2" p:empName="virgil" />
-                <bean class="jp.co.stnet.cms.job01.Employee" p:empId="3" p:empName="gordon" />
-                <bean class="jp.co.stnet.cms.job01.Employee" p:empId="4" p:empName="john" />
-                <bean class="jp.co.stnet.cms.job01.Employee" p:empId="5" p:empName="alan" />
+            <list value-type="jp.co.stnet.cms.batch.job01.Employee">
+                <bean class="jp.co.stnet.cms.batch.job01.Employee" p:empId="1" p:empName="scott" />
+                <bean class="jp.co.stnet.cms.batch.job01.Employee" p:empId="2" p:empName="virgil" />
+                <bean class="jp.co.stnet.cms.batch.job01.Employee" p:empId="3" p:empName="gordon" />
+                <bean class="jp.co.stnet.cms.batch.job01.Employee" p:empId="4" p:empName="john" />
+                <bean class="jp.co.stnet.cms.batch.job01.Employee" p:empId="5" p:empName="alan" />
             </list>
         </constructor-arg>
     </bean>

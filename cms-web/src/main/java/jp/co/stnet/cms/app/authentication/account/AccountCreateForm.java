@@ -1,7 +1,7 @@
 package jp.co.stnet.cms.app.authentication.account;
 
 
-import jp.co.stnet.cms.app.common.validation.*;
+import jp.co.stnet.cms.domain.common.validation.*;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 import org.terasoluna.gfw.common.validator.constraints.Compare;

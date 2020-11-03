@@ -146,4 +146,25 @@
         <property name="validator" ref="validator" />
     </bean>
 
+
+
+    <import resource="classpath:META-INF/spring/launch-context.xml"/>
+
+    <bean class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
+        <property name="applicationContextFactories">
+            <bean class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean">
+                <property name="resources">
+                    <list>
+                        <value>classpath:/META-INF/jobs/**/*.xml</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="jobLoader">
+            <bean class="org.springframework.batch.core.configuration.support.DefaultJobLoader">
+                <property name="jobRegistry" ref="jobRegistry"/>
+            </bean>
+        </property>
+    </bean>
+
 </beans>

@@ -6,4 +6,8 @@
 
     <import resource="classpath:META-INF/spring/launch-context.xml"/>
 
+    <!-- launch-context.xml に定義すると重複起動になるので、コマンド実行時のみ有効にする -->
+    <bean id="beanValidator"
+          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
 </beans>

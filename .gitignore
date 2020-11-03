@@ -83,3 +83,5 @@ fabric.properties
 .history/
 
 **/target
+/cms-batch/lib/
+/cms-web/files/

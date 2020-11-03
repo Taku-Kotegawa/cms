@@ -34,6 +34,10 @@ public final class Constants {
         public static final String VIEW = "view";
         public static final String UNLOCK = "unlock";
         public static final String DOWNLOAD = "download";
+        public static final String UPLOAD = "upload";
+        public static final String CONFIRM = "confirm";
+        public static final String VALIDATE = "validate";
+        public static final String GOHOME = "goHome";
     }
 
     public static final class CSV {

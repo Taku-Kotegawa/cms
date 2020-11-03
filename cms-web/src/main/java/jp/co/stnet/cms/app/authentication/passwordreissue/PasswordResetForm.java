@@ -1,8 +1,8 @@
 package jp.co.stnet.cms.app.authentication.passwordreissue;
 
 
-import jp.co.stnet.cms.app.common.validation.NotReusedPassword;
-import jp.co.stnet.cms.app.common.validation.StrongPassword;
+import jp.co.stnet.cms.domain.common.validation.NotReusedPassword;
+import jp.co.stnet.cms.domain.common.validation.StrongPassword;
 import lombok.Data;
 import org.terasoluna.gfw.common.validator.constraints.Compare;
 

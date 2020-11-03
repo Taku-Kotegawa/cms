@@ -1,7 +1,7 @@
 package jp.co.stnet.cms.app.admin.account;
 
-import jp.co.stnet.cms.app.common.validation.NotContainControlChars;
-import jp.co.stnet.cms.app.common.validation.NotContainControlCharsExceptNewlines;
+import jp.co.stnet.cms.domain.common.validation.NotContainControlChars;
+import jp.co.stnet.cms.domain.common.validation.NotContainControlCharsExceptNewlines;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

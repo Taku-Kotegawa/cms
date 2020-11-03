@@ -642,7 +642,7 @@
           </div>
 
           <div class="row mb-3">
-            <div class="col-24">
+            <div class="col-36">
               <!-- ラベル -->
               <c:if test="${fieldState.textarea__input || fieldState.textarea__view}">
                 <form:label path="textarea">${fieldLabel.textarea}</form:label>
@@ -693,7 +693,7 @@
               </c:if>
               </c:if>
               <!-- 参照用-->
-              <c:if test="${fieldState.file1UuidUuid__view}">
+              <c:if test="${fieldState.file1Uuid__view}">
                 <div>
                   <c:if test="${variable.file1Managed != null}">
                     <span>
@@ -739,8 +739,6 @@
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
 </section>
-
-<%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
 
 <style>
 </style>

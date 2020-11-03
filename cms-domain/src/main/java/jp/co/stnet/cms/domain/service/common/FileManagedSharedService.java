@@ -22,4 +22,6 @@ public interface FileManagedSharedService {
 
     void cleanup(LocalDateTime deleteTo);
 
+    String getFileStoreBaseDir();
+
 }

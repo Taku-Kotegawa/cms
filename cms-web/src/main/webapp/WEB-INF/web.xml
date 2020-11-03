@@ -99,6 +99,10 @@
             <!-- ApplicationContext for Spring MVC (REST) -->
             <param-value>classpath*:META-INF/spring/spring-mvc-rest.xml</param-value>
         </init-param>
+        <init-param>
+            <param-name>spring.profiles.active</param-name>
+            <param-value>async</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
         <multipart-config>
             <max-file-size>5242880</max-file-size>
@@ -118,6 +122,10 @@
             <param-name>contextConfigLocation</param-name>
             <!-- ApplicationContext for Spring MVC -->
             <param-value>classpath*:META-INF/spring/spring-mvc.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>spring.profiles.active</param-name>
+            <param-value>async</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
         <multipart-config>

@@ -71,6 +71,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>cms-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cms-batch</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- == Begin TERASOLUNA == -->
         <dependency>
