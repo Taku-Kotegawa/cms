@@ -192,8 +192,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <exclude-property/>
-                <exclude-log/>
+                <exclude-property />
+                <exclude-log />
             </properties>
         </profile>
 
@@ -208,15 +208,6 @@
             </properties>
         </profile>
 
-        <profile>
-            <id>jdk11</id>
-            <activation>
-                <jdk>11</jdk>
-            </activation>
-            <properties>
-                <java-version>11</java-version>
-            </properties>
-        </profile>
     </profiles>
 
 </project>

@@ -104,7 +104,7 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
                         .filemime(mimeType)
                         .filesize(file.getSize())
                         .status(Status.DRAFT.getCodeValue())
-                        .uri(storeFile.getAbsolutePath().substring(STORE_BASEDIR.length()))
+                        .uri(storeFile.getAbsolutePath().substring(STORE_BASEDIR.length()).replace('\\', '/'))
                         .build());
 
     }
