@@ -90,9 +90,8 @@
 
     <root level="warn">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="APPLICATION_LOG_FILE" />
+        <appender-ref ref="MONITORING_LOG_FILE" />
     </root>
-
 
     <appender name="Job"
               class="ch.qos.logback.classic.sift.SiftingAppender">

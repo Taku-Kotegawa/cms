@@ -44,4 +44,10 @@ public final class Constants {
         public static final Integer MAX_LENGTH = 99999;
     }
 
+    public static final class MSG {
+        public static final String VALIDATION_ERROR_STOP = "入力チェックでエラーを検出したため、処理を中断しました。";
+        public static final String DB_ACCESS_ERROR_STOP = "データベース更新時にエラーが発生したため、処理を中断しました。";
+    }
+
+
 }

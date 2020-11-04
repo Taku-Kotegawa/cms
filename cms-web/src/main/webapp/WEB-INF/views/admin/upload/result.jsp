@@ -17,7 +17,7 @@
     <!-- ここより下にメインコンテンツを記入 -->
 
     <div class="row mb-3">
-      <div class="col-5">
+      <div class="col-8">
         <label>ジョブの選択</label>
         <select id="targetJob" class="form-control">
           <c:forEach items="${jobList}" var="job">
@@ -25,7 +25,7 @@
           </c:forEach>
         </select>
       </div>
-      <div class="col-31 align-self-end">
+      <div class="col-28 align-self-end">
         <a href="" class="btn-button">更新</a>
       </div>
     </div>
@@ -37,6 +37,7 @@
         <th>startTime<br>endTime</th>
         <th>status</th>
         <th>jobParameters</th>
+        <th>log</th>
         </tr>
     </thead>
     <tbody>
@@ -46,6 +47,7 @@
         <td>${result.startTime}<br>${result.endTime}</td>
         <td>${result.status}</td>
         <td>${result.jobParameters}</td>
+        <td class="text-center"><a href="${pageContext.request.contextPath}/admin/upload/joblog?jobexecutionid=${result.id}">参照</a></td>
       </tr>
     </c:forEach>
     </tbody>
@@ -61,7 +63,7 @@
   function () {
     $('#targetJob').change(function() {
         console.log(this);
-        var url = "${f:h(pageContext.request.contextPath)}/admin/upload/result?targetjob=" + $(this).val();
+        var url = "${pageContext.request.contextPath}/admin/upload/result?targetjob=" + $(this).val();
         location.href = url;
     });
 

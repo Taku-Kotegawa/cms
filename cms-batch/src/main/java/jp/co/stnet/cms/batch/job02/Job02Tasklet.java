@@ -1,7 +1,9 @@
 package jp.co.stnet.cms.batch.job02;
 
 import com.github.dozermapper.core.Mapper;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -17,11 +19,12 @@ import org.springframework.validation.SmartValidator;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static jp.co.stnet.cms.domain.common.Constants.MSG;
+
 /**
  * job02ジョブ実装
  * CSV -> VARIABLEテーブル
  */
-@Slf4j
 @Component
 public class Job02Tasklet implements Tasklet {
 
@@ -37,8 +40,20 @@ public class Job02Tasklet implements Tasklet {
     @Autowired
     Mapper beanMapper;
 
+    private static final Logger log = LoggerFactory.getLogger("JobLogger");
+
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+
+        Long jobInstanceId = chunkContext.getStepContext().getJobInstanceId();
+        String jobName = chunkContext.getStepContext().getJobName();
+        Long jobExecutionId = chunkContext.getStepContext().getStepExecution().getJobExecutionId();
+
+        MDC.put("jobInstanceId", jobInstanceId.toString());
+        MDC.put("jobName", jobName);
+        MDC.put("jobExecutionId", jobExecutionId.toString());
+        MDC.put("jobName_jobExecutionId", jobName + "_" + jobExecutionId.toString());
+
 
         int count_read   = 0;
         int count_insert = 0;
@@ -67,7 +82,8 @@ public class Job02Tasklet implements Tasklet {
             if (result.hasErrors()) {
                 result.getAllErrors().forEach(r -> log.error(r.toString()));
                 csvReader.close();
-                throw new ValidationException("入力チェックでエラーを検出したため、処理を中断。");
+                log.error(MSG.VALIDATION_ERROR_STOP);
+                throw new ValidationException(MSG.VALIDATION_ERROR_STOP);
             }
             csvReader.close();
 
@@ -104,7 +120,8 @@ public class Job02Tasklet implements Tasklet {
             }
 
             if (hasDBAccessException) {
-                throw new Exception("データベース更新時にエラーが発生したため、処理を中断。");
+                log.error(MSG.DB_ACCESS_ERROR_STOP);
+                throw new Exception(MSG.DB_ACCESS_ERROR_STOP);
             }
 
         } finally {
@@ -116,6 +133,9 @@ public class Job02Tasklet implements Tasklet {
         log.info("更新件数:    " + count_update);
         log.info("スキップ件数: " + count_skip);
         log.info("End");
+
+        MDC.clear();
+
         return RepeatStatus.FINISHED;
     }
 

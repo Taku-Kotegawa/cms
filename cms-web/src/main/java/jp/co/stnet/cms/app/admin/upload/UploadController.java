@@ -3,6 +3,8 @@ package jp.co.stnet.cms.app.admin.upload;
 import jp.co.stnet.cms.app.common.uploadfile.UploadFileForm;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.common.StateMap;
+import jp.co.stnet.cms.domain.common.exception.IllegalStateBusinessException;
+import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
@@ -21,8 +23,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.terasoluna.gfw.common.message.ResultMessages;
 
 import javax.validation.groups.Default;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +43,7 @@ public class UploadController {
     private final String JSP_COMPLETE = BASE_PATH + "/complete";
     private final String JSP_FAILE = BASE_PATH + "/faile";
     private final String JSP_RESULT = BASE_PATH + "/result";
+    private final String JSP_JOBLOG = BASE_PATH + "/joblog";
 
     @Autowired
     FileManagedSharedService fileManagedSharedService;
@@ -53,7 +60,7 @@ public class UploadController {
     }
 
     @GetMapping(value = "upload", params = "form")
-    String uploadForm(UploadForm form, Model model, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+    public String uploadForm(UploadForm form, Model model, @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
         model.addAttribute("buttonState", getButtonStateMap(null).asMap());
         model.addAttribute("fieldState", getFiledStateMap(null).asMap());
@@ -61,7 +68,7 @@ public class UploadController {
     }
 
     @PostMapping(value = "upload", params = "confirm")
-    String confirm(@Validated UploadForm form, BindingResult result, Model model,
+    public String confirm(@Validated UploadForm form, BindingResult result, Model model,
                   @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
         FileManaged uploadFile = fileManagedSharedService.findByUuid(form.getUploadFileUuid());
@@ -92,7 +99,7 @@ public class UploadController {
     }
 
     @PostMapping("upload")
-    String upload(@Validated UploadForm form, BindingResult result, Model model,
+    public String upload(@Validated UploadForm form, BindingResult result, Model model,
                   @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
         model.addAttribute("buttonState", getButtonStateMap(null).asMap());
@@ -102,7 +109,7 @@ public class UploadController {
     }
 
     @GetMapping("result")
-    String result(Model model,
+    public String result(Model model,
                   @RequestParam(value = "targetjob", required = false) String targetjob,
                   @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
@@ -121,6 +128,33 @@ public class UploadController {
 
         return JSP_RESULT;
     }
+
+    @GetMapping("joblog")
+    public String jobLog(Model model, @RequestParam(value="jobexecutionid") Long jobExecutionId,
+                         @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        JobExecution jobExecution = jobExplorer.getJobExecution(jobExecutionId);
+        if (jobExecution == null) {
+            throw new IllegalStateBusinessException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001));
+        }
+
+        String jobName = jobExecution.getJobInstance().getJobName();
+        model.addAttribute("jobName", jobName);
+        model.addAttribute("jobExecutionId", jobExecutionId.toString());
+
+        String filePath = "/home/taku/Job_" + jobName + "_" + jobExecutionId + ".log";
+        List<String> fileLines = new ArrayList<>();
+        try {
+            fileLines = Files.readAllLines(Paths.get(filePath));
+        } catch (IOException e) {
+            fileLines.add("ログファイルが見つかりません。");
+        }
+
+        model.addAttribute("jobLog", fileLines);
+
+        return JSP_JOBLOG;
+    }
+
 
 
 
