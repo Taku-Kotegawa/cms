@@ -20,16 +20,17 @@ import java.io.Serializable;
 @EntityListeners(AuditingEntityListener.class)
 public class Select extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     /**
      * ID
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
      * ステータス
      */
+    @Column(nullable = false)
     private String status;
 
     /**

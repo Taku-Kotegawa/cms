@@ -66,7 +66,5 @@
         var url = "${pageContext.request.contextPath}/admin/upload/result?targetjob=" + $(this).val();
         location.href = url;
     });
-
-
   });
 </script>

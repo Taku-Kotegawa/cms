@@ -3,6 +3,7 @@ package jp.co.stnet.cms.domain.model.example;
 import jp.co.stnet.cms.domain.model.AbstractRevisionEntity;
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -18,11 +19,13 @@ public class SelectRevision extends AbstractRevisionEntity implements Serializab
     /**
      * ID
      */
+    @Column(nullable = false)
     private Long id;
 
     /**
      * ステータス
      */
+    @Column(nullable = false)
     private String status;
 
     /**

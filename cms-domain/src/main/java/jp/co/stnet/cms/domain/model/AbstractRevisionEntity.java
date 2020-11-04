@@ -3,10 +3,7 @@ package jp.co.stnet.cms.domain.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,8 +14,10 @@ public abstract class AbstractRevisionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rid;
 
+    @Column(nullable = false)
     private Integer revType;
 
+    @Column(nullable = false)
     private Long version;
 
     private String createdBy;
@@ -31,5 +30,6 @@ public abstract class AbstractRevisionEntity {
     @JsonFormat(pattern="yyyy/MM/dd HH:mm:ss")
     private LocalDateTime lastModifiedDate;
 
+    @Column(nullable = false)
     private String status;
 }

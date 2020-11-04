@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(name = "PERSON")
 @Data
 @Builder
 @AllArgsConstructor
@@ -17,7 +18,7 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
-public class Person extends AbstractEntity<Long> implements Serializable, StatusInterface {
+public class Person2 extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +30,8 @@ public class Person extends AbstractEntity<Long> implements Serializable, Status
     private String name;
 
     private Integer age;
+
+    private String memo;
 
     @Override
     public boolean isNew() {
