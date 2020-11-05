@@ -116,6 +116,10 @@ public class UploadController {
         List<String> jobList = jobExplorer.getJobNames();
         model.addAttribute("jobList", jobList);
 
+        if (targetjob == null) {
+            targetjob = jobList.get(0);
+        }
+
         model.addAttribute("selectedJob", targetjob);
 
         List<JobInstance> instances = jobExplorer.getJobInstances(targetjob, 0, 10);
