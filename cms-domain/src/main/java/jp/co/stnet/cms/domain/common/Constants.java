@@ -19,6 +19,7 @@ public final class Constants {
         public static final String VIEW = "view";
         public static final String UNLOCK = "unlock";
         public static final String DOWNLOAD = "download";
+        public static final String UPLOAD = "upload";
     }
 
     public static final class BUTTON {

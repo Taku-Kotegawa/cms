@@ -13,6 +13,11 @@ import lombok.NoArgsConstructor;
 public class UploadForm {
 
     /**
+     * アプロード用のジョブ名
+     */
+    private String jobName;
+
+    /**
      * アップロードファイル(Uuid)
      */
     private String uploadFileUuid;

@@ -60,7 +60,11 @@ public class UploadController {
     }
 
     @GetMapping(value = "upload", params = "form")
-    public String uploadForm(UploadForm form, Model model, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+    public String uploadForm(UploadForm form, Model model,
+                             @RequestHeader(value = "Referer", required=false) String referer,
+                             @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        model.addAttribute("referer", referer);
 
         model.addAttribute("buttonState", getButtonStateMap(null).asMap());
         model.addAttribute("fieldState", getFiledStateMap(null).asMap());
@@ -95,18 +99,20 @@ public class UploadController {
         model.addAttribute("buttonState", getButtonStateMap(null).asMap());
         model.addAttribute("fieldState", getFiledStateMap(null).asMap());
 
+
+        // リダイレクト
         return JSP_CONFIRM;
     }
 
-    @PostMapping("upload")
-    public String upload(@Validated UploadForm form, BindingResult result, Model model,
-                  @AuthenticationPrincipal LoggedInUser loggedInUser) {
-
-        model.addAttribute("buttonState", getButtonStateMap(null).asMap());
-        model.addAttribute("fieldState", getFiledStateMap(null).asMap());
-
-        return JSP_CONFIRM;
-    }
+//    @PostMapping("upload")
+//    public String upload(@Validated UploadForm form, BindingResult result, Model model,
+//                  @AuthenticationPrincipal LoggedInUser loggedInUser) {
+//
+//        model.addAttribute("buttonState", getButtonStateMap(null).asMap());
+//        model.addAttribute("fieldState", getFiledStateMap(null).asMap());
+//
+//        return JSP_CONFIRM;
+//    }
 
     @GetMapping("result")
     public String result(Model model,

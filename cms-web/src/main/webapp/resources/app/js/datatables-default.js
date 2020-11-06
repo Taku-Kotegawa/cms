@@ -270,3 +270,14 @@ $.fn.dataTable.ext.buttons.exceldownload = {
         window.open('list/excel?' + $.param(data), '_blank');
     }
 };
+
+/**
+ * アップロード画面ボタン
+ */
+$.fn.dataTable.ext.buttons.upload = {
+    text: '<i class="fa fa-upload" aria-hidden="true"></i>',
+    titleAttr: 'アップロード',
+    action: function (e, dt, node, config) {
+        window.location.href = "upload";
+    }
+};

@@ -490,6 +490,13 @@ public class VariableController {
         return "fileManagedDownloadView";
     }
 
+    @GetMapping("upload")
+    public String upload(Model model, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+        variableService.hasAuthority(Constants.OPERATION.UPLOAD, loggedInUser);
+        return "redirect:/admin/upload/upload?form&jobName=job02";
+    }
+
+
     /**
      * ボタンの状態設定
      */

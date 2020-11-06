@@ -148,7 +148,7 @@
           ],
 
           // ボタンの表示
-          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'createnew'],
+          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'upload', 'createnew'],
 
           // データロード後処理
           'initComplete': function (settings, json) {
@@ -169,7 +169,6 @@
 
         // 項目単位フィルタを追加(列の並び順対応版)
         addFieldFilter2(table)
-
 
         $('#draft').change().on('change', function (e, s) {
           localStorage.dataTables_Draft = e.target.checked;

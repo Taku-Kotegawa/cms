@@ -3,7 +3,8 @@
     <div class="row mb-2">
       <div class="col-18">
         <!-- ページタイトルを記入 -->
-        <h3>Page Title</h3>
+        <h3>Master Import</h3>
+        <hr>
       </div>
       <div class="col-18">
         <!-- ページタイトル右の余白 -->
@@ -16,28 +17,19 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
-    <!-- １．フォームタグで囲む -->
     <form:form modelAttribute="uploadForm" enctype="multipart/form-data" autocomplete="off">
+
       <!-- EnterキーによるPOSTを無効化 -->
       <input type="submit" disabled style="display:none" />
 
+      <form:hidden path="jobName" />
 
-      <div class="row operation-button-block">
-        <div class="col-36">
-          <!-- ホーム画面に戻る -->
-          <c:if test="${buttonState.goHome__view}">
-            <a id="gotoList" href="${pageContext.request.contextPath}" class="btn btn-button mr-2" <c:if
-              test="${buttonState.goHome__disabled}">disabled</c:if> >戻る</a>
-          </c:if>
-        </div>
-      </div>
-      <hr>
       <div>
         <div class="row mb-3">
           <div class="col-12">
             <!-- ラベル -->
             <c:if test="${fieldState.uploadFileUuid__input || fieldState.uploadFileUuid__view}">
-              <form:label path="uploadFileUuid">画像*</form:label>
+              <form:label path="uploadFileUuid">インポートファイル*</form:label>
             </c:if>
             <!-- 入力 -->
             <c:if test="${fieldState.uploadFileUuid__input}">
@@ -74,8 +66,9 @@
           </div>
         </div>
         <div class="row mb-3">
-          <div class="col-24">
-            <button type="submit" name="confirm" value="confirm" class="btn-button">アップロード</button>
+          <div class="col-36">
+            <a href="${referer}" class="btn btn-button">キャンセル</a>
+            <button type="submit" name="confirm" value="confirm" class="btn btn-button">アップロード</button>
           </div>
         </div>
       </div>

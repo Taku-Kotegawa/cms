@@ -86,8 +86,6 @@ public class VariableCsv {
 
     private String textarea;
 
-    private String file1uuid;
-
     @Size(max = 255)
     private String remark;
 }
