@@ -41,6 +41,13 @@
         </a>
       </li>
 
+      <li class="mb-2">
+        <i class="fas fa-angle-right"></i>
+        <a href="${f:h(pageContext.request.contextPath)}/admin/upload/result">
+          ジョブ処理結果
+        </a>
+      </li>
+
     </ul>
 
 
