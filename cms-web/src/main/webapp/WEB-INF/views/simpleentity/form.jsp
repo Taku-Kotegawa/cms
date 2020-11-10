@@ -488,7 +488,6 @@
               <c:if test="${fieldState.select02__input}">
                 <form:select path="select02" multiple="true" cssClass="form-control"
                   cssErrorClass="form-control is-invalid">
-                  <form:option value="" label="--Select--" />
                   <form:options items="${CL_STATUS}" />
                 </form:select>
                 <form:errors path="select02" cssClass="invalid-feedback" />
@@ -579,7 +578,7 @@
                     <div class="input-group-text"><i class="fas fa-angle-down"></i></div>
                   </div>
                   <ul class="dropdown-menu dropdown-menu-right combobox" aria-labelledby="dropdownMenuButton">
-                    <input class="form-control" id="myInput" type="text" placeholder="Filter..">
+                    <input class="form-control dropdown-menu-input" id="myInput" type="text" placeholder="Filter..">
                     <c:forEach var="item" items="${CL_STATUS}" varStatus="status">
                       <li class="autocomplete" data-autocomplete="${item.value}" data-target="combobox01">${item.value}
                       </li>
@@ -711,41 +710,4 @@
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
 </section>
-
-<%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
-
-<style>
-</style>
-
-<script>
-  $(function () {
-
-    $('.select2').select2();
-
-    $('.select2[multiple]').select2({
-      closeOnSelect: false
-    });
-
-    $('.select2-tags').select2({
-      tags: true,
-    });
-
-    $('.datetime').datetimepicker({
-      format: '',
-    });
-
-    $("#myInput").on("keyup", function () {
-      var value = $(this).val().toLowerCase();
-      $(".dropdown-menu li").filter(function () {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-      });
-    });
-  });
-
-
-  $(document).on('ontouched click', '.autocomplete', function () {
-    var text = $(this).data('autocomplete');
-    var target = $(this).data('target');
-    $('input[name="' + target + '"]').val(text);
-  });
-</script>
+<script src="${pageContext.request.contextPath}/resources/app/js/form-onload-default.js"></script>

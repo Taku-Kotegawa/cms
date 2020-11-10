@@ -295,12 +295,3 @@
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
 </section>
-
-<script type="text/javascript">
-  $(document).ready(function () {
-    // ManagedFileのイベント登録
-    $('.file-managed').change(function (event) {
-      file_attach($(this).get(0))
-    });
-  });
-</script>
