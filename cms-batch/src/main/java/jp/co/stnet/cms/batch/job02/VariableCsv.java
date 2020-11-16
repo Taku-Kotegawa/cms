@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 
 import static jp.co.stnet.cms.domain.common.validation.ParseableType.TO_INT;
 
-
 @Data
 public class VariableCsv {
 

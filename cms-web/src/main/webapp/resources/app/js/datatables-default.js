@@ -64,6 +64,9 @@ $.extend($.fn.dataTable.defaults, {
     // 列順変更許可
     'colReorder': true,
 
+    // テーブル幅自動設定
+    "autoWidth": false,
+
 });
 
 
@@ -278,6 +281,6 @@ $.fn.dataTable.ext.buttons.upload = {
     text: '<i class="fa fa-upload" aria-hidden="true"></i>',
     titleAttr: 'アップロード',
     action: function (e, dt, node, config) {
-        window.location.href = "upload";
+        window.location.href = "upload?form";
     }
 };

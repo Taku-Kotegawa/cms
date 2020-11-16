@@ -40,6 +40,7 @@
             transaction-manager="adminTransactionManager"
             isolation-level-for-create="READ_COMMITTED"/>
 
+
     <bean id="jobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry"/>
 
     <bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
@@ -49,7 +50,8 @@
           c:dataSource-ref="adminDataSource" />
 
     <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher"
-          p:jobRepository-ref="jobRepository" />
+          p:jobRepository-ref="jobRepository">
+    </bean>
 
     <bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator"
           p:jobRepository-ref="jobRepository"

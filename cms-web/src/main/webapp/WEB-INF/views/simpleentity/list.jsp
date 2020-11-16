@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/views/common/includes/include-datatables.jsp" %>
 
-<section class="content-header">
-  <div class="container">
+<section class="content-header px-5">
+  <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-18">
         <h4>Simple Entity List</h4>
@@ -12,8 +12,8 @@
   </div>
 </section>
 
-<section class="content">
-  <div class="container">
+<section class="content px-5">
+  <div class="container-fluid">
 
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
@@ -35,7 +35,14 @@
           <th></th>
           <th></th>
           <th></th>
-          <th></th>
+          <th data-filter="disable">
+            <select id="col_filter_8" data-column="8" class="dataTables_column_filter form-control">
+              <option value=""></option>
+              <c:forEach items="${CL_STATUS}" var="obj">
+                <option value="${obj.key}">${obj.value}</option>
+              </c:forEach>
+            </select>
+          </th>
           <th></th>
           <!-- (1) End -->
         </tr>
@@ -132,6 +139,7 @@
             },
             {
               data: 'lastModifiedDate',
+              className: 'text-center',
             },
           //<!-- (3) End -->
           ],
@@ -142,7 +150,7 @@
           ],
 
           // ボタンの表示
-          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'exceldownload', 'createnew'],
+          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'exceldownload', 'upload', 'createnew'],
 
           // データロード後処理
           'initComplete': function (settings, json) {

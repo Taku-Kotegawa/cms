@@ -1,6 +1,11 @@
-package jp.co.stnet.cms.batch.job02;
+package jp.co.stnet.cms.batch.job03;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.domain.common.exception.NoChangeBusinessException;
+import jp.co.stnet.cms.domain.model.example.SimpleEntity;
+import jp.co.stnet.cms.domain.repository.example.SimpleEntityRepository;
+import jp.co.stnet.cms.domain.repository.example.SimpleEntityRevisionRepository;
+import jp.co.stnet.cms.domain.service.example.SimpleEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -12,12 +17,10 @@ import org.springframework.batch.item.validator.ValidationException;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 import static jp.co.stnet.cms.domain.common.Constants.MSG;
 
@@ -26,18 +29,23 @@ import static jp.co.stnet.cms.domain.common.Constants.MSG;
  * CSV -> VARIABLEテーブル
  */
 @Component
-public class Job02Tasklet implements Tasklet {
+@Transactional
+public class Job03Tasklet implements Tasklet {
 
     @Autowired
-    VariableRepository variableRepository;
-
-    @Autowired
-    ItemStreamReader<VariableCsv> csvReader;
+    ItemStreamReader<SimpleEntityCsv> csvReader;
 
     @Autowired
     SmartValidator smartValidator;
 
+    @Autowired
+    SimpleEntityRepository simpleEntityRepository;
 
+    @Autowired
+    SimpleEntityRevisionRepository simpleEntityRevisionRepository;
+
+    @Autowired
+    SimpleEntityService simpleEntityService;
 
     @Autowired
     Mapper beanMapper;
@@ -56,17 +64,17 @@ public class Job02Tasklet implements Tasklet {
         MDC.put("jobExecutionId", jobExecutionId.toString());
         MDC.put("jobName_jobExecutionId", jobName + "_" + jobExecutionId.toString());
 
-
         int count_read   = 0;
         int count_insert = 0;
         int count_update = 0;
+        int count_delete = 0;
         int count_skip   = 0;
 
         // DB操作時の例外発生の有無を記録する
         boolean hasDBAccessException = false;
 
-        // CSVファイルを１行を格納するmodel
-        VariableCsv csvLine = null;
+        // CSVファイルを１行を格納するBean
+        SimpleEntityCsv csvLine = null;
 
         // CSVファイルの入力チェック結果を格納するBindingResult
         BindingResult result = new BeanPropertyBindingResult(csvLine, "csvLine");
@@ -95,26 +103,35 @@ public class Job02Tasklet implements Tasklet {
             csvReader.open(chunkContext.getStepContext().getStepExecution().getExecutionContext());
             while ((csvLine = csvReader.read()) != null) {
                 count_read++;
-                Variable v = map(csvLine);
                 try {
-                    Variable current = findByTypeAndCode(v.getType(),v.getCode());
-                    if (current == null) {
-                        v.setVersion(0L);
-                        count_insert = count_insert + variableRepository.insert(v);
+
+                    SimpleEntity v = map(csvLine);
+                    if (csvLine.getId() == null) {
+                        // 新規登録
+                        simpleEntityService.save(v);
+                        count_insert++;
                     } else {
-                        v.setId(current.getId());
-                        v.setFile1uuid(current.getFile1uuid()); // 添付ファイルはCSVで更新しない
-                        if (!v.equals(current)) {
-                            log.info(v.toString());
-                            log.info(current.toString());
-                            v.setVersion(current.getVersion() + 1L);    // リポジトリ側で対処している場合は不要
-                            v.setCreatedBy(current.getCreatedBy());     // リポジトリ側で対処している場合は不要
-                            v.setCreatedDate(current.getCreatedDate()); // リポジトリ側で対処している場合は不要
-                            count_update = count_update = variableRepository.updateByPrimaryKeyWithBLOBs(v);
+                        // 更新
+                        SimpleEntity current = simpleEntityRepository.findById(Long.parseLong(csvLine.getId())).orElse(null);
+                        if (current != null) {
+                            if ("99".equals(csvLine.getStatus())) {
+                                    simpleEntityService.delete(current.getId());
+                                    count_delete++;
+                            } else {
+                                try {
+                                    v.setVersion(current.getVersion());
+                                    simpleEntityService.save(v);
+                                    count_update++;
+                                } catch (NoChangeBusinessException e) {
+                                    count_skip++;
+                                }
+                            }
+
                         } else {
                             count_skip++;
                         }
                     }
+
                 } catch (Exception e) {
                     log.error("Exception: " + e.getLocalizedMessage());
                     hasDBAccessException = true;
@@ -130,7 +147,6 @@ public class Job02Tasklet implements Tasklet {
             log.error("Exception: " + e.getLocalizedMessage());
             throw e;
 
-
         } finally {
             csvReader.close();
         }
@@ -138,6 +154,7 @@ public class Job02Tasklet implements Tasklet {
         log.info("読込件数:    " + count_read);
         log.info("挿入件数:    " + count_insert);
         log.info("更新件数:    " + count_update);
+        log.info("削除件数:    " + count_delete);
         log.info("スキップ件数: " + count_skip);
         log.info("End");
 
@@ -152,28 +169,10 @@ public class Job02Tasklet implements Tasklet {
      * @param csv CSV一行を表すModel
      * @return VariableのModel
      */
-    private Variable map(VariableCsv csv) {
+    private SimpleEntity map(SimpleEntityCsv csv) {
         String JOB_EXECUTOR = "job_user";
-
-        Variable v = beanMapper.map(csv, Variable.class);
-        v.setCreatedDate(LocalDateTime.now());
-        v.setLastModifiedDate(LocalDateTime.now());
-        v.setCreatedBy(JOB_EXECUTOR);
-        v.setLastModifiedBy(JOB_EXECUTOR);
+        SimpleEntity v = beanMapper.map(csv, SimpleEntity.class);
         return v;
-    }
-
-    private Variable findByTypeAndCode(String type, String code) {
-        VariableExample example = new VariableExample();
-        example.or().andTypeEqualTo(type).andCodeEqualTo(code);
-        List<Variable> list = variableRepository.selectByExampleWithBLOBs(example);
-
-        if (list.size()>0) {
-            return list.get(0);
-        } else {
-            return null;
-        }
-
     }
 
 }

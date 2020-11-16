@@ -1,6 +1,7 @@
 package jp.co.stnet.cms.app.simpleentity;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.app.admin.upload.UploadForm;
 import jp.co.stnet.cms.app.simpleentity.SimpleEntityForm.Create;
 import jp.co.stnet.cms.app.simpleentity.SimpleEntityForm.Update;
 import jp.co.stnet.cms.domain.common.Constants;
@@ -11,12 +12,18 @@ import jp.co.stnet.cms.domain.common.datatables.OperationsUtil;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.common.scheduled.CsvUtils;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.model.example.SimpleEntity;
 import jp.co.stnet.cms.domain.model.example.SimpleEntityRevision;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
+import jp.co.stnet.cms.domain.service.example.MyBatchService;
 import jp.co.stnet.cms.domain.service.example.SimpleEntityService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobInstanceAlreadyExistsException;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,6 +43,7 @@ import javax.inject.Named;
 import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -47,6 +55,8 @@ public class SimpleEntityController {
     private final String JSP_LIST = BASE_PATH + "/list";
     private final String JSP_FORM = BASE_PATH + "/form";
     private final String JSP_VIEW = BASE_PATH + "/view";
+    private final String JSP_UPLOAD_FORM = "upload/form";
+    private final String JSP_UPLOAD_COMPLETE = "upload/complete";
 
     @Autowired
     SimpleEntityService simpleEntityService;
@@ -55,8 +65,14 @@ public class SimpleEntityController {
     FileManagedSharedService fileManagedSharedService;
 
     @Autowired
+    JobOperator jobOperator;
+
+    @Autowired
     @Named("CL_STATUS")
     CodeList statusCodeList;
+
+    @Autowired
+    private MyBatchService service;
 
     @Autowired
     Mapper beanMapper;
@@ -387,6 +403,7 @@ public class SimpleEntityController {
     }
 
     // TODO メソッド削除
+
     /**
      * 無効解除
      */
@@ -449,7 +466,7 @@ public class SimpleEntityController {
         // SimpleEntity simpleEntity = simpleEntityService.findById(id);　// TODO 置き換え
 
         SimpleEntity simpleEntity;
-        if ( rev == null) {
+        if (rev == null) {
             // 下書きを含む最新
             simpleEntity = simpleEntityService.findById(id);
 
@@ -602,6 +619,75 @@ public class SimpleEntityController {
         }
 
         return fieldState;
+    }
+
+    @GetMapping(value = "upload", params = "form")
+    public String uploadForm(@ModelAttribute UploadForm form, Model model,
+                             @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        form.setJobName("job03");
+
+        FileManaged uploadFileManaged = fileManagedSharedService.findByUuid(form.getUploadFileUuid());
+        form.setUploadFileManaged(uploadFileManaged);
+
+        model.addAttribute("pageTitle", "Import Simple Entity");
+        model.addAttribute("referer", "list");
+
+        return JSP_UPLOAD_FORM;
+    }
+
+    @PostMapping(value = "upload")
+    public String upload(@Validated UploadForm form, BindingResult result, Model model,
+                         RedirectAttributes redirectAttributes,
+                         @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        final String jobName = "job03";
+        Long jobExecutionId = null;
+
+        if (result.hasErrors()) {
+            return uploadForm(form, model, loggedInUser);
+        }
+
+        FileManaged uploadFile = fileManagedSharedService.findByUuid(form.getUploadFileUuid());
+        String uploadFileAbsolutePath = fileManagedSharedService.getFileStoreBaseDir() + uploadFile.getUri();
+        String jobParams = "inputFile=" + uploadFileAbsolutePath;
+
+
+        if (!jobName.equals(form.getJobName())) {
+            return uploadForm(form, model, loggedInUser);
+        }
+
+//        try {
+//            service.execute(null, null, null);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+
+        try {
+            jobExecutionId = jobOperator.start(jobName, jobParams);
+
+        } catch (NoSuchJobException | JobInstanceAlreadyExistsException | JobParametersInvalidException e) {
+            e.printStackTrace();
+
+            // メッセージをセットして、フォーム画面に戻る。
+
+        }
+
+        redirectAttributes.addAttribute("jobName", jobName);
+        redirectAttributes.addAttribute("jobExecutionId", jobExecutionId);
+
+        return "redirect:upload?complete";
+    }
+
+    @GetMapping(value = "upload", params = "complete")
+    public String uploadComplete(Model model, @RequestParam Map<String, String> params, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        model.addAttribute("returnBackBtn", "一覧画面に戻る");
+        model.addAttribute("returnBackUrl", "simpleentity/list");
+        model.addAttribute("jobName", params.get("jobName"));
+        model.addAttribute("jobExecutionId", params.get("jobExecutionId"));
+        return JSP_UPLOAD_COMPLETE;
     }
 
 }

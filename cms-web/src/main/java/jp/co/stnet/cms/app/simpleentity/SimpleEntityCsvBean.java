@@ -5,7 +5,6 @@ import com.orangesignal.csv.annotation.CsvEntity;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 @Data
 @CsvEntity
@@ -48,6 +47,6 @@ public class SimpleEntityCsvBean implements Serializable {
      * コレクション(文字列)
      */
     @CsvColumn(name = "複数の値")
-    private Collection<String> text05;
+    private String text05;
 
 }

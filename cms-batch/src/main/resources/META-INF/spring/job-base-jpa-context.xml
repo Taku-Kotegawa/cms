@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd
+            http://www.springframework.org/schema/tx https://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/data/jpa https://www.springframework.org/schema/data/jpa/spring-jpa.xsd"
+       profile="!async">
+
+    <import resource="classpath:META-INF/spring/launch-context.xml"/>
+
+    <!-- launch-context.xml に定義すると重複起動になるので、コマンド実行時のみ有効にする -->
+    <bean id="beanValidator"
+          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+    <!-- JPA　テスト   -->
+
+    <tx:annotation-driven />
+
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${database.driverClassName}" />
+        <property name="url" value="${database.url}" />
+        <property name="username" value="${database.username}" />
+        <property name="password" value="${database.password}" />
+        <property name="defaultAutoCommit" value="false" />
+        <property name="maxTotal" value="${cp.maxActive}" />
+        <property name="maxIdle" value="${cp.maxIdle}" />
+        <property name="minIdle" value="${cp.minIdle}" />
+        <property name="maxWaitMillis" value="${cp.maxWait}" />
+    </bean>
+
+    <!--    <jdbc:initialize-database data-source="dataSource"-->
+    <!--        ignore-failures="ALL">-->
+    <!--        <jdbc:script location="classpath:/database/${database}-schema.sql" encoding="UTF-8" />-->
+    <!--        <jdbc:script location="classpath:/database/${database}-dataload.sql" encoding="UTF-8" />-->
+    <!--    </jdbc:initialize-database>-->
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <jpa:repositories base-package="jp.co.stnet.cms.domain.repository" />
+
+    <bean id="jpaVendorAdapter"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="false" />
+        <property name="database" value="${database}" />
+    </bean>
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="packagesToScan" value="jp.co.stnet.cms.domain.model" />
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="jpaPropertyMap">
+            <util:map>
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+                <entry key="hibernate.hbm2ddl.auto" value="none" />
+                <entry key="hibernate.dialect.storage_engine" value="innodb" />
+                <entry key="hibernate.physical_naming_strategy" value="jp.co.stnet.cms.domain.common.namingstrategy.CustomPhysicalNamingStrategy" />
+                <entry key="hibernate.connection.charSet" value="UTF-8" />
+                <entry key="hibernate.show_sql" value="false" />
+                <entry key="hibernate.format_sql" value="false" />
+                <entry key="hibernate.use_sql_comments" value="true" />
+                <entry key="hibernate.jdbc.batch_size" value="30" />
+                <entry key="hibernate.jdbc.fetch_size" value="100" />
+                <entry key="hibernate.enable_lazy_load_no_trans" value="true" />
+            </util:map>
+        </property>
+    </bean>
+
+    <jpa:auditing auditor-aware-ref="springSecurityAuditorAware" />
+
+</beans>

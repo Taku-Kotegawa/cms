@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/views/common/includes/include-datatables.jsp" %>
 
-<section class="content-header">
-  <div class="container">
+<section class="content-header  px-5">
+  <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-18">
         <h4>変数一覧</h4>
@@ -12,8 +12,8 @@
   </div>
 </section>
 
-<section class="content">
-  <div class="container">
+<section class="content px-5">
+  <div class="container-fluid">
 
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
@@ -30,7 +30,14 @@
           <th data-filter="disable"></th>
                 <th></th>
                 <th></th>
-                <th></th>
+                  <th data-filter="disable">
+                    <select id="col_filter_4" data-column="4" class="dataTables_column_filter form-control">
+                      <option value=""></option>
+                      <c:forEach items="${CL_STATUS}" var="obj">
+                              <option value="${obj.key}">${obj.value}</option>
+                      </c:forEach>
+                    </select>
+                  </th>
                 <th></th>
                 <th></th>
                 <th></th>

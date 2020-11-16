@@ -21,15 +21,13 @@
     処理完了まで時間が要する場合があります。
     </p>
 
-    <a href="list"
-             target="_blank" class="btn btn-button">一覧に戻る</a>
+    <a href="${pageContext.request.contextPath}/${returnBackUrl}" class="btn btn-button">${f:h(returnBackBtn)}</a>
 
-    <a href="${pageContext.request.contextPath}/admin/upload/joblog?jobexecutionid=${jobExecutionId}"
+    <a href="${pageContext.request.contextPath}/job/joblog?jobexecutionid=${jobExecutionId}"
              target="_blank" class="btn btn-button">ジョブログを確認する</a>
 
-    <a href="${pageContext.request.contextPath}/admin/upload/result?targetjob=${jobName}"
+    <a href="${pageContext.request.contextPath}/job/result?targetjob=${jobName}"
              target="_blank" class="btn btn-button">ジョブ一覧を表示する</a>
-
 
     <!-- ここより上にメインコンテンツを記入 -->
   </div>

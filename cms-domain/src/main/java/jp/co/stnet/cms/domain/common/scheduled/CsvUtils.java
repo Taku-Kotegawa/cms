@@ -6,6 +6,7 @@ public class CsvUtils {
 
     public static CsvConfig getCsvDefault() {
         CsvConfig config = new CsvConfig(',', '"', '"'); // ダブルクォテーション括り, カンマ区切り
+        config.setNullString("");
         return config;
     }
 

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,11 +17,13 @@ public class UploadForm {
     /**
      * アプロード用のジョブ名
      */
+    @NotNull
     private String jobName;
 
     /**
      * アップロードファイル(Uuid)
      */
+    @NotNull
     private String uploadFileUuid;
 
     /**
