@@ -2,9 +2,12 @@ package jp.co.stnet.cms.app.simpleentity;
 
 import com.orangesignal.csv.annotation.CsvColumn;
 import com.orangesignal.csv.annotation.CsvEntity;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @CsvEntity
@@ -48,5 +51,101 @@ public class SimpleEntityCsvBean implements Serializable {
      */
     @CsvColumn(name = "複数の値")
     private String text05;
+
+    /**
+     * ラジオボタン(真偽値)
+     */
+    @CsvColumn(name = "ラジオボタン(真偽値)")
+    private Boolean radio01;
+
+    /**
+     * ラジオボタン(文字列)
+     */
+    @CsvColumn(name = "ラジオボタン(文字列)")
+    private String radio02;
+
+    /**
+     * チェックボックス(文字列)
+     */
+    @CsvColumn(name = "チェックボックス(文字列)")
+    private String checkbox01;
+
+    /**
+     * チェックボックス(複数の値)
+     */
+    @CsvColumn(name = "チェックボックス(複数の値)")
+    private List<String> checkbox02;
+
+    /**
+     * テキストエリア
+     */
+    @CsvColumn(name = "テキストエリア")
+    private String textarea01;
+
+    /**
+     * 日付
+     */
+    @CsvColumn(name = "日付", format="yyyy/MM/dd")
+    private Date date01;
+
+    /**
+     * 日付時刻
+     */
+    @CsvColumn(name = "日付時刻", format="yyyy/MM/dd HH:mm:ss")
+    private Date datetime01;
+
+    /**
+     * セレクト(単一の値)
+     */
+    @CsvColumn(name = "セレクト(単一の値)")
+    private String select01;
+
+    /**
+     * セレクト(複数の値)
+     */
+    @CsvColumn(name = "セレクト(複数の値)")
+    private List<String> select02;
+
+    /**
+     * セレクト(単一の値, select2)
+     */
+    @CsvColumn(name = "セレクト(単一の値, select2)")
+    private String select03;
+
+    /**
+     * セレクト(複数の値, select2)
+     */
+    @CsvColumn(name = "セレクト(複数の値, select2)")
+    private List<String> select04;
+
+    /**
+     * コンボボックス(単一の値, Bootstrap)
+     */
+    @CsvColumn(name = "コンボボックス(単一の値, Bootstrap)")
+    private String combobox01;
+
+    /**
+     * コンボボックス(単一の値, Select2)
+     */
+    @CsvColumn(name = "コンボボックス(単一の値, Select2)")
+    private String combobox02;
+
+    /**
+     * コンボボックス(複数の値, Select2)
+     */
+    @CsvColumn(name = "コンボボックス(複数の値, Select2)")
+    private List<String> combobox03;
+
+    /**
+     * 添付ファイル(FileManaged UUID)
+     */
+    @CsvColumn(name = "添付ファイル(FileManaged UUID)")
+    private String attachedFile01Uuid;
+
+    /**
+     * 添付ファイル(FileManaged)
+     */
+    @CsvColumn(name = "添付ファイル(FileManaged)")
+    private FileManaged attachedFile01Managed;
 
 }

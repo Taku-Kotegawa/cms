@@ -150,7 +150,12 @@
     </bean>
 
 
+    <!-- 非同期実行用の設定 -->
+    <task:executor id="taskExecutor" pool-size="3" queue-capacity="10"/>
 
+    <task:annotation-driven executor="taskExecutor"/>
+
+    <!-- バッチジョブ実行用の設定 -->
     <import resource="classpath:META-INF/spring/launch-context.xml"/>
 
     <bean class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
@@ -169,10 +174,6 @@
             </bean>
         </property>
     </bean>
-
-    <task:executor id="taskExecutor" pool-size="3" queue-capacity="10"/>
-
-    <task:annotation-driven executor="taskExecutor"/>
 
     <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher"
           p:jobRepository-ref="jobRepository"

@@ -73,7 +73,9 @@ public class SimpleEntityListRow implements Serializable {
      */
     private Boolean text04;
 
-
+    /**
+     * テキストフィールド(複数の値)
+     */
     private Collection<String> text05;
 
 }

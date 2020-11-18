@@ -27,10 +27,8 @@ import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 import org.terasoluna.gfw.common.message.ResultMessages;
 import org.terasoluna.gfw.common.query.QueryEscapeUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +43,8 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     protected final Map<String, String> fieldMap;
 
+    protected final Map<String, Annotation> elementCollectionFieldsMap;
+
     @Autowired
     Mapper beanMapper;
 
@@ -54,11 +54,13 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     protected AbstractNodeService(Class<T> clazz) {
         this.clazz = clazz;
         this.fieldMap = BeanUtils.getFileds(this.clazz, null);
+        this.elementCollectionFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, ElementCollection.class);
     }
 
     protected AbstractNodeService() {
         this.clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         this.fieldMap = BeanUtils.getFileds(this.clazz, null);
+        this.elementCollectionFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, ElementCollection.class);
     }
 
     abstract protected JpaRepository<T, ID> getRepository();
@@ -157,9 +159,9 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
         StringBuilder sql = new StringBuilder();
         if (!count) {
-            sql.append("SELECT c FROM ");
+            sql.append("SELECT distinct c FROM ");
         } else {
-            sql.append("SELECT count(c) FROM ");
+            sql.append("SELECT count(distinct c) FROM ");
         }
 
         sql.append(clazz.getSimpleName());
@@ -169,6 +171,14 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
             sql.append(" INNER JOIN ");
             sql.append(maxRevClazz.getSimpleName());
             sql.append(" m ON m.rid = c.rid AND c.revType < 2 ");
+        }
+
+        // @ElementCollection フィールドのための結合
+        for (Column column : input.getColumns()) {
+            if (isCollectionElement(column.getData())) {
+                sql.append(" LEFT JOIN c.");
+                sql.append(convertColumnName((column.getData())));
+            }
         }
 
         // フィールドフィルタ
@@ -181,25 +191,35 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                     sql.append(" AND ");
                 }
                 if (isDate(column.getData())) {
-                    sql.append("function('date_format', ");
-                    sql.append("c." + convertColumnName(column.getData()));
-                    sql.append(", '%Y/%m/%d')");
+                    sql.append("function('date_format', c.");
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(", '%Y/%m/%d') LIKE :");
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(" ESCAPE '~'");
                 } else if (isDateTime(column.getData())) {
-                    sql.append("function('date_format', ");
-                    sql.append("c." + convertColumnName((column.getData())));
-                    sql.append(", '%Y/%m/%d %T')");
-
+                    sql.append("function('date_format', c.");
+                    sql.append(convertColumnName((column.getData())));
+                    sql.append(", '%Y/%m/%d %T') LIKE :");
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(" ESCAPE '~'");
                 } else if (isNumeric(convertColumnName(column.getData()))) {
-                    sql.append("function('format', ");
-                    sql.append("c." + convertColumnName(column.getData()));
-                    sql.append(", 0)");
+                    sql.append("function('CONVERT', c.");
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(", CHAR) LIKE :");
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(" ESCAPE '~'");
+                } else if (isCollection(column.getData())) {
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(" LIKE :");
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(" ESCAPE '~'");
                 } else {
-                    sql.append("c." + convertColumnName(column.getData()));
+                    sql.append("c.");
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(" LIKE :");
+                    sql.append(convertColumnName(column.getData()));
+                    sql.append(" ESCAPE '~'");
                 }
-
-                sql.append(" LIKE :");
-                sql.append(convertColumnName(column.getData()));
-                sql.append(" ESCAPE '~'");
             }
         }
 
@@ -211,17 +231,25 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 if (column.getSearchable()) {
                     sql.append(" OR ");
                     if (isDate(column.getData())) {
-                        sql.append("function('date_format', ");
-                        sql.append("c." + convertColumnName(column.getData()));
-                        sql.append(", '%Y/%m/%d')");
+                        sql.append("function('date_format', c.");
+                        sql.append(convertColumnName(column.getData()));
+                        sql.append(", '%Y/%m/%d') LIKE :globalSearch ESCAPE '~'");
                     } else if (isDateTime(column.getData())) {
-                        sql.append("function('date_format', ");
-                        sql.append("c." + convertColumnName(column.getData()));
-                        sql.append(", '%Y/%m/%d %T')");
+                        sql.append("function('date_format', c.");
+                        sql.append(convertColumnName(column.getData()));
+                        sql.append(", '%Y/%m/%d %T') LIKE :globalSearch ESCAPE '~'");
+                    } else if (isNumeric(convertColumnName(column.getData()))) {
+                        sql.append("function('CONVERT', c.");
+                        sql.append(convertColumnName(column.getData()));
+                        sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
+                    } else if (isCollection(column.getData())) {
+                        sql.append(convertColumnName(column.getData()));
+                        sql.append(" LIKE :globalSearch ESCAPE '~'");
                     } else {
-                        sql.append("c." + convertColumnName(column.getData()));
+                        sql.append("c.");
+                        sql.append(convertColumnName(column.getData()));
+                        sql.append(" LIKE :globalSearch ESCAPE '~'");
                     }
-                    sql.append(" LIKE :globalSearch ESCAPE '~'");
                 }
             }
         }
@@ -230,7 +258,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         List<String> orderClause = new ArrayList<>();
         for (Order order : input.getOrder()) {
             orderClause.add(
-                    "c." + convertColumnName(input.getColumns().get(order.getColumn()).getData()) + " " + order.getDir());
+                    convertColumnName(input.getColumns().get(order.getColumn()).getData()) + " " + order.getDir());
         }
         sql.append(" ORDER BY ");
         sql.append(StringUtils.join(orderClause, ','));
@@ -248,6 +276,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         // フィールドフィルタ
         for (Column column : input.getColumns()) {
             if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
+                // 検索文字列を%で囲む
                 typedQuery.setParameter(convertColumnName(column.getData()), QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
             }
         }
@@ -258,7 +287,6 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         }
 
         return typedQuery;
-
     }
 
     protected boolean isDate(String fieldName) {
@@ -277,13 +305,21 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 || "java.lang.Double".equals(fieldMap.get(fieldName));
     }
 
+    protected boolean isCollection(String fieldName) {
+        return "java.util.Collection".equals(fieldMap.get(fieldName))
+                || "java.util.List".equals(fieldMap.get(fieldName));
+    }
+
     protected String convertColumnName(String org) {
         if (StringUtils.endsWith(org, "Label")) {
             return StringUtils.left(org, org.length() - 5);
         } else {
             return org;
         }
+    }
 
+    protected boolean isCollectionElement(String fieldName) {
+        return elementCollectionFieldsMap.containsKey(fieldName);
     }
 
     protected Pageable getPageable(DataTablesInput input) {

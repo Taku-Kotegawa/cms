@@ -186,12 +186,35 @@ public class SimpleEntityController {
 
         for (SimpleEntity simpleEntity : simpleEntityList) {
             SimpleEntityCsvBean row = beanMapper.map(simpleEntity, SimpleEntityCsvBean.class);
+            customMap(row, simpleEntity);
             row.setStatusLabel(Status.getByValue(simpleEntity.getStatus()).getCodeLabel());
             list.add(row);
         }
 
         model.addAttribute("exportCsvData", list);
         model.addAttribute("class", SimpleEntityCsvBean.class);
+    }
+
+    private void customMap(SimpleEntityCsvBean row, SimpleEntity simpleEntity) {
+
+    }
+
+    private List<SimpleEntityBean> getBeanList(List<SimpleEntity> entities) {
+        List<SimpleEntityBean> beans = new ArrayList<>();
+        for(SimpleEntity entity : entities) {
+            SimpleEntityBean bean = beanMapper.map(entities, SimpleEntityBean.class);
+            beans.add(bean);
+        }
+        return beans;
+    }
+
+    private List<SimpleEntityBean> getBeanListByRev(List<SimpleEntityRevision> entities) {
+        List<SimpleEntity> beans = new ArrayList<>();
+        for(SimpleEntityRevision entity : entities) {
+            SimpleEntity bean = beanMapper.map(entities, SimpleEntity.class);
+            beans.add(bean);
+        }
+        return getBeanList(beans);
     }
 
 
@@ -403,7 +426,6 @@ public class SimpleEntityController {
     }
 
     // TODO メソッド削除
-
     /**
      * 無効解除
      */

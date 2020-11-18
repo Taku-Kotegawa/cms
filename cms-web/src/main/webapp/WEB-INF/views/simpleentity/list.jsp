@@ -29,7 +29,7 @@
           <th class="text-center px-1" data-filter="disable"></th>
           <th data-filter="disable"></th>
           <!-- (1) Start -->
-          <th data-filter="disable"></th>
+          <th></th>
           <th></th>
           <th></th>
           <th></th>
@@ -55,7 +55,7 @@
           <th class="text-center">テキスト(数値・整数)</th>
           <th class="text-center">テキスト(数値・小数あり)</th>
           <th class="text-center">テキスト(真偽値)</th>
-          <th class="text-center">URL</th>
+          <th class="text-center">テキストフィールド(複数の値)</th>
           <th>ステータス</th>
           <th class="text-center">最終更新日時</th>
           <!-- (2) End -->
