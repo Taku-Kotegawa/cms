@@ -18,26 +18,26 @@ package jp.co.stnet.cms.domain.common.scheduled;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import jp.co.stnet.cms.domain.service.common.FileUploadSharedService;
 import org.springframework.beans.factory.annotation.Value;
-import org.terasoluna.gfw.common.date.ClassicDateFactory;
 
 import javax.inject.Inject;
+import java.time.LocalDateTime;
 
 public class TempFileCleaner {
 
-    @Inject
-    ClassicDateFactory dateFactory;
-    
+//    @Inject
+//    ClassicDateFactory dateFactory;
+
     @Inject
     FileUploadSharedService fileUploadSharedService;
 
     @Inject
     FileManagedSharedService fileManagedSharedService;
-    
+
     @Value("${security.tempFileCleanupSeconds}")
     int cleanupInterval;
-    
+
     public void cleanup() {
-        fileUploadSharedService.cleanUp(dateFactory.newTimestamp().toLocalDateTime().minusSeconds(cleanupInterval));
-        fileManagedSharedService.cleanup(dateFactory.newTimestamp().toLocalDateTime().minusSeconds(cleanupInterval));
+        fileUploadSharedService.cleanUp(LocalDateTime.now().minusSeconds(cleanupInterval));
+        fileManagedSharedService.cleanup(LocalDateTime.now().minusSeconds(cleanupInterval));
     }
 }

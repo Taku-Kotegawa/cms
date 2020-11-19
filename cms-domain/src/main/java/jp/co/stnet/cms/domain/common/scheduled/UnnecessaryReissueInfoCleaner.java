@@ -17,21 +17,20 @@ package jp.co.stnet.cms.domain.common.scheduled;
 
 
 import jp.co.stnet.cms.domain.service.authentication.PasswordReissueService;
-import org.terasoluna.gfw.common.date.ClassicDateFactory;
 
 import javax.inject.Inject;
+import java.time.LocalDateTime;
 
 public class UnnecessaryReissueInfoCleaner {
 
-    @Inject
-    ClassicDateFactory dateFactory;
+//    @Inject
+//    ClassicDateFactory dateFactory;
 
     @Inject
     PasswordReissueService passwordReissueService;
 
     public void cleanup() {
-        passwordReissueService.removeExpired(dateFactory.newTimestamp()
-                .toLocalDateTime());
+        passwordReissueService.removeExpired(LocalDateTime.now());
     }
 
 }
