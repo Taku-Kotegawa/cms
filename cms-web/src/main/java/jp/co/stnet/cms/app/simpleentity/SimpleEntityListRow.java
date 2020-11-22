@@ -8,8 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -77,5 +79,116 @@ public class SimpleEntityListRow implements Serializable {
      * テキストフィールド(複数の値)
      */
     private Collection<String> text05;
+
+    /**
+     * ラジオボタン(真偽値)
+     */
+    private Boolean radio01;
+    /**
+     * ラジオボタン(文字列)
+     */
+    private String radio02;
+    /**
+     * チェックボックス(文字列)
+     */
+    private String checkbox01;
+    /**
+     * チェックボックス(複数の値)
+     */
+    private List<String> checkbox02;
+    /**
+     * テキストエリア
+     */
+    private String textarea01;
+    /**
+     * 日付
+     */
+    private LocalDate date01;
+    /**
+     * 日付時刻
+     */
+    private LocalDateTime datetime01;
+    /**
+     * セレクト(単一の値)
+     */
+    private String select01;
+    /**
+     * セレクト(複数の値)
+     */
+    private List<String> select02;
+    /**
+     * セレクト(単一の値, select2)
+     */
+    private String select03;
+    /**
+     * セレクト(複数の値, select2)
+     */
+    private List<String> select04;
+    /**
+     * コンボボックス(単一の値, Bootstrap)
+     */
+    private String combobox01;
+    /**
+     * コンボボックス(単一の値, Select2)
+     */
+    private String combobox02;
+
+
+
+
+    /**
+     * ラジオボタン(真偽値)ラベル
+     */
+    private String radio01Label;
+
+    /**
+     * チェックボックス(文字列)のラベル
+     */
+    private String checkbox01Label;
+
+    /**
+     * チェックボックス(複数の値)ラベル
+     */
+    private String checkbox02Label;
+
+    /**
+     * セレクト(単一の値)ラベル
+     */
+    private String select01Label;
+
+    /**
+     * セレクト(複数の値)
+     */
+    private String select02Label;
+
+    /**
+     * セレクト(単一の値, select2)
+     */
+    private String select03Label;
+
+    /**
+     * セレクト(複数の値, select2)
+     */
+    private String select04Label;
+
+    /**
+     * コンボボックス(単一の値, Bootstrap)
+     */
+    private String combobox01Label;
+
+    /**
+     * コンボボックス(単一の値, Select2)
+     */
+    private String combobox02Label;
+
+    /**
+     * コンボボックス(複数の値, Select2)
+     */
+    private String combobox03Label;
+
+    /**
+     * 添付ファイル名
+     */
+    private String attachedFile01FileName;
 
 }

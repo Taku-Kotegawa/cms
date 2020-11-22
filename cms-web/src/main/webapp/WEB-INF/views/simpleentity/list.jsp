@@ -35,6 +35,7 @@
           <th></th>
           <th></th>
           <th></th>
+          <th></th>
           <th data-filter="disable">
             <select id="col_filter_8" data-column="8" class="dataTables_column_filter form-control">
               <option value=""></option>
@@ -56,6 +57,7 @@
           <th class="text-center">テキスト(数値・小数あり)</th>
           <th class="text-center">テキスト(真偽値)</th>
           <th class="text-center">テキストフィールド(複数の値)</th>
+          <th class="text-center">ラジオボタン(真偽値)ラベル</th>
           <th>ステータス</th>
           <th class="text-center">最終更新日時</th>
           <!-- (2) End -->
@@ -132,6 +134,9 @@
               render: $.fn.dataTable.render.text(),
             },
             {
+              data: 'radio01Label',
+              render: $.fn.dataTable.render.text(),
+            }, {
               data: 'statusLabel',
               className: 'text-center',
               // orderable: false,

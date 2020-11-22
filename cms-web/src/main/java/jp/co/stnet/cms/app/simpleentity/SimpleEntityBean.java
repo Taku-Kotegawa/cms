@@ -12,6 +12,11 @@ public class SimpleEntityBean extends SimpleEntity {
     private String radio01Label;
 
     /**
+     * チェックボックス(文字列)のラベル
+     */
+    private String checkbox01Label;
+
+    /**
      * チェックボックス(複数の値)ラベル
      */
     private String checkbox02Label;

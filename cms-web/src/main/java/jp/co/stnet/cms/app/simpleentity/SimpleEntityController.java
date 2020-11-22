@@ -44,6 +44,7 @@ import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -120,14 +121,12 @@ public class SimpleEntityController {
             recordsFiltered = simpleEntityPage2.getTotalElements();
         }
 
-        for (SimpleEntity simpleEntity : simpleEntityList) {
-            SimpleEntityListRow simpleEntityListRow = beanMapper.map(simpleEntity, SimpleEntityListRow.class);
-            simpleEntityListRow.setOperations(getToggleButton(simpleEntity.getId().toString(), op));
-            simpleEntityListRow.setDT_RowId(simpleEntity.getId().toString());
-
+        for (SimpleEntityBean bean : getBeanList(simpleEntityList)) {
+            SimpleEntityListRow simpleEntityListRow = beanMapper.map(bean, SimpleEntityListRow.class);
+            simpleEntityListRow.setOperations(getToggleButton(bean.getId().toString(), op));
+            simpleEntityListRow.setDT_RowId(bean.getId().toString());
             // ステータスラベル
-            simpleEntityListRow.setStatusLabel(Status.getByValue(simpleEntity.getStatus()).getCodeLabel());
-
+            simpleEntityListRow.setStatusLabel(Status.getByValue(bean.getStatus()).getCodeLabel());
             list.add(simpleEntityListRow);
         }
 
@@ -202,7 +201,53 @@ public class SimpleEntityController {
     private List<SimpleEntityBean> getBeanList(List<SimpleEntity> entities) {
         List<SimpleEntityBean> beans = new ArrayList<>();
         for(SimpleEntity entity : entities) {
-            SimpleEntityBean bean = beanMapper.map(entities, SimpleEntityBean.class);
+            SimpleEntityBean bean = beanMapper.map(entity, SimpleEntityBean.class);
+
+            // ラジオボタン(真偽値)ラベル
+            bean.setRadio01Label(entity.getRadio01() ? "はい" : "いいえ");
+
+            // チェックボックス(文字列)ラベル
+            bean.setCheckbox01Label("はい".equals(entity.getCheckbox01()) ? "☑" : "□"  + "利用規約に合意する");
+
+            // チェックボックス(複数の値)ラベル
+            String s = entity.getCheckbox02().stream()
+                    .map(str -> statusCodeList.asMap().get(str))
+                    .collect(Collectors.joining(", "));
+            bean.setCheckbox02Label(s);
+
+            // セレクト(単一の値)ラベル
+            bean.setSelect01Label(statusCodeList.asMap().get(entity.getSelect01()));
+
+            // セレクト(複数の値)
+            String t = entity.getSelect02().stream()
+                    .map(str -> statusCodeList.asMap().get(str))
+                    .collect(Collectors.joining());
+            bean.setSelect02Label(t);
+
+            // セレクト(単一の値, select2)
+            bean.setSelect03Label(statusCodeList.asMap().get(entity.getSelect03()));
+
+            // セレクト(複数の値, select2)
+            String u = entity.getSelect04().stream()
+                    .map(str -> statusCodeList.asMap().get(str))
+                    .collect(Collectors.joining());
+            bean.setSelect04Label(u);
+
+            // コンボボックス(単一の値, Select2)
+            bean.setCombobox02Label(statusCodeList.asMap().get(entity.getCombobox02()));
+
+            // コンボボックス(複数の値, Select2)
+            String v = entity.getCombobox03().stream()
+                    .map(str -> statusCodeList.asMap().get(str))
+                    .collect(Collectors.joining());
+            bean.setCombobox03Label(v);
+
+            // 添付ファイル名
+            bean.setAttachedFile01Managed(fileManagedSharedService.findByUuid(entity.getAttachedFile01Uuid()));
+            if (bean.getAttachedFile01Managed() != null) {
+                bean.setAttachedFile01FileName(bean.getAttachedFile01Managed().getOriginalFilename());
+            }
+
             beans.add(bean);
         }
         return beans;

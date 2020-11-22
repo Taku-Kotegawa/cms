@@ -190,34 +190,41 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 } else {
                     sql.append(" AND ");
                 }
-                if (isDate(column.getData())) {
+                String fieldName = convertColumnName(column.getData());
+                if (isDate(fieldName)) {
                     sql.append("function('date_format', c.");
-                    sql.append(convertColumnName(column.getData()));
+                    sql.append(fieldName);
                     sql.append(", '%Y/%m/%d') LIKE :");
-                    sql.append(convertColumnName(column.getData()));
+                    sql.append(fieldName);
                     sql.append(" ESCAPE '~'");
-                } else if (isDateTime(column.getData())) {
+                } else if (isDateTime(fieldName)) {
                     sql.append("function('date_format', c.");
-                    sql.append(convertColumnName((column.getData())));
+                    sql.append(fieldName);
                     sql.append(", '%Y/%m/%d %T') LIKE :");
-                    sql.append(convertColumnName(column.getData()));
+                    sql.append(fieldName);
                     sql.append(" ESCAPE '~'");
-                } else if (isNumeric(convertColumnName(column.getData()))) {
+                } else if (isNumeric(fieldName)) {
                     sql.append("function('CONVERT', c.");
-                    sql.append(convertColumnName(column.getData()));
+                    sql.append(fieldName);
                     sql.append(", CHAR) LIKE :");
-                    sql.append(convertColumnName(column.getData()));
+                    sql.append(fieldName);
                     sql.append(" ESCAPE '~'");
-                } else if (isCollection(column.getData())) {
-                    sql.append(convertColumnName(column.getData()));
+                } else if (isCollection(fieldName)) {
+                    sql.append(fieldName);
                     sql.append(" LIKE :");
-                    sql.append(convertColumnName(column.getData()));
+                    sql.append(fieldName);
+                    sql.append(" ESCAPE '~'");
+                } else if (isBoolean(fieldName)) {
+                    sql.append("function('FORMAT', c.");
+                    sql.append(fieldName);
+                    sql.append(", 0) LIKE :");
+                    sql.append(fieldName);
                     sql.append(" ESCAPE '~'");
                 } else {
                     sql.append("c.");
-                    sql.append(convertColumnName(column.getData()));
+                    sql.append(fieldName);
                     sql.append(" LIKE :");
-                    sql.append(convertColumnName(column.getData()));
+                    sql.append(fieldName);
                     sql.append(" ESCAPE '~'");
                 }
             }
@@ -230,24 +237,29 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
             for (Column column : input.getColumns()) {
                 if (column.getSearchable()) {
                     sql.append(" OR ");
-                    if (isDate(column.getData())) {
+                    String fieldName = convertColumnName(column.getData());
+                    if (isDate(fieldName)) {
                         sql.append("function('date_format', c.");
-                        sql.append(convertColumnName(column.getData()));
+                        sql.append(fieldName);
                         sql.append(", '%Y/%m/%d') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isDateTime(column.getData())) {
+                    } else if (isDateTime(fieldName)) {
                         sql.append("function('date_format', c.");
-                        sql.append(convertColumnName(column.getData()));
+                        sql.append(fieldName);
                         sql.append(", '%Y/%m/%d %T') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isNumeric(convertColumnName(column.getData()))) {
+                    } else if (isNumeric(fieldName)) {
                         sql.append("function('CONVERT', c.");
-                        sql.append(convertColumnName(column.getData()));
+                        sql.append(fieldName);
                         sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
-                    } else if (isCollection(column.getData())) {
-                        sql.append(convertColumnName(column.getData()));
+                    } else if (isCollection(fieldName)) {
+                        sql.append(fieldName);
                         sql.append(" LIKE :globalSearch ESCAPE '~'");
+                    } else if (isBoolean(fieldName)) {
+                        sql.append("function('CONVERT', c.");
+                        sql.append(fieldName);
+                        sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
                     } else {
                         sql.append("c.");
-                        sql.append(convertColumnName(column.getData()));
+                        sql.append(fieldName);
                         sql.append(" LIKE :globalSearch ESCAPE '~'");
                     }
                 }
@@ -255,13 +267,14 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         }
 
         // Order BY
-        List<String> orderClause = new ArrayList<>();
+        List<String> orderClauses = new ArrayList<>();
         for (Order order : input.getOrder()) {
-            orderClause.add(
-                    convertColumnName(input.getColumns().get(order.getColumn()).getData()) + " " + order.getDir());
+            String fieldName = input.getColumns().get(order.getColumn()).getData();
+            String orderClause = (isCollection(fieldName) ? "" : "c.") + convertColumnName(fieldName) + " " + order.getDir();
+            orderClauses.add(orderClause);
         }
         sql.append(" ORDER BY ");
-        sql.append(StringUtils.join(orderClause, ','));
+        sql.append(StringUtils.join(orderClauses, ','));
 
         // Limit
         TypedQuery typedQuery;
@@ -308,6 +321,10 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     protected boolean isCollection(String fieldName) {
         return "java.util.Collection".equals(fieldMap.get(fieldName))
                 || "java.util.List".equals(fieldMap.get(fieldName));
+    }
+
+    protected boolean isBoolean(String fieldName) {
+        return "java.lang.Boolean".equals(fieldMap.get(fieldName));
     }
 
     protected String convertColumnName(String org) {
