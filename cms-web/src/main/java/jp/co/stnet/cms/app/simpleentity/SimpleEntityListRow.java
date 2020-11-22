@@ -103,10 +103,12 @@ public class SimpleEntityListRow implements Serializable {
     /**
      * 日付
      */
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDate date01;
     /**
      * 日付時刻
      */
+    @JsonFormat(pattern = "yyyy/MM/dd hh:mm")
     private LocalDateTime datetime01;
     /**
      * セレクト(単一の値)
@@ -132,10 +134,6 @@ public class SimpleEntityListRow implements Serializable {
      * コンボボックス(単一の値, Select2)
      */
     private String combobox02;
-
-
-
-
     /**
      * ラジオボタン(真偽値)ラベル
      */

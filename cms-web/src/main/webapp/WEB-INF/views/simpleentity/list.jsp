@@ -12,6 +12,18 @@
   </div>
 </section>
 
+<style>
+.dataTables_scrollBody > table > thead > tr {
+  height: 0;
+  border-bottom-width: 0px;
+}
+
+table.dataTable > tbody > tr > td {
+  white-space: nowrap;
+}
+</style>
+
+
 <section class="content px-5">
   <div class="container-fluid">
 
@@ -35,9 +47,28 @@
           <th></th>
           <th></th>
           <th></th>
-          <th></th>
           <th data-filter="disable">
             <select id="col_filter_8" data-column="8" class="dataTables_column_filter form-control">
+              <option value=""></option>
+              <option value="1">はい</option>
+              <option value="0">いいえ</option>
+            </select>
+          </th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th data-filter="disable">
+            <select id="col_filter_9" data-column="9" class="dataTables_column_filter form-control">
               <option value=""></option>
               <c:forEach items="${CL_STATUS}" var="obj">
                 <option value="${obj.key}">${obj.value}</option>
@@ -53,12 +84,25 @@
           <!-- (2) Start -->
           <th class="text-center">#</th>
           <th class="text-center">テキスト</th>
-          <th class="text-center">テキスト(数値・整数)</th>
-          <th class="text-center">テキスト(数値・小数あり)</th>
-          <th class="text-center">テキスト(真偽値)</th>
-          <th class="text-center">テキストフィールド(複数の値)</th>
-          <th class="text-center">ラジオボタン(真偽値)ラベル</th>
-          <th>ステータス</th>
+          <th class="text-center">テキスト<br>(数値・整数)</th>
+          <th class="text-center">テキスト<br>(数値・小数あり)</th>
+          <th class="text-center">テキスト<br>(真偽値)</th>
+          <th class="text-center">テキスト<br>(複数の値)</th>
+          <th class="text-center">ラジオボタン<br>(真偽値)</th>
+          <th class="text-center">ラジオボタン<br>(文字列)</th>
+          <th class="text-center">チェックボックス<br>(文字列)</th>
+          <th class="text-center">チェックボックス<br>(複数の値)</th>
+          <th class="text-center">日付</th>
+          <th class="text-center">日付時刻</th>
+          <th class="text-center">select</th>
+          <th class="text-center">select<br>(複数の値)</th>
+          <th class="text-center">select2</th>
+          <th class="text-center">select2<br>(複数の値)</th>
+          <th class="text-center">コンボボックス</th>
+          <th class="text-center">コンボボックス<br>(Select2-tags)</th>
+          <th class="text-center">コンボボックス<br>(Select2-tags 複数の値)</th>
+          <th class="text-center">ファイル名</th>
+          <th class="text-center">ステータス</th>
           <th class="text-center">最終更新日時</th>
           <!-- (2) End -->
         </tr>
@@ -93,6 +137,8 @@
             'url': 'list/json',
             'data': myflatten
           },
+
+          "scrollX": true,          
 
           // 一覧に表示する項目とJSONの項目にマッピング
           'columns': [{
@@ -136,7 +182,60 @@
             {
               data: 'radio01Label',
               render: $.fn.dataTable.render.text(),
-            }, {
+            },
+            { 
+              data: 'radio02',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'checkbox01Label',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'checkbox02Label',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'date01',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'datetime01',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'select01Label',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'select02Label',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'select03Label',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'select04Label',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'combobox01',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'combobox02Label',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'combobox03Label',
+              render: $.fn.dataTable.render.text(),
+            },
+            { 
+              data: 'attachedFile01FileName',
+              render: $.fn.dataTable.render.text(),
+            },
+            {
               data: 'statusLabel',
               className: 'text-center',
               // orderable: false,

@@ -175,7 +175,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
         // @ElementCollection フィールドのための結合
         for (Column column : input.getColumns()) {
-            if (isCollectionElement(column.getData())) {
+            if (isCollectionElement(convertColumnName(column.getData()))) {
                 sql.append(" LEFT JOIN c.");
                 sql.append(convertColumnName((column.getData())));
             }
@@ -269,8 +269,8 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         // Order BY
         List<String> orderClauses = new ArrayList<>();
         for (Order order : input.getOrder()) {
-            String fieldName = input.getColumns().get(order.getColumn()).getData();
-            String orderClause = (isCollection(fieldName) ? "" : "c.") + convertColumnName(fieldName) + " " + order.getDir();
+            String fieldName = convertColumnName(input.getColumns().get(order.getColumn()).getData());
+            String orderClause = (isCollection(fieldName) ? "" : "c.") + fieldName + " " + order.getDir();
             orderClauses.add(orderClause);
         }
         sql.append(" ORDER BY ");

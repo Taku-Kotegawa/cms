@@ -183,7 +183,7 @@ public class SimpleEntityController {
             }
         }
 
-        for (SimpleEntity simpleEntity : simpleEntityList) {
+        for (SimpleEntity simpleEntity : getBeanList(simpleEntityList)) {
             SimpleEntityCsvBean row = beanMapper.map(simpleEntity, SimpleEntityCsvBean.class);
             customMap(row, simpleEntity);
             row.setStatusLabel(Status.getByValue(simpleEntity.getStatus()).getCodeLabel());
@@ -204,48 +204,66 @@ public class SimpleEntityController {
             SimpleEntityBean bean = beanMapper.map(entity, SimpleEntityBean.class);
 
             // ラジオボタン(真偽値)ラベル
-            bean.setRadio01Label(entity.getRadio01() ? "はい" : "いいえ");
+            if (entity.getRadio01() != null) {
+                bean.setRadio01Label(entity.getRadio01() ? "はい" : "いいえ");
+            }
 
             // チェックボックス(文字列)ラベル
-            bean.setCheckbox01Label("はい".equals(entity.getCheckbox01()) ? "☑" : "□"  + "利用規約に合意する");
+            if (entity.getCheckbox01() != null) {
+                bean.setCheckbox01Label("はい".equals(entity.getCheckbox01()) ? "☑" : "□"  + "利用規約に合意する");
+            }
 
             // チェックボックス(複数の値)ラベル
-            String s = entity.getCheckbox02().stream()
-                    .map(str -> statusCodeList.asMap().get(str))
-                    .collect(Collectors.joining(", "));
-            bean.setCheckbox02Label(s);
+            if (entity.getCheckbox02() != null) {
+                String s = entity.getCheckbox02().stream()
+                        .map(str -> statusCodeList.asMap().get(str))
+                        .collect(Collectors.joining(", "));
+                bean.setCheckbox02Label(s);
+            }
 
             // セレクト(単一の値)ラベル
-            bean.setSelect01Label(statusCodeList.asMap().get(entity.getSelect01()));
+            if (entity.getSelect01() != null) {
+                bean.setSelect01Label(statusCodeList.asMap().get(entity.getSelect01()));
+            }
 
             // セレクト(複数の値)
-            String t = entity.getSelect02().stream()
-                    .map(str -> statusCodeList.asMap().get(str))
-                    .collect(Collectors.joining());
-            bean.setSelect02Label(t);
+            if (entity.getSelect02() != null) {
+                String t = entity.getSelect02().stream()
+                        .map(str -> statusCodeList.asMap().get(str))
+                        .collect(Collectors.joining(", "));
+                bean.setSelect02Label(t);
+            }
 
             // セレクト(単一の値, select2)
-            bean.setSelect03Label(statusCodeList.asMap().get(entity.getSelect03()));
+            if (entity.getSelect03() != null) {
+                bean.setSelect03Label(statusCodeList.asMap().get(entity.getSelect03()));
+            }
 
             // セレクト(複数の値, select2)
             String u = entity.getSelect04().stream()
                     .map(str -> statusCodeList.asMap().get(str))
-                    .collect(Collectors.joining());
+                    .collect(Collectors.joining(", "));
             bean.setSelect04Label(u);
 
             // コンボボックス(単一の値, Select2)
-            bean.setCombobox02Label(statusCodeList.asMap().get(entity.getCombobox02()));
+            if (entity.getCombobox02() != null) {
+                bean.setCombobox02Label(statusCodeList.asMap().get(entity.getCombobox02()));
+            }
 
             // コンボボックス(複数の値, Select2)
-            String v = entity.getCombobox03().stream()
-                    .map(str -> statusCodeList.asMap().get(str))
-                    .collect(Collectors.joining());
-            bean.setCombobox03Label(v);
+            if (entity.getCombobox03() != null) {
+                String v = entity.getCombobox03().stream()
+                        .map(str -> statusCodeList.asMap().get(str))
+                        .collect(Collectors.joining(", "));
+                bean.setCombobox03Label(v);
+            }
 
             // 添付ファイル名
-            bean.setAttachedFile01Managed(fileManagedSharedService.findByUuid(entity.getAttachedFile01Uuid()));
-            if (bean.getAttachedFile01Managed() != null) {
-                bean.setAttachedFile01FileName(bean.getAttachedFile01Managed().getOriginalFilename());
+            if (entity.getAttachedFile01Uuid() != null) {
+                bean.setAttachedFile01Managed(fileManagedSharedService.findByUuid(entity.getAttachedFile01Uuid()));
+                if (bean.getAttachedFile01Managed() != null) {
+                    bean.setAttachedFile01FileName(bean.getAttachedFile01Managed().getOriginalFilename());
+                }
             }
 
             beans.add(bean);

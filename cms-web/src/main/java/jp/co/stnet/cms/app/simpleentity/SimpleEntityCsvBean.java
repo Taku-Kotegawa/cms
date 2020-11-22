@@ -56,7 +56,7 @@ public class SimpleEntityCsvBean implements Serializable {
      * ラジオボタン(真偽値)
      */
     @CsvColumn(name = "ラジオボタン(真偽値)")
-    private Boolean radio01;
+    private String radio01Label;
 
     /**
      * ラジオボタン(文字列)
@@ -68,13 +68,13 @@ public class SimpleEntityCsvBean implements Serializable {
      * チェックボックス(文字列)
      */
     @CsvColumn(name = "チェックボックス(文字列)")
-    private String checkbox01;
+    private String checkbox01Label;
 
     /**
      * チェックボックス(複数の値)
      */
     @CsvColumn(name = "チェックボックス(複数の値)")
-    private List<String> checkbox02;
+    private String checkbox02Label;
 
     /**
      * テキストエリア
@@ -98,25 +98,25 @@ public class SimpleEntityCsvBean implements Serializable {
      * セレクト(単一の値)
      */
     @CsvColumn(name = "セレクト(単一の値)")
-    private String select01;
+    private String select01Label;
 
     /**
      * セレクト(複数の値)
      */
     @CsvColumn(name = "セレクト(複数の値)")
-    private List<String> select02;
+    private String select02Label;
 
     /**
      * セレクト(単一の値, select2)
      */
     @CsvColumn(name = "セレクト(単一の値, select2)")
-    private String select03;
+    private String select03Label;
 
     /**
      * セレクト(複数の値, select2)
      */
     @CsvColumn(name = "セレクト(複数の値, select2)")
-    private List<String> select04;
+    private String select04Label;
 
     /**
      * コンボボックス(単一の値, Bootstrap)
@@ -128,24 +128,18 @@ public class SimpleEntityCsvBean implements Serializable {
      * コンボボックス(単一の値, Select2)
      */
     @CsvColumn(name = "コンボボックス(単一の値, Select2)")
-    private String combobox02;
+    private String combobox02Label;
 
     /**
      * コンボボックス(複数の値, Select2)
      */
     @CsvColumn(name = "コンボボックス(複数の値, Select2)")
-    private List<String> combobox03;
+    private String combobox03Label;
 
     /**
      * 添付ファイル(FileManaged UUID)
      */
-    @CsvColumn(name = "添付ファイル(FileManaged UUID)")
-    private String attachedFile01Uuid;
-
-    /**
-     * 添付ファイル(FileManaged)
-     */
-    @CsvColumn(name = "添付ファイル(FileManaged)")
-    private FileManaged attachedFile01Managed;
+    @CsvColumn(name = "添付ファイル")
+    private String attachedFile01FileName;
 
 }
