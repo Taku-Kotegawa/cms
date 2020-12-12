@@ -23,6 +23,7 @@
           <li> <a href="${f:h(pageContext.request.contextPath)}/simpleentity/list">SimpleEntity List</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/person/list">Person</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/select/list">Select</a></li>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/pdfbox?form">pdfbox</a></li>
         </ul>
       </div>
     </div>
