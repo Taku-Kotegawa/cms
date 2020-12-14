@@ -27,18 +27,10 @@
 <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-colreorder/js/colReorder.bootstrap4.min.js"></script>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- fiexed Column-->
+<!-- <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.min.css"> -->
+<!-- <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.min.js"></script> -->
+<!-- <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/js/fixedColumns.bootstrap4.min.js"></script> -->
 
 
 
@@ -53,6 +45,46 @@ table.dataTable {
 /* フィールドフィルター */
 tr.filter th {
   padding: 4px 8px;
+}
+
+/* scrollx でのスタイル崩れ修正 */
+.dataTables_scrollBody > table > thead > tr {
+  height: 0 !important;
+  border-bottom-width: 0px !important;
+}
+
+
+/* DataTables Checkbox */
+table.dataTable .dt-checkboxes-cell {
+  padding-top: 7.8px;
+}
+
+.page-link {
+  color: #212529;
+  border: unset;
+}
+
+.page-item.active .page-link {
+    color: #212529;
+    background-color: #e5e5e2;
+}
+
+.page-item.disabled .page-link {
+  color: #8c959d;  
+}
+
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: unset;
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-hover tbody tr:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, 0.075);
 }
 
 </style>
