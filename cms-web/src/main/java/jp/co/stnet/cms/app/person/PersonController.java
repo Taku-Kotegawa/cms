@@ -111,6 +111,12 @@ public class PersonController {
         return JSP_SEARCH;
     }
 
+    private Long nullToZero(Long number) {
+        if (number == null) {
+            return 0L;
+        }
+        return number;
+    }
 
     /**
      * DataTables用のJSONの作成
