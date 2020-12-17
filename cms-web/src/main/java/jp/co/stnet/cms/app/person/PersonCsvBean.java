@@ -42,4 +42,6 @@ public class PersonCsvBean implements Serializable {
     @CsvColumn(name = "年齢")
     private Integer age;
 
+    @CsvColumn(name = "コード")
+    private String code;
 }

@@ -5,6 +5,8 @@ import jp.co.stnet.cms.domain.model.AbstractEntity;
 import jp.co.stnet.cms.domain.model.StatusInterface;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -113,13 +115,18 @@ public class SimpleEntity extends AbstractEntity<Long> implements Serializable, 
      */
     @ElementCollection
     private List<String> combobox03;
+
     /**
      * 添付ファイル(FileManaged)
      */
     private String attachedFile01Uuid;
+
     /**
      * 添付ファイル(FileManaged)
      */
+    @OneToOne(cascade = CascadeType.ALL)
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "attachedFile01Uuid", referencedColumnName = "uuid", unique=true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private FileManaged attachedFile01Managed;
 
     @Override

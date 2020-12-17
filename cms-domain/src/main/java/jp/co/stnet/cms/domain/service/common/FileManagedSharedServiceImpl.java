@@ -8,6 +8,8 @@ import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.repository.common.FileManagedRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.tika.Tika;
+import org.apache.tika.exception.TikaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,15 +18,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 import org.terasoluna.gfw.common.message.ResultMessages;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 
 @Slf4j
 @Service
@@ -48,6 +51,11 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
         } catch (IOException e) {
             throw new ResourceNotFoundException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001, filePath));
         }
+    }
+
+    @Override
+    public byte[] getFile(String uuid) {
+        return getFile(findByUuid(uuid).getFid());
     }
 
     @Override
@@ -81,7 +89,6 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
         File storeFile = new File(storeDir + File.separator + uuid);
         String mimeType = "";
-
         mimeType = MimeTypes.getMimeType(FilenameUtils.getExtension(file.getOriginalFilename()));
 
         try {
@@ -143,12 +150,30 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
         return STORE_BASEDIR + "/";
     }
 
+    @Override
+    public String getContent(String uuid) throws IOException, TikaException {
+        Tika tika = new Tika();
+        return tika.parseToString(new FileInputStream(new File(STORE_BASEDIR + findByUuid(uuid).getUri())));
+    }
+
     private File mkdirs(String filePath) {
         File uploadDir = new File(filePath);
         if (!uploadDir.exists()) {
             uploadDir.mkdirs();
         }
         return uploadDir;
+    }
+
+    private String escapeContent(String rawContent) {
+
+            rawContent = rawContent.replaceAll("[　]+", " ")
+                    .replaceAll("[ ]+", " ")
+                    .replaceAll("[\t]+", " ")
+                    .replaceAll("[ |\t]+", " ")
+                    .replaceAll("[\\n|\\r\\n|\\r]+", " ")
+                    .replaceAll("\\n|\\r\\n|\\r", " ");
+
+            return escapeHtml4(rawContent);
     }
 
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("admin")
-public class menuController {
+public class MenuController {
 
     @GetMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN')")

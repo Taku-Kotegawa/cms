@@ -4,7 +4,8 @@ import org.terasoluna.gfw.common.codelist.EnumCodeList;
 
 public enum VariableType implements EnumCodeList.CodeListItem {
 
-    VARIABLE_LABEL("VARIABLE_LABEL", "Variable編集画面ラベル");
+    VARIABLE_LABEL("VARIABLE_LABEL", "Variable編集画面ラベル"),
+    SAMPLE_CODELIST("SAMPLE_CODELIST", "サンプルコードリスト");
 
     private final String value;
     private final String label;

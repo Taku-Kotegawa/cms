@@ -30,10 +30,7 @@ import org.terasoluna.gfw.common.query.QueryEscapeUtils;
 import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Transactional
@@ -45,6 +42,9 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     protected final Map<String, Annotation> elementCollectionFieldsMap;
 
+    protected final Map<String, Annotation> relationFieldsMap;
+
+
     @Autowired
     Mapper beanMapper;
 
@@ -55,12 +55,16 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         this.clazz = clazz;
         this.fieldMap = BeanUtils.getFileds(this.clazz, null);
         this.elementCollectionFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, ElementCollection.class);
+        this.relationFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, OneToOne.class);
+        relationFieldsMap.putAll(BeanUtils.getFieldByAnnotation(clazz, null, ManyToOne.class));
     }
 
     protected AbstractNodeService() {
         this.clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         this.fieldMap = BeanUtils.getFileds(this.clazz, null);
         this.elementCollectionFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, ElementCollection.class);
+        this.relationFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, OneToOne.class);
+        relationFieldsMap.putAll(BeanUtils.getFieldByAnnotation(clazz, null, ManyToOne.class));
     }
 
     abstract protected JpaRepository<T, ID> getRepository();
@@ -71,11 +75,24 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001, id)));
     }
 
+    /**
+     * 保存前処理
+     */
+    protected void beforeSave(T entity, T current){};
+
+    /**
+     * 保存処理
+     * @param entity 更新するエンティティ
+     * @return entity 保存後のエンティティ
+     */
     @Override
     public T save(T entity) {
+
+        T currentCopy = null;
+
         if (!entity.isNew()) {
             T current = findById(entity.getId());
-            T currentCopy = beanMapper.map(current, clazz);
+            currentCopy = beanMapper.map(current, clazz);
 
             // 下書き保存時、本保存から変更がなければ保存しない(ステータスを変更チェックの対象から除外)
             if (current.getStatus().equals(Status.VALID.getCodeValue())
@@ -89,7 +106,9 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         }
 
         try {
+            beforeSave(entity, currentCopy);
             entity = getRepository().saveAndFlush(entity);
+
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new OptimisticLockingFailureBusinessException(ResultMessages.error().add(MessageKeys.E_CM_FW_8001));
         } catch (DataIntegrityViolationException e) {
@@ -153,9 +172,23 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         return getJPQLQuery(input, count, clazz, null);
     }
 
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     * @param input
+     * @param count
+     * @param clazz
+     * @param maxRevClazz
+     * @return
+     */
     protected Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz, Class maxRevClazz) {
 
         boolean hasFieldFilter = false;
+        Set<String> relationEntitySet = new HashSet<>();
 
         StringBuilder sql = new StringBuilder();
         if (!count) {
@@ -173,12 +206,25 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
             sql.append(" m ON m.rid = c.rid AND c.revType < 2 ");
         }
 
-        // @ElementCollection フィールドのための結合
+        // @OneToOne etc, @ElementCollection フィールドのための結合
         for (Column column : input.getColumns()) {
-            if (isCollectionElement(convertColumnName(column.getData()))) {
+            String originalColumnName = column.getData();
+            String convertedColumnName = convertColumnName(originalColumnName);
+
+            if (isCollectionElement(convertedColumnName)) {
                 sql.append(" LEFT JOIN c.");
-                sql.append(convertColumnName((column.getData())));
+                sql.append(convertedColumnName);
             }
+
+            String relationEntityName = getRelationEntity(originalColumnName);
+            if (relationEntityName != null) {
+                relationEntitySet.add(relationEntityName);
+            }
+        }
+
+        for (String entityName : relationEntitySet) {
+            sql.append(" LEFT JOIN c.");
+            sql.append(entityName);
         }
 
         // フィールドフィルタ
@@ -190,41 +236,47 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 } else {
                     sql.append(" AND ");
                 }
-                String fieldName = convertColumnName(column.getData());
-                if (isDate(fieldName)) {
+                String originalColumnName = column.getData();
+                String convertedColumnName = convertColumnName(originalColumnName);
+                if (isDate(convertedColumnName)) {
                     sql.append("function('date_format', c.");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(", '%Y/%m/%d') LIKE :");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(" ESCAPE '~'");
-                } else if (isDateTime(fieldName)) {
+                } else if (isDateTime(convertedColumnName)) {
                     sql.append("function('date_format', c.");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(", '%Y/%m/%d %T') LIKE :");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(" ESCAPE '~'");
-                } else if (isNumeric(fieldName)) {
+                } else if (isNumeric(convertedColumnName)) {
                     sql.append("function('CONVERT', c.");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(", CHAR) LIKE :");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(" ESCAPE '~'");
-                } else if (isCollection(fieldName)) {
-                    sql.append(fieldName);
+                } else if (isCollection(convertedColumnName)) {
+                    sql.append(convertedColumnName);
                     sql.append(" LIKE :");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(" ESCAPE '~'");
-                } else if (isBoolean(fieldName)) {
+                } else if (isRelation(originalColumnName)) {
+                    sql.append("c." + originalColumnName);
+                    sql.append(" LIKE :");
+                    sql.append(convertedColumnName);
+                    sql.append(" ESCAPE '~'");
+                } else if (isBoolean(convertedColumnName)) {
                     sql.append("function('FORMAT', c.");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(", 0) LIKE :");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(" ESCAPE '~'");
                 } else {
                     sql.append("c.");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(" LIKE :");
-                    sql.append(fieldName);
+                    sql.append(convertedColumnName);
                     sql.append(" ESCAPE '~'");
                 }
             }
@@ -237,29 +289,33 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
             for (Column column : input.getColumns()) {
                 if (column.getSearchable()) {
                     sql.append(" OR ");
-                    String fieldName = convertColumnName(column.getData());
-                    if (isDate(fieldName)) {
+                    String originalColumnName = column.getData();
+                    String convertColumnName = convertColumnName(originalColumnName);
+                    if (isDate(convertColumnName)) {
                         sql.append("function('date_format', c.");
-                        sql.append(fieldName);
+                        sql.append(convertColumnName);
                         sql.append(", '%Y/%m/%d') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isDateTime(fieldName)) {
+                    } else if (isDateTime(convertColumnName)) {
                         sql.append("function('date_format', c.");
-                        sql.append(fieldName);
+                        sql.append(convertColumnName);
                         sql.append(", '%Y/%m/%d %T') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isNumeric(fieldName)) {
+                    } else if (isNumeric(convertColumnName)) {
                         sql.append("function('CONVERT', c.");
-                        sql.append(fieldName);
+                        sql.append(convertColumnName);
                         sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
-                    } else if (isCollection(fieldName)) {
-                        sql.append(fieldName);
+                    } else if (isCollection(convertColumnName)) {
+                        sql.append(convertColumnName);
                         sql.append(" LIKE :globalSearch ESCAPE '~'");
-                    } else if (isBoolean(fieldName)) {
+                    } else if (isBoolean(convertColumnName)) {
                         sql.append("function('CONVERT', c.");
-                        sql.append(fieldName);
+                        sql.append(convertColumnName);
                         sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
+                    } else if (isRelation(originalColumnName)) {
+                        sql.append("c." + originalColumnName);
+                        sql.append(" LIKE :globalSearch ESCAPE '~'");
                     } else {
                         sql.append("c.");
-                        sql.append(fieldName);
+                        sql.append(convertColumnName);
                         sql.append(" LIKE :globalSearch ESCAPE '~'");
                     }
                 }
@@ -269,12 +325,23 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         // Order BY
         List<String> orderClauses = new ArrayList<>();
         for (Order order : input.getOrder()) {
-            String fieldName = convertColumnName(input.getColumns().get(order.getColumn()).getData());
-            String orderClause = (isCollection(fieldName) ? "" : "c.") + fieldName + " " + order.getDir();
+            String originalFiledName = input.getColumns().get(order.getColumn()).getData();
+            String convertColumnName = convertColumnName(originalFiledName);
+
+            String orderClause;
+            if (isCollection(convertColumnName)) {
+                orderClause = convertColumnName + " " + order.getDir();
+            } else if (isRelation(originalFiledName)) {
+                orderClause = "c." + originalFiledName + " " + order.getDir();
+            } else {
+                orderClause = "c." + convertColumnName + " " + order.getDir();
+            }
             orderClauses.add(orderClause);
         }
         sql.append(" ORDER BY ");
         sql.append(StringUtils.join(orderClauses, ','));
+
+        System.out.println(sql);
 
         // Limit
         TypedQuery typedQuery;
@@ -328,6 +395,11 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     }
 
     protected String convertColumnName(String org) {
+
+        if (StringUtils.contains(org, ".")) {
+            return StringUtils.substring(org, org.indexOf(".") + 1);
+        }
+
         if (StringUtils.endsWith(org, "Label")) {
             return StringUtils.left(org, org.length() - 5);
         } else {
@@ -337,6 +409,27 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     protected boolean isCollectionElement(String fieldName) {
         return elementCollectionFieldsMap.containsKey(fieldName);
+    }
+
+    protected boolean isRelation(String fieldName) {
+        if (getRelationEntity(fieldName) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    protected String getRelationEntity(String fieldName) {
+
+        String entityName = null;
+        if (fieldName.contains(".")) {
+            entityName = fieldName.substring(0, fieldName.indexOf("."));
+        }
+
+        if (relationFieldsMap.containsKey(entityName)) {
+            return entityName;
+        } else {
+            return null;
+        }
     }
 
     protected Pageable getPageable(DataTablesInput input) {

@@ -2,6 +2,9 @@ package jp.co.stnet.cms.domain.common;
 
 import com.google.common.base.CaseFormat;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     /**
@@ -40,7 +43,11 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, snakeCase);
     };
 
-
+    /**
+     * nullだった空白文字列を返す。
+     * @param o
+     * @return
+     */
     public static String nvl(Object o) {
         if (o == null) {
             return "";

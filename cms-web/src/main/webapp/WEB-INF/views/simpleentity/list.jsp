@@ -12,18 +12,6 @@
   </div>
 </section>
 
-<style>
-.dataTables_scrollBody > table > thead > tr {
-  height: 0;
-  border-bottom-width: 0px;
-}
-
-table.dataTable > tbody > tr > td {
-  white-space: nowrap;
-}
-</style>
-
-
 <section class="content px-5">
   <div class="container-fluid">
 
@@ -138,7 +126,7 @@ table.dataTable > tbody > tr > td {
             'data': myflatten
           },
 
-          "scrollX": true,          
+          "scrollX": true,
 
           // 一覧に表示する項目とJSONの項目にマッピング
           'columns': [{
@@ -231,10 +219,15 @@ table.dataTable > tbody > tr > td {
               data: 'combobox03Label',
               render: $.fn.dataTable.render.text(),
             },
-            { 
-              data: 'attachedFile01FileName',
+            // { 
+            //   data: 'attachedFile01FileName',
+            //   render: $.fn.dataTable.render.text(),
+            // },
+            {
+              data: 'attachedFile01Managed.originalFilename',
               render: $.fn.dataTable.render.text(),
-            },
+              "defaultContent": " - ",
+            },            
             {
               data: 'statusLabel',
               className: 'text-center',

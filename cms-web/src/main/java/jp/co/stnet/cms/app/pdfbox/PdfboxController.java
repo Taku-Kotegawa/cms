@@ -97,7 +97,6 @@ public class PdfboxController {
 
         documents = splitter.split( document );
 
-
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         documents.get(0).save(out);
 

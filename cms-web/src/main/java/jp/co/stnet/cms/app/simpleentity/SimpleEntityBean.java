@@ -1,5 +1,6 @@
 package jp.co.stnet.cms.app.simpleentity;
 
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.example.SimpleEntity;
 import lombok.Data;
 
@@ -60,5 +61,8 @@ public class SimpleEntityBean extends SimpleEntity {
      * 添付ファイル名
      */
     private String attachedFile01FileName;
+
+
+    private FileManaged attachedFile01Managed;
 
 }

@@ -22,9 +22,9 @@
     <tiles:insertAttribute name="header" />
     <div class="content-wrapper">
       <tiles:insertAttribute name="body" />
-<%-- JSPのコメント
+<%-- JSPのコメント 
       <%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
---%>
+      --%>
     </div>
   </div>
 </body>

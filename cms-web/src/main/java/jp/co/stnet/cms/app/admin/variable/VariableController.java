@@ -44,7 +44,6 @@ import java.util.Map;
 @Slf4j
 @Controller
 @RequestMapping("admin/variable")
-@TransactionTokenCheck("variable")
 public class VariableController {
 
     private final String BASE_PATH = "admin/variable";
@@ -224,9 +223,11 @@ public class VariableController {
             form.setFile1Managed(fileManagedSharedService.findByUuid(form.getFile1Uuid()));
         }
 
+        Variable variable = beanMapper.map(form, Variable.class);
+
         model.addAttribute("fieldLabel", getFieldLabel(variableType));
-        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, null).asMap());
-        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.CREATE, null).asMap());
+        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, variable).asMap());
+        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.CREATE, variable).asMap());
         model.addAttribute("op", op());
 
         return JSP_FORM;
@@ -585,6 +586,7 @@ public class VariableController {
         excludeKeys.add("version");
         excludeKeys.add("file1Managed");
         excludeKeys.add("file1Managed-createdBy");
+        excludeKeys.add("file1Managed-createdDate");
         excludeKeys.add("file1Managed-fid");
         excludeKeys.add("file1Managed-filemime");
         excludeKeys.add("file1Managed-filesize");
@@ -607,6 +609,7 @@ public class VariableController {
         // 編集
         if (Constants.OPERATION.SAVE.equals(operation)) {
             fieldState.setInputTrueAll();
+
             fieldState.setViewTrue("status");
             fieldState.setDisabledTrue("type");
             fieldState.setHiddenTrue("type");
@@ -615,6 +618,19 @@ public class VariableController {
             // スタータスが無効
             if (Status.INVALID.toString().equals(record.getStatus())) {
                 fieldState.setReadOnlyTrueAll();
+            }
+        }
+
+        if (record != null && record.getType() != null) {
+            List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), record.getType());
+            if (variables.size() > 0 && variables.get(0).getTextarea() != null) {
+                String[] t = variables.get(0).getTextarea().split(",");
+                for (int i = 0; i < t.length; i++) {
+                    String[] v = t[i].split("=");
+                    if (v.length == 1 ) {
+                        fieldState.setInputFalse(v[0].trim());
+                    }
+                }
             }
         }
 
@@ -649,7 +665,7 @@ public class VariableController {
         labels.put("date4", "日付４");
         labels.put("date5", "日付５");
         labels.put("textarea", "テキストエリア");
-        labels.put("file1", "ファイル");
+        labels.put("file1Uuid", "ファイル");
         labels.put("remark", "備考");
 
         List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), code);

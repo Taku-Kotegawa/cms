@@ -17,6 +17,14 @@ public class StateMap {
     private final String VIEW = "view";
     private final String[] attributes = {DISABLED, READONLY, HIDDEN, VIEW, INPUT};
 
+    public StateMap setInputTrue(String fieldName) {
+        return setAttribute(fieldName, INPUT, true);
+    }
+
+    public StateMap setInputFalse(String fieldName) {
+        return setAttribute(fieldName, INPUT, false);
+    }
+
     public StateMap setDisabledTrue(String fieldName) {
         return setAttribute(fieldName, DISABLED, true);
     }

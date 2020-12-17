@@ -21,6 +21,12 @@
     </bean>
     -->
 
+    <bean id="CL_SAMPLE" parent="AbstractJdbcCodeList">
+        <property name="querySql" value="SELECT CODE, VALUE1 || case when STATUS = 2 then '(無効)' else '' end as VALUE1 FROM VARIABLE WHERE TYPE = 'SAMPLE_CODELIST' ORDER BY STATUS, CODE" />
+        <property name="valueColumn" value="CODE" />
+        <property name="labelColumn" value="VALUE1" />
+    </bean>
+
     <bean id="CL_STATUS"
           class="org.terasoluna.gfw.common.codelist.EnumCodeList">
         <constructor-arg value="jp.co.stnet.cms.domain.model.common.Status" />

@@ -38,7 +38,14 @@
                       </c:forEach>
                     </select>
                   </th>
-                <th></th>
+                  <th data-filter="disable">
+                    <select id="col_filter_5" data-column="5" class="dataTables_column_filter form-control">
+                      <option value=""></option>
+                      <c:forEach items="${CL_VARIABLETYPE}" var="obj">
+                              <option value="${obj.key}">${obj.value}</option>
+                      </c:forEach>
+                    </select>
+                  </th>
                 <th></th>
                 <th></th>
                 <th></th>

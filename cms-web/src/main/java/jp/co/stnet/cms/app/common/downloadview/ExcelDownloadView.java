@@ -33,8 +33,8 @@ public class ExcelDownloadView extends AbstractFileDownloadView {
 
         List<SimpleEntity> list = (List<SimpleEntity>) model.get("list");
 
-//        Workbook wb = new XSSFWorkbook(templateFile.getInputStream()); // Resourceフォルダ配下を指定するとテンプレートの修正後に再起動が必要
-        Workbook wb = new XSSFWorkbook(new FileInputStream(file)); // 絶対パスを指定するとテンプレートの修正が即時に反映する
+        Workbook wb = new XSSFWorkbook(templateFile.getInputStream()); // Resourceフォルダ配下を指定するとテンプレートの修正後に再起動が必要
+//        Workbook wb = new XSSFWorkbook(new FileInputStream(file)); // 絶対パスを指定するとテンプレートの修正が即時に反映する
         Sheet sheet = wb.getSheetAt(0);
 
         sheet.getRow(0).getCell(1).setCellValue("あいう");

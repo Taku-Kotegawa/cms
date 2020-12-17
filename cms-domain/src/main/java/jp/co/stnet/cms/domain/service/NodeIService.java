@@ -17,7 +17,6 @@ public interface NodeIService<T extends AbstractEntity<ID>, ID> {
      */
     T  findById(ID id);
 
-
     /**
      * DataTables用の検索(Page)
      */

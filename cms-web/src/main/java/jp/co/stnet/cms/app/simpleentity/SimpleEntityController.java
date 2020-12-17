@@ -259,12 +259,17 @@ public class SimpleEntityController {
             }
 
             // 添付ファイル名
-            if (entity.getAttachedFile01Uuid() != null) {
-                bean.setAttachedFile01Managed(fileManagedSharedService.findByUuid(entity.getAttachedFile01Uuid()));
-                if (bean.getAttachedFile01Managed() != null) {
-                    bean.setAttachedFile01FileName(bean.getAttachedFile01Managed().getOriginalFilename());
-                }
+//            if (entity.getAttachedFile01Uuid() != null) {
+//                bean.setAttachedFile01Managed(fileManagedSharedService.findByUuid(entity.getAttachedFile01Uuid()));
+//                if (bean.getAttachedFile01Managed() != null) {
+//                    bean.setAttachedFile01FileName(bean.getAttachedFile01Managed().getOriginalFilename());
+//                }
+//            }
+
+            if (entity.getAttachedFile01Managed() != null) {
+                bean.setAttachedFile01FileName(bean.getAttachedFile01Managed().getOriginalFilename());
             }
+
 
             beans.add(bean);
         }

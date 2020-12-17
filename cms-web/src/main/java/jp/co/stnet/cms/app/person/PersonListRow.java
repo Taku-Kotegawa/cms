@@ -2,6 +2,7 @@ package jp.co.stnet.cms.app.person;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -92,5 +93,17 @@ public class PersonListRow implements Serializable {
      * 年齢
      */
     private Integer age;
+
+    private String code;
+
+    /**
+     * 添付ファイル(FileManaged UUID)
+     */
+    private String attachedFile01Uuid;
+
+    /**
+     * 添付ファイル(FileManaged)
+     */
+    private FileManaged attachedFile01Managed;
 
 }

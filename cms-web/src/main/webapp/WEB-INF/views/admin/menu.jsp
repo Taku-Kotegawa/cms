@@ -72,6 +72,20 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="card-body py-3">
+        <h5>Hibernate Search</h5>
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2">
+            <i class="fas fa-angle-right"></i>
+            <a href="${f:h(pageContext.request.contextPath)}/admin/index/manage">
+              索引再作成
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>    
+
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
 </section>

@@ -15,7 +15,7 @@ public class BeanUtils extends org.apache.commons.beanutils.BeanUtils {
      *
      * @param clazz
      * @param parentClassName
-     * @return
+     * @return key:フィールド名, value: クラス名
      */
     public static Map<String, String> getFileds(Class clazz, String parentClassName) {
 
@@ -42,7 +42,10 @@ public class BeanUtils extends org.apache.commons.beanutils.BeanUtils {
                     // 何もしない
 
                 } else {
-                    fieldsMap.putAll(getFileds(fieldClass, fieldName));
+                    // TODO ループ
+                    if(parentClassName == null) {
+                        fieldsMap.putAll(getFileds(fieldClass, fieldName));
+                    }
                 }
 
                 fieldsMap.put(prefix + fieldName, fieldClass.getName());
@@ -57,7 +60,7 @@ public class BeanUtils extends org.apache.commons.beanutils.BeanUtils {
      *
      * @param clazz           クラス
      * @param parentClassName 親クラス(スーパークラス)
-     * @param Class           アノテーションクラス
+     * @param annotationClass アノテーションクラス
      * @return フォールド名とアノテーションの組み合わせMap
      */
     public static Map<String, Annotation> getFieldByAnnotation(Class clazz, String parentClassName, Class annotationClass) {

@@ -93,12 +93,11 @@
       <hr />
 
         <form:hidden path="version" />
-
           <c:if test="${fieldState.status__view}">
-            <div class="row mb-3">
+            <div class="row">
               <div class="col-11 ">
                 <!-- ラベル -->
-                <form:label path="status">ステータス</form:label>
+                <form:label class="mt-3" path="status">ステータス</form:label>
                 <div class="form-control__view">
                   ${f:h(CL_STATUS[variable.status])}
                 </div>
@@ -106,11 +105,11 @@
             </div>
           </c:if>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-6">
               <!-- ラベル -->
               <c:if test="${fieldState.type__input || fieldState.type__view}">
-                <form:label path="type">タイプ</form:label>
+                <form:label class="mt-3" path="type">タイプ</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.type__input}">
@@ -136,7 +135,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.code__input || fieldState.code__view}">
-                <form:label path="code">コード</form:label>
+                <form:label class="mt-3" path="code">コード</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.code__input}">
@@ -157,11 +156,11 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value1__input || fieldState.value1__view}">
-                <form:label path="value1">${fieldLabel.value1}</form:label>
+                <form:label class="mt-3" path="value1">${fieldLabel.value1}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value1__input}">
@@ -183,7 +182,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value2__input || fieldState.value2__view}">
-                <form:label path="value2">${fieldLabel.value2}</form:label>
+                <form:label class="mt-3" path="value2">${fieldLabel.value2}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value2__input}">
@@ -205,7 +204,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value3__input || fieldState.value3__view}">
-                <form:label path="value3">${fieldLabel.value3}</form:label>
+                <form:label class="mt-3" path="value3">${fieldLabel.value3}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value3__input}">
@@ -226,11 +225,11 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value4__input || fieldState.value4__view}">
-                <form:label path="value4">${fieldLabel.value4}</form:label>
+                <form:label class="mt-3" path="value4">${fieldLabel.value4}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value4__input}">
@@ -252,7 +251,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value5__input || fieldState.value5__view}">
-                <form:label path="value5">${fieldLabel.value5}</form:label>
+                <form:label class="mt-3" path="value5">${fieldLabel.value5}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value5__input}">
@@ -274,7 +273,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value6__input || fieldState.value6__view}">
-                <form:label path="value6">${fieldLabel.value6}</form:label>
+                <form:label class="mt-3" path="value6">${fieldLabel.value6}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value6__input}">
@@ -295,11 +294,11 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value7__input || fieldState.value7__view}">
-                <form:label path="value7">${fieldLabel.value7}</form:label>
+                <form:label class="mt-3" path="value7">${fieldLabel.value7}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value7__input}">
@@ -321,7 +320,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value8__input || fieldState.value8__view}">
-                <form:label path="value8">${fieldLabel.value8}</form:label>
+                <form:label class="mt-3" path="value8">${fieldLabel.value8}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value8__input}">
@@ -343,7 +342,7 @@
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value9__input || fieldState.value9__view}">
-                <form:label path="value9">${fieldLabel.value9}</form:label>
+                <form:label class="mt-3" path="value9">${fieldLabel.value9}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value9__input}">
@@ -364,11 +363,11 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.value10__input || fieldState.value10__view}">
-                <form:label path="value10">${fieldLabel.value10}</form:label>
+                <form:label class="mt-3" path="value10">${fieldLabel.value10}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.value10__input}">
@@ -390,17 +389,18 @@
           </div>
 
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date1__input || fieldState.date1__view}">
-                <form:label path="date1">${fieldLabel.date1}</form:label>
+                <form:label class="mt-3" path="date1">${fieldLabel.date1}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date1__input}">
                 <div class="input-group" id="date1-input-group" data-target-input="nearest">
                   <form:input path="date1" cssClass="form-control datetimepicker-input"
-                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date1-input-group" />
+                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date1-input-group"
+                    disabled="${fieldState.date1__disabled}" readonly="${fieldState.date1__readonly}" />
                   <div class="input-group-append" data-target="#date1-input-group" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="fa fa-calendar fa-fw"></i></div>
                   </div>
@@ -421,13 +421,14 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date2__input || fieldState.date2__view}">
-                <form:label path="date2">${fieldLabel.date2}</form:label>
+                <form:label class="mt-3" path="date2">${fieldLabel.date2}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date2__input}">
                 <div class="input-group" id="date2-input-group" data-target-input="nearest">
                   <form:input path="date2" cssClass="form-control datetimepicker-input"
-                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date2-input-group" />
+                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date2-input-group"
+                    disabled="${fieldState.date2__disabled}" readonly="${fieldState.date2__readonly}" />
                   <div class="input-group-append" data-target="#date2-input-group" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="fa fa-calendar fa-fw"></i></div>
                   </div>
@@ -448,13 +449,14 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date3__input || fieldState.date3__view}">
-                <form:label path="date3">${fieldLabel.date3}</form:label>
+                <form:label class="mt-3" path="date3">${fieldLabel.date3}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date3__input}">
                 <div class="input-group" id="date3-input-group" data-target-input="nearest">
                   <form:input path="date3" cssClass="form-control datetimepicker-input"
-                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date3-input-group" />
+                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date3-input-group"
+                    disabled="${fieldState.date3__disabled}" readonly="${fieldState.date3__readonly}" />
                   <div class="input-group-append" data-target="#date3-input-group" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="fa fa-calendar fa-fw"></i></div>
                   </div>
@@ -475,13 +477,14 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date4__input || fieldState.date4__view}">
-                <form:label path="date4">${fieldLabel.date4}</form:label>
+                <form:label class="mt-3" path="date4">${fieldLabel.date4}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date4__input}">
                 <div class="input-group" id="date4-input-group" data-target-input="nearest">
                   <form:input path="date4" cssClass="form-control datetimepicker-input"
-                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date4-input-group" />
+                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date4-input-group"
+                    disabled="${fieldState.date4__disabled}" readonly="${fieldState.date4__readonly}" />
                   <div class="input-group-append" data-target="#date4-input-group" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="fa fa-calendar fa-fw"></i></div>
                   </div>
@@ -502,13 +505,14 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.date5__input || fieldState.date5__view}">
-                <form:label path="date5">${fieldLabel.date5}</form:label>
+                <form:label class="mt-3" path="date5">${fieldLabel.date5}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.date5__input}">
                 <div class="input-group" id="date5-input-group" data-target-input="nearest">
                   <form:input path="date5" cssClass="form-control datetimepicker-input"
-                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date5-input-group" />
+                    cssErrorClass="form-control datetimepicker-input is-invalid" data-target="#date5-input-group"
+                    disabled="${fieldState.date5__disabled}" readonly="${fieldState.date5__readonly}" />
                   <div class="input-group-append" data-target="#date5-input-group" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="fa fa-calendar fa-fw"></i></div>
                   </div>
@@ -528,11 +532,11 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint1__input || fieldState.valint1__view}">
-                <form:label path="valint1">${fieldLabel.valint1}</form:label>
+                <form:label class="mt-3" path="valint1">${fieldLabel.valint1}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint1__input}">
@@ -554,7 +558,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint2__input || fieldState.valint2__view}">
-                <form:label path="valint2">${fieldLabel.valint2}</form:label>
+                <form:label class="mt-3" path="valint2">${fieldLabel.valint2}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint2__input}">
@@ -576,7 +580,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint3__input || fieldState.valint3__view}">
-                <form:label path="valint3">${fieldLabel.valint3}</form:label>
+                <form:label class="mt-3" path="valint3">${fieldLabel.valint3}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint3__input}">
@@ -598,7 +602,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint4__input || fieldState.valint4__view}">
-                <form:label path="valint4">${fieldLabel.valint4}</form:label>
+                <form:label class="mt-3" path="valint4">${fieldLabel.valint4}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint4__input}">
@@ -620,7 +624,7 @@
             <div class="col-7">
               <!-- ラベル -->
               <c:if test="${fieldState.valint5__input || fieldState.valint5__view}">
-                <form:label path="valint5">${fieldLabel.valint5}</form:label>
+                <form:label class="mt-3" path="valint5">${fieldLabel.valint5}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint5__input}">
@@ -641,11 +645,11 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-36">
               <!-- ラベル -->
               <c:if test="${fieldState.textarea__input || fieldState.textarea__view}">
-                <form:label path="textarea">${fieldLabel.textarea}</form:label>
+                <form:label class="mt-3" path="textarea">${fieldLabel.textarea}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.textarea__input}">
@@ -666,11 +670,11 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-12">
               <!-- ラベル -->
               <c:if test="${fieldState.file1Uuid__input || fieldState.file1Uuid__view}">
-                <form:label path="file1Uuid">${fieldLabel.file1}</form:label>
+                <form:label class="mt-3" path="file1Uuid">${fieldLabel.file1Uuid}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.file1Uuid__input}">
@@ -707,11 +711,11 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-36">
               <!-- ラベル -->
               <c:if test="${fieldState.remark__input || fieldState.remark__view}">
-                <form:label path="remark">${fieldLabel.remark}</form:label>
+                <form:label class="mt-3" path="remark">${fieldLabel.remark}</form:label>
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.remark__input}">

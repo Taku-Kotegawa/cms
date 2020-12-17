@@ -87,6 +87,8 @@ public class MessageKeys {
     public static final String I_CM_FW_0007 = "i.cm.fw.0007";
     /** i.cm.fw.0008=無効データは編集できません。そのため参照モードで開きました。 */
     public static final String I_CM_FW_0008 = "i.cm.fw.0008";
+    /** i.cm.fw.0009=検索条件を指定してください。 */
+    public static final String I_CM_FW_0009 = "i.cm.fw.0009";
     /** w.cm.fw.2001=登録内容に変更はありません。 */
     public static final String W_CM_FW_2001 = "w.cm.fw.2001";
     /** w.cm.fw.2002=同じ値が既に登録されています。({0} = {1}) */

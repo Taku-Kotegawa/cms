@@ -9,11 +9,14 @@ import jp.co.stnet.cms.domain.common.datatables.OperationsUtil;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.common.scheduled.CsvUtils;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.model.example.Person;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import jp.co.stnet.cms.domain.service.example.PersonService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.search.engine.search.aggregation.AggregationKey;
+import org.hibernate.search.engine.search.query.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,6 +36,7 @@ import javax.inject.Named;
 import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -44,6 +48,8 @@ public class PersonController {
     private final String JSP_LIST = BASE_PATH + "/list";
     private final String JSP_FORM = BASE_PATH + "/form";
     private final String JSP_VIEW = BASE_PATH + "/view";
+    private final String JSP_SEARCH = BASE_PATH + "/search";
+
 
     @Autowired
     PersonService personService;
@@ -70,6 +76,41 @@ public class PersonController {
     public String list(Model model) {
         return JSP_LIST;
     }
+
+    @GetMapping("search")
+    public String search(Model model, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+        return JSP_SEARCH;
+    }
+
+    @GetMapping(value = "search", params = "q")
+    public String search(Model model, @RequestParam String q, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        if (q == null) {
+            model.addAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0009));
+            return search(model, loggedInUser);
+        }
+
+        SearchResult<Person> result =  personService.search(q);
+
+        List<PersonSearchRow> hits = new ArrayList<>();
+        for(Person p : result.hits()) {
+            PersonSearchRow s = beanMapper.map(p, PersonSearchRow.class);
+            s.setContentHighlight(personService.highlight(p.getContent(), q));
+            hits.add(s);
+        }
+
+
+        Map<String, Long> countsByGenre = result.aggregation( AggregationKey.of( "countsByGenre" ) );
+
+        model.addAttribute("q", q);
+        model.addAttribute("result", result);
+        model.addAttribute("hits", hits);
+        model.addAttribute("totalHitCount", result.total().hitCount());
+        model.addAttribute("countsByGenre", countsByGenre);
+
+        return JSP_SEARCH;
+    }
+
 
     /**
      * DataTables用のJSONの作成
@@ -103,6 +144,15 @@ public class PersonController {
 
             // ステータスラベル
             personListRow.setStatusLabel(Status.getByValue(person.getStatus()).getCodeLabel());
+
+            // 添付ファイル名
+//            if (person.getAttachedFile01Uuid() != null) {
+//                person.setAttachedFile01Managed(fileManagedSharedService.findByUuid(person.getAttachedFile01Uuid()));
+//            }
+
+//            if (personListRow.getAttachedFile01Managed() == null) {
+//                personListRow.setAttachedFile01Managed(FileManaged.builder().build());
+//            }
 
             list.add(personListRow);
         }
@@ -265,6 +315,10 @@ public class PersonController {
             beanMapper.map(person, form);
         }
 
+        if (form.getAttachedFile01Uuid() != null) {
+            form.setAttachedFile01Managed(fileManagedSharedService.findByUuid(form.getAttachedFile01Uuid()));
+        }
+
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.SAVE, person).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.SAVE, person).asMap());
         model.addAttribute("op", op());
@@ -387,6 +441,12 @@ public class PersonController {
         personService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
 
         Person person = personService.findById(id);
+
+        if (person.getAttachedFile01Uuid() != null) {
+            person.setAttachedFile01Managed(fileManagedSharedService.findByUuid(person.getAttachedFile01Uuid()));
+        }
+
+
         model.addAttribute("person", person);
 
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, person).asMap());

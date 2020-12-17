@@ -2,6 +2,7 @@ package jp.co.stnet.cms.app.simpleentity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -189,4 +190,6 @@ public class SimpleEntityListRow implements Serializable {
      */
     private String attachedFile01FileName;
 
+
+    private FileManaged attachedFile01Managed;
 }
