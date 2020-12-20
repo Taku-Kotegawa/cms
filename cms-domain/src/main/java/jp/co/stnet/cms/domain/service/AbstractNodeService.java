@@ -100,7 +100,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 currentCopy.setStatus(Status.DRAFT.getCodeValue());
             }
 
-            if (Objects.equals(entity, currentCopy)) {
+            if (compareEntity(entity, currentCopy)) {
                 throw new NoChangeBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2001)));
             }
         }
@@ -117,6 +117,10 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
         entityManager.detach(entity);
         return getRepository().findById(Objects.requireNonNull(entity.getId())).orElse(null);
+    }
+
+    protected boolean compareEntity(T entity, T currentCopy) {
+        return Objects.equals(entity, currentCopy);
     }
 
     @Override

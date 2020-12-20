@@ -20,7 +20,7 @@
 
     <div class="form-check-inline" style="width:100%">
       <input id="draft" type="checkbox" checked="checked">
-      <label for="checkbox011">下書きを含む</label>
+      <label for="draft">下書きを含む</label>
     </div>
 
     <table id="list" class="table-sm table-striped">
@@ -276,8 +276,12 @@
           fnColumns(table);
         });
 
+        // 画面表示時の下書きチェックボックスの復元
         if (localStorage.dataTables_Draft == 'false') {
           $('#draft')[0].checked = false;
+          table.draw();
+        } else if (localStorage.dataTables_Draft != 'false' && $('#draft')[0].checked == false) {
+          $('#draft')[0].checked = true;
           table.draw();
         }
 

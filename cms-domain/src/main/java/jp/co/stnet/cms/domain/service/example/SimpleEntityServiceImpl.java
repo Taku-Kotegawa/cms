@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -45,4 +46,9 @@ public class SimpleEntityServiceImpl extends AbstractNodeRevService<SimpleEntity
         return true;
     }
 
+    @Override
+    protected boolean compareEntity(SimpleEntity entity, SimpleEntity currentCopy) {
+        currentCopy.setAttachedFile01Managed(null);
+        return Objects.equals(entity, currentCopy);
+    }
 }

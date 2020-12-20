@@ -124,7 +124,7 @@ public class SimpleEntity extends AbstractEntity<Long> implements Serializable, 
     /**
      * 添付ファイル(FileManaged)
      */
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "attachedFile01Uuid", referencedColumnName = "uuid", unique=true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private FileManaged attachedFile01Managed;

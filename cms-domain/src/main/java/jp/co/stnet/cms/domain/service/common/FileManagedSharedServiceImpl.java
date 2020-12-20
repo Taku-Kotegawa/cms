@@ -85,9 +85,11 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
                 + File.separator + fileType
                 + File.separator + uuid.substring(0, 1);
 
+        String storeFilePath = storeDir + File.separator + uuid;
+
         mkdirs(storeDir);
 
-        File storeFile = new File(storeDir + File.separator + uuid);
+        File storeFile = new File(storeFilePath);
         String mimeType = "";
         mimeType = MimeTypes.getMimeType(FilenameUtils.getExtension(file.getOriginalFilename()));
 
@@ -111,7 +113,7 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
                         .filemime(mimeType)
                         .filesize(file.getSize())
                         .status(Status.DRAFT.getCodeValue())
-                        .uri(storeFile.getAbsolutePath().substring(STORE_BASEDIR.length()).replace('\\', '/'))
+                        .uri(storeFilePath.substring(STORE_BASEDIR.length()).replace('\\', '/'))
                         .build());
 
     }

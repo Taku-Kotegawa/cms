@@ -19,6 +19,10 @@ import org.hibernate.search.engine.search.aggregation.AggregationKey;
 import org.hibernate.search.engine.search.query.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,9 +38,8 @@ import org.terasoluna.gfw.web.token.transaction.TransactionTokenType;
 
 import javax.inject.Named;
 import javax.validation.groups.Default;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
 @Slf4j
 @Controller
@@ -69,6 +72,11 @@ public class PersonController {
         return new PersonForm();
     }
 
+    @ModelAttribute
+    private PersonSearchCriteriaForm setUpCriteria() {
+        return new PersonSearchCriteriaForm();
+    }
+
     /**
      * 一覧画面の表示
      */
@@ -83,26 +91,35 @@ public class PersonController {
     }
 
     @GetMapping(value = "search", params = "q")
-    public String search(Model model, @RequestParam String q, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+    public String search(Model model, @Validated PersonSearchCriteriaForm form, BindingResult bindingResult,
+                         @PageableDefault(size = 5) Pageable pageable, @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
-        if (q == null) {
+        if (form.getQ() == null) {
             model.addAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0009));
             return search(model, loggedInUser);
         }
 
-        SearchResult<Person> result =  personService.search(q);
+        SearchResult<Person> result =  personService.search(form.getQ(), pageable);
 
         List<PersonSearchRow> hits = new ArrayList<>();
         for(Person p : result.hits()) {
             PersonSearchRow s = beanMapper.map(p, PersonSearchRow.class);
-            s.setContentHighlight(personService.highlight(p.getContent(), q));
+            s.setContentHighlight(personService.highlight(p.getContent(), form.getQ()));
             hits.add(s);
         }
 
 
         Map<String, Long> countsByGenre = result.aggregation( AggregationKey.of( "countsByGenre" ) );
 
-        model.addAttribute("q", q);
+
+        Page<PersonSearchRow> page = new PageImpl<PersonSearchRow>(hits, pageable, result.total().hitCount());
+
+        Map<String, String> query = new HashMap<>();
+        query.put("q", form.getQ());
+
+        model.addAttribute("query", query);
+        model.addAttribute("page", page);
+        model.addAttribute("q", form.getQ());
         model.addAttribute("result", result);
         model.addAttribute("hits", hits);
         model.addAttribute("totalHitCount", result.total().hitCount());

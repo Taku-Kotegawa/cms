@@ -36,8 +36,8 @@ console.log(element.dataset);
     return;
   }
 
-  if ($upload_file.files[0].size > 5 * 1024 * 1024) {
-    alert("ファイルが大きすぎます。(5MBまで)");
+  if ($upload_file.files[0].size > 10 * 1024 * 1024) {
+    alert("ファイルが大きすぎます。(10MBまで)");
     $upload_file.value = "";
     return;
   }

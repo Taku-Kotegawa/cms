@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class SimpleEntityForm implements Serializable {
     /**
      * テキストフィールド
      */
+    @NotNull
     private String text01;
     /**
      * テキストフィールド(数値・整数)

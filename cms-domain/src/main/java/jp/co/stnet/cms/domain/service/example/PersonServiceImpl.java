@@ -32,6 +32,7 @@ import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.mapping.SearchMapping;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -150,7 +152,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
     @Override
     @Transactional(readOnly = true)
-    public SearchResult<Person> search(String term) {
+    public SearchResult<Person> search(String term, Pageable pageable) {
         SearchSession searchSession = Search.session(entityManager);
 
         List<String> tokens = analyze(term);
@@ -158,6 +160,13 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
         AggregationKey<Map<String, Long>> countsByGenreKey = AggregationKey.of( "countsByGenre" );
 
+        int pageSize = 5;
+        long offset = 0;
+
+        if (pageable != null) {
+            pageSize = pageable.getPageSize();
+            offset = pageable.getOffset();
+        }
 
         SearchResult<Person> result = searchSession.search(Person.class)
                 .where(
@@ -172,7 +181,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
                 .aggregation( countsByGenreKey, f -> f.terms()
                         .field( "code", String.class ) )
                 .sort(f -> f.score())
-                .fetch(20);
+                .fetch((int) offset, pageSize);
 
 
 //        long totalHitCount = result.total().hitCount();

@@ -1,11 +1,12 @@
 package jp.co.stnet.cms.domain.model.example;
 
 import jp.co.stnet.cms.domain.model.AbstractRevisionEntity;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -137,5 +138,13 @@ public class SimpleEntityRevision extends AbstractRevisionEntity implements Seri
      * 添付ファイル(FileManaged)
      */
     private String attachedFile01Uuid;
+
+    /**
+     * 添付ファイル(FileManaged)
+     */
+    @ManyToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "attachedFile01Uuid", referencedColumnName = "uuid", unique=true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private FileManaged attachedFile01Managed;
 
 }

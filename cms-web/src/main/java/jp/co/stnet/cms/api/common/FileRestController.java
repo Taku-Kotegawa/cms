@@ -31,6 +31,8 @@ public class FileRestController {
 
         try {
 
+            //TODO ファイルサイズのチェック
+
             FileManaged fileManaged = fileManagedSharedService.store(multipartFile, fileType, false);
 
             return UploadFileResult.builder()
