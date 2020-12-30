@@ -251,7 +251,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 } else if (isDateTime(convertedColumnName)) {
                     sql.append("function('date_format', c.");
                     sql.append(convertedColumnName);
-                    sql.append(", '%Y/%m/%d %T') LIKE :");
+                    sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :");
                     sql.append(convertedColumnName);
                     sql.append(" ESCAPE '~'");
                 } else if (isNumeric(convertedColumnName)) {
@@ -302,7 +302,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                     } else if (isDateTime(convertColumnName)) {
                         sql.append("function('date_format', c.");
                         sql.append(convertColumnName);
-                        sql.append(", '%Y/%m/%d %T') LIKE :globalSearch ESCAPE '~'");
+                        sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :globalSearch ESCAPE '~'");
                     } else if (isNumeric(convertColumnName)) {
                         sql.append("function('CONVERT', c.");
                         sql.append(convertColumnName);

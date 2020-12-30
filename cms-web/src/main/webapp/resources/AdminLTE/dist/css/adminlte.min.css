@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*!
  *   AdminLTE v3.0.5
  *   Author: Colorlib
@@ -32845,6 +32846,10 @@ a.text-muted:hover {
 .form-control__view {
   box-shadow: unset;
   background-color: unset;
+  min-height: calc(1.52475rem + 2px);
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
 }
 
 .form-control-file {
@@ -33031,6 +33036,54 @@ th.select-all {
   }
 }
 
+/* DataTablesの行下線が消える障害の解消 */
+table.dataTable {
+  border-collapse: collapse !important;
+}
+
+/* フィールドフィルター */
+tr.filter th {
+  padding: 4px 8px;
+}
+
+/* scrollx でのスタイル崩れ修正 */
+.dataTables_scrollBody > table > thead > tr {
+  height: 0 !important;
+  border-bottom-width: 0px !important;
+}
+
+/* DataTables Checkbox */
+table.dataTable .dt-checkboxes-cell {
+  padding-top: 7.8px;
+}
+
+.page-link {
+  color: #212529;
+  border: unset;
+}
+
+.page-item.active .page-link {
+  color: #212529;
+  background-color: #e5e5e2;
+}
+
+.page-item.disabled .page-link {
+  color: #8c959d;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: unset;
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-hover tbody tr:hover {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
 .form-check-inline input[type='radio'],
 .form-check-inline input[type='checkbox'] {
   margin-left: .3rem;
@@ -33171,8 +33224,19 @@ table.dataTable th {
   white-space: nowrap;
 }
 
+table.dataTable > thead > tr.filter > th {
+  padding-right: 5px;
+  padding-left: 5px;
+  border-bottom-width: 0;
+}
+
 table.dataTable.table-sm > thead > tr.filter > th {
   padding-right: 5px;
+  padding-left: 5px;
+}
+
+table.dataTable > tbody > tr > td {
+  border-bottom: 1px solid #e6e4df;
 }
 
 :focus {
@@ -33185,5 +33249,28 @@ table.dataTable.table-sm > thead > tr.filter > th {
 
 .form-check-inline span input[type='radio'] {
   vertical-align: text-top;
+}
+
+.content-header {
+  background-color: #e0e0d8;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+}
+
+.main-header {
+  box-shadow: 1px 0px 5px #000;
+  border-bottom: 0;
+}
+
+.admin-panel {
+  margin: 0 0 20px;
+  padding: 10px 25px;
+  background: #f8f8f8;
+  border: 1px solid #ccc;
+}
+
+.shortMessage {
+  color: rebeccapurple;
+  background-color: antiquewhite;
 }
 /*# sourceMappingURL=adminlte.min.css.map */

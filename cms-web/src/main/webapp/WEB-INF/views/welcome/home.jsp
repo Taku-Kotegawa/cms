@@ -1,3 +1,8 @@
+<c:if test="${not empty shortMessage}">
+  <div class="shortMessage container-flued py-1 px-3">
+    ${f:br(f:h(shortMessage))}
+  </div>  
+</c:if>
 <section class="content-header">
   <div class="container">
     <div class="row mb-2">
@@ -32,6 +37,7 @@
 
   <!-- ここより上にメインコンテンツを記入 -->
   </div>
+  
 </section>
 
 <footer class="main-footer">

@@ -1,26 +1,27 @@
 package jp.co.stnet.cms.domain.model.authentication;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import org.terasoluna.gfw.common.codelist.EnumCodeList;
 
-import javax.persistence.*;
-import java.util.List;
-
-@Entity
-@Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+@Getter
+public enum Role implements EnumCodeList.CodeListItem {
 
-    @Id
-    private String role;
+    ADMIN("ADMIN", "管理者", 1),
+    USER("USER", "一般ユーザ", 2);
 
-    private String label;
+    private final String value;
+    private final String label;
+    private final int wait;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Column(nullable=false)
-    private List<Permission> permissions;
+    @Override
+    public String getCodeLabel() {
+        return name();
+    }
+
+    @Override
+    public String getCodeValue() {
+        return value;
+    }
 }

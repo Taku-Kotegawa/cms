@@ -1,23 +1,28 @@
 package jp.co.stnet.cms.domain.model.authentication;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import org.terasoluna.gfw.common.codelist.EnumCodeList;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Entity
-@Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class Permission {
+@Getter
+public enum Permission implements EnumCodeList.CodeListItem {
 
-    @Id
-    private String permission;
+    VIEW_ALL_NODE("全コンテンツの参照", "NODE"),
+    VIEW_OWN_NODE("自分のコンテンツの参照", "NODE"),
+    ADMIN_PERMISSION("パーミッションの管理", "ADMIN");
 
-    private String label;
+    private final String label;
+    private final String category;
+
+    @Override
+    public String getCodeLabel() {
+        return label;
+    }
+
+    @Override
+    public String getCodeValue() {
+        return name();
+    }
 
 }

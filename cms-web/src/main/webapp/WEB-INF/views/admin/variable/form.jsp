@@ -540,7 +540,7 @@
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint1__input}">
-                <form:input path="valint1" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                <form:input type="number" path="valint1" cssClass="form-control" cssErrorClass="form-control is-invalid"
                   disabled="${fieldState.valint1__disabled}" readonly="${fieldState.valint1__readonly}" />
                 <form:errors path="valint1" cssClass="invalid-feedback" />
               </c:if>
@@ -562,7 +562,7 @@
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint2__input}">
-                <form:input path="valint2" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                <form:input type="number" path="valint2" cssClass="form-control" cssErrorClass="form-control is-invalid"
                   disabled="${fieldState.valint2__disabled}" readonly="${fieldState.valint2__readonly}" />
                 <form:errors path="valint2" cssClass="invalid-feedback" />
               </c:if>
@@ -584,7 +584,7 @@
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint3__input}">
-                <form:input path="valint3" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                <form:input type="number" path="valint3" cssClass="form-control" cssErrorClass="form-control is-invalid"
                   disabled="${fieldState.valint3__disabled}" readonly="${fieldState.valint3__readonly}" />
                 <form:errors path="valint3" cssClass="invalid-feedback" />
               </c:if>
@@ -606,7 +606,7 @@
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint4__input}">
-                <form:input path="valint4" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                <form:input type="number" path="valint4" cssClass="form-control" cssErrorClass="form-control is-invalid"
                   disabled="${fieldState.valint4__disabled}" readonly="${fieldState.valint4__readonly}" />
                 <form:errors path="valint4" cssClass="invalid-feedback" />
               </c:if>
@@ -628,7 +628,7 @@
               </c:if>
               <!-- 入力 -->
               <c:if test="${fieldState.valint5__input}">
-                <form:input path="valint5" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                <form:input type="number" path="valint5" cssClass="form-control" cssErrorClass="form-control is-invalid"
                   disabled="${fieldState.valint5__disabled}" readonly="${fieldState.valint5__readonly}" />
                 <form:errors path="valint5" cssClass="invalid-feedback" />
               </c:if>
@@ -663,7 +663,7 @@
               </c:if>
               <!-- 参照用-->
               <c:if test="${fieldState.textarea__view}">
-                <div class="">
+                <div class="form-control form-control__view">
                   ${f:br(f:h(variable.textarea))}
                 </div>
               </c:if>

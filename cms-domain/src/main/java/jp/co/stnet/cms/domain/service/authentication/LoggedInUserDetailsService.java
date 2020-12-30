@@ -2,10 +2,12 @@ package jp.co.stnet.cms.domain.service.authentication;
 
 import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
+import jp.co.stnet.cms.domain.model.authentication.PermissionRole;
 import jp.co.stnet.cms.domain.repository.authentication.AccountRepository;
-import jp.co.stnet.cms.domain.repository.authentication.RoleRepository;
+import jp.co.stnet.cms.domain.repository.authentication.PermissionRoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,10 +28,7 @@ public class LoggedInUserDetailsService implements UserDetailsService {
     AccountSharedService accountSharedService;
 
     @Autowired
-    AccountRepository accountRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
+    PermissionRoleSharedService permissionRoleSharedService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -49,8 +48,9 @@ public class LoggedInUserDetailsService implements UserDetailsService {
                     roleIds.add(roleLabel);
                 }
             }
-            for (String permission : roleRepository.findPermissions(roleIds)) {
-                authorities.add(new SimpleGrantedAuthority(permission));
+
+            for (PermissionRole permissionRole : permissionRoleSharedService.findAllByRole(roleIds)) {
+                authorities.add(new SimpleGrantedAuthority(permissionRole.getPermission().name()));
             }
 
             return new LoggedInUser(account,

@@ -21,6 +21,17 @@ table.dataTable th {
   white-space: nowrap;
 }
 
-table.dataTable.table-sm>thead>tr.filter>th {
+table.dataTable > thead > tr.filter > th {
   padding-right: 5px;
+  padding-left: 5px;  
+  border-bottom-width: 0;
 }
+table.dataTable.table-sm > thead > tr.filter > th {
+  padding-right: 5px;
+  padding-left: 5px;  
+}
+
+table.dataTable > tbody > tr > td {
+  border-bottom: 1px solid #e6e4df;
+}
+

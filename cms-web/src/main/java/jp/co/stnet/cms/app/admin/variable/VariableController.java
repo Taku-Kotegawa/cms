@@ -5,7 +5,6 @@ import jp.co.stnet.cms.app.admin.variable.VariableForm.Create;
 import jp.co.stnet.cms.app.admin.variable.VariableForm.Update;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.common.StateMap;
-import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInputDraft;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesOutput;
 import jp.co.stnet.cms.domain.common.datatables.OperationsUtil;
@@ -24,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -621,22 +621,79 @@ public class VariableController {
             }
         }
 
-        if (record != null && record.getType() != null) {
-            List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), record.getType());
-            if (variables.size() > 0 && variables.get(0).getTextarea() != null) {
-                String[] t = variables.get(0).getTextarea().split(",");
-                for (int i = 0; i < t.length; i++) {
-                    String[] v = t[i].split("=");
-                    if (v.length == 1 ) {
-                        fieldState.setInputFalse(v[0].trim());
-                    }
-                }
-            }
+        // ラベル未設定フィールドは入力不可
+        VariableType variableType = null;
+        if (record.getType() != null) {
+            variableType = VariableType.valueOf(record.getType());
         }
+
+        if (variableType != null) {
+            if(variableType.getLabelValue1().isEmpty()) { fieldState.setInputFalse("value1"); };
+            if(variableType.getLabelValue2().isEmpty()) { fieldState.setInputFalse("value2"); };
+            if(variableType.getLabelValue3().isEmpty()) { fieldState.setInputFalse("value3"); };
+            if(variableType.getLabelValue4().isEmpty()) { fieldState.setInputFalse("value4"); };
+            if(variableType.getLabelValue5().isEmpty()) { fieldState.setInputFalse("value5"); };
+            if(variableType.getLabelValue6().isEmpty()) { fieldState.setInputFalse("value6"); };
+            if(variableType.getLabelValue7().isEmpty()) { fieldState.setInputFalse("value7"); };
+            if(variableType.getLabelValue8().isEmpty()) { fieldState.setInputFalse("value8"); };
+            if(variableType.getLabelValue9().isEmpty()) { fieldState.setInputFalse("value9"); };
+            if(variableType.getLabelValue10().isEmpty()) { fieldState.setInputFalse("value10"); };
+            if(variableType.getLabelValint1().isEmpty()) { fieldState.setInputFalse("valint1"); };
+            if(variableType.getLabelValint2().isEmpty()) { fieldState.setInputFalse("valint2"); };
+            if(variableType.getLabelValint3().isEmpty()) { fieldState.setInputFalse("valint3"); };
+            if(variableType.getLabelValint4().isEmpty()) { fieldState.setInputFalse("valint4"); };
+            if(variableType.getLabelValint5().isEmpty()) { fieldState.setInputFalse("valint5"); };
+            if(variableType.getLabelDate1().isEmpty()) { fieldState.setInputFalse("date1"); };
+            if(variableType.getLabelDate2().isEmpty()) { fieldState.setInputFalse("date2"); };
+            if(variableType.getLabelDate3().isEmpty()) { fieldState.setInputFalse("date3"); };
+            if(variableType.getLabelDate4().isEmpty()) { fieldState.setInputFalse("date4"); };
+            if(variableType.getLabelDate5().isEmpty()) { fieldState.setInputFalse("date5"); };
+            if(variableType.getLabelTextarea().isEmpty()) { fieldState.setInputFalse("textarea"); };
+            if(variableType.getLabelFile1().isEmpty()) { fieldState.setInputFalse("file1Uuid"); };
+        }        
+
+//        if (record != null && record.getType() != null) {
+//            List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), record.getType());
+//            if (variables.size() > 0 && variables.get(0).getTextarea() != null) {
+//                String[] t = variables.get(0).getTextarea().split(",");
+//                for (int i = 0; i < t.length; i++) {
+//                    String[] v = t[i].split("=");
+//                    if (v.length == 1) {
+//                        fieldState.setInputFalse(v[0].trim());
+//                    }
+//                }
+//            }
+//        }
 
         // 参照
         if (Constants.OPERATION.VIEW.equals(operation)) {
             fieldState.setViewTrueAll();
+
+            if (variableType != null) {
+                if(variableType.getLabelValue1().isEmpty()) { fieldState.setViewFalse("value1"); };
+                if(variableType.getLabelValue2().isEmpty()) { fieldState.setViewFalse("value2"); };
+                if(variableType.getLabelValue3().isEmpty()) { fieldState.setViewFalse("value3"); };
+                if(variableType.getLabelValue4().isEmpty()) { fieldState.setViewFalse("value4"); };
+                if(variableType.getLabelValue5().isEmpty()) { fieldState.setViewFalse("value5"); };
+                if(variableType.getLabelValue6().isEmpty()) { fieldState.setViewFalse("value6"); };
+                if(variableType.getLabelValue7().isEmpty()) { fieldState.setViewFalse("value7"); };
+                if(variableType.getLabelValue8().isEmpty()) { fieldState.setViewFalse("value8"); };
+                if(variableType.getLabelValue9().isEmpty()) { fieldState.setViewFalse("value9"); };
+                if(variableType.getLabelValue10().isEmpty()) { fieldState.setViewFalse("value10"); };
+                if(variableType.getLabelValint1().isEmpty()) { fieldState.setViewFalse("valint1"); };
+                if(variableType.getLabelValint2().isEmpty()) { fieldState.setViewFalse("valint2"); };
+                if(variableType.getLabelValint3().isEmpty()) { fieldState.setViewFalse("valint3"); };
+                if(variableType.getLabelValint4().isEmpty()) { fieldState.setViewFalse("valint4"); };
+                if(variableType.getLabelValint5().isEmpty()) { fieldState.setViewFalse("valint5"); };
+                if(variableType.getLabelDate1().isEmpty()) { fieldState.setViewFalse("date1"); };
+                if(variableType.getLabelDate2().isEmpty()) { fieldState.setViewFalse("date2"); };
+                if(variableType.getLabelDate3().isEmpty()) { fieldState.setViewFalse("date3"); };
+                if(variableType.getLabelDate4().isEmpty()) { fieldState.setViewFalse("date4"); };
+                if(variableType.getLabelDate5().isEmpty()) { fieldState.setViewFalse("date5"); };
+                if(variableType.getLabelTextarea().isEmpty()) { fieldState.setViewFalse("textarea"); };
+                if(variableType.getLabelFile1().isEmpty()) { fieldState.setViewFalse("file1Uuid"); };
+            }
+
         }
 
         return fieldState;
@@ -668,18 +725,50 @@ public class VariableController {
         labels.put("file1Uuid", "ファイル");
         labels.put("remark", "備考");
 
-        List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), code);
-        if (variables.size() > 0 && variables.get(0).getTextarea() != null) {
-            String[] t = variables.get(0).getTextarea().split(",");
-            for (int i = 0; i < t.length; i++) {
-                String[] v = t[i].split("=");
-                if (v.length == 2) {
-                    labels.put(v[0].trim(), StringUtils.stripToEmpty(v[1]));
-                } else if (v.length == 1) {
-                    labels.put(v[0].trim(), "");
-                }
-            }
+
+        VariableType variableType = null;
+        if (code != null) {
+            variableType = VariableType.valueOf(code);
         }
+
+        if (variableType != null) {
+
+            labels.put("value1", variableType.getLabelValue1());
+            labels.put("value2", variableType.getLabelValue2());
+            labels.put("value3", variableType.getLabelValue3());
+            labels.put("value4", variableType.getLabelValue4());
+            labels.put("value5", variableType.getLabelValue5());
+            labels.put("value6", variableType.getLabelValue6());
+            labels.put("value7", variableType.getLabelValue7());
+            labels.put("value8", variableType.getLabelValue8());
+            labels.put("value9", variableType.getLabelValue9());
+            labels.put("value10", variableType.getLabelValue10());
+            labels.put("valint1", variableType.getLabelValint1());
+            labels.put("valint2", variableType.getLabelValint2());
+            labels.put("valint3", variableType.getLabelValint3());
+            labels.put("valint4", variableType.getLabelValint4());
+            labels.put("valint5", variableType.getLabelValint5());
+            labels.put("date1", variableType.getLabelDate1());
+            labels.put("date2", variableType.getLabelDate2());
+            labels.put("date3", variableType.getLabelDate3());
+            labels.put("date4", variableType.getLabelDate4());
+            labels.put("date5", variableType.getLabelDate5());
+            labels.put("textarea", variableType.getLabelTextarea());
+            labels.put("file1Uuid", variableType.getLabelFile1());
+        }
+
+//        List<Variable> variables = variableSharedService.findAllByTypeAndCode(VariableType.VARIABLE_LABEL.getCodeValue(), code);
+//        if (variables.size() > 0 && variables.get(0).getTextarea() != null) {
+//            String[] t = variables.get(0).getTextarea().split(",");
+//            for (int i = 0; i < t.length; i++) {
+//                String[] v = t[i].split("=");
+//                if (v.length == 2) {
+//                    labels.put(v[0].trim(), StringUtils.stripToEmpty(v[1]));
+//                } else if (v.length == 1) {
+//                    labels.put(v[0].trim(), "");
+//                }
+//            }
+//        }
         return labels;
     }
 

@@ -1,28 +1,49 @@
 package jp.co.stnet.cms.domain.model.common;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.terasoluna.gfw.common.codelist.EnumCodeList;
 
+@AllArgsConstructor
+@Getter
 public enum VariableType implements EnumCodeList.CodeListItem {
 
-    VARIABLE_LABEL("VARIABLE_LABEL", "Variable編集画面ラベル"),
-    SAMPLE_CODELIST("SAMPLE_CODELIST", "サンプルコードリスト");
+    SAMPLE_CODELIST("サンプルコードリスト","ラベル","v2","v3","v4","v5","v6","v7","v8","v9","v10","d1","d2","d3","d4","d5","i1", "i2", "i3","i4","i5","ta","f1"),
+    SHORT_MESSAGE("ショートメッセージ","","","","","","","","","","","公開開始日","公開終了日","","","","", "", "","","","メッセージ","");
 
-    private final String value;
     private final String label;
 
-    VariableType(String value, String label) {
-        this.value = value;
-        this.label = label;
-    }
+    private final String labelValue1;
+    private final String labelValue2;
+    private final String labelValue3;
+    private final String labelValue4;
+    private final String labelValue5;
+    private final String labelValue6;
+    private final String labelValue7;
+    private final String labelValue8;
+    private final String labelValue9;
+    private final String labelValue10;
+    private final String labelDate1;
+    private final String labelDate2;
+    private final String labelDate3;
+    private final String labelDate4;
+    private final String labelDate5;
+    private final String labelValint1;
+    private final String labelValint2;
+    private final String labelValint3;
+    private final String labelValint4;
+    private final String labelValint5;
+    private final String labelTextarea;
+    private final String labelFile1;
 
-    public static VariableType getByValue(String value) {
-        for (VariableType type : VariableType.values()) {
-            if (type.getCodeValue().equals(value)) {
-                return type;
-            }
-        }
-        return null;
-    }
+//    public static VariableType getByValue(String value) {
+//        for (VariableType type : VariableType.values()) {
+//            if (type.getCodeValue().equals(value)) {
+//                return type;
+//            }
+//        }
+//        return null;
+//    }
 
     @Override
     public String getCodeLabel() {
@@ -31,6 +52,6 @@ public enum VariableType implements EnumCodeList.CodeListItem {
 
     @Override
     public String getCodeValue() {
-        return value;
+        return name();
     }
 }
