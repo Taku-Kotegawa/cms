@@ -30,6 +30,7 @@
           <li> <a href="${f:h(pageContext.request.contextPath)}/person/search">Person(Search)</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/select/list">Select</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/pdfbox?form">pdfbox</a></li>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/account/">Accout + Modal Dialog</a></li>
         </ul>
       </div>
     </div>

@@ -92,7 +92,7 @@
 
     var options = {
         url: url,
-        // title:'Header title',
+        title:'Header title',
         size: eModal.size.lg,
     };
     eModal.ajax(options);
@@ -164,6 +164,8 @@
         'data': myflatten
       },
 
+      stateSave: false,
+
       // 一覧に表示する項目とJSONの項目にマッピング
       'columns': [{
           data: 'id',
@@ -213,7 +215,7 @@
       ],
 
       // ボタンの表示
-      'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'createnew'],
+      'buttons': ['colvis'],
 
       // データロード後処理
       'initComplete': function (settings, json) {
@@ -233,7 +235,7 @@
     // addFieldFilter(table)
 
     // 項目単位フィルタを追加(列の並び順対応版)
-    // addFieldFilter2(table)
+    addFieldFilter2(table)
 
 
     // $('#draft').change().on('change', function (e, s) {
