@@ -71,13 +71,13 @@
 
 </style>
 
-<section class="content-header">
-  <div class="container">
-    <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
-  </div>
-</section>
 <section class="content">
   <div class="container">
+
+    <div class="py-5">
+      <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
+    </div>
+
     <!-- ここより下にメインコンテンツを記入 -->
     <form method="get">
       <div class="row">

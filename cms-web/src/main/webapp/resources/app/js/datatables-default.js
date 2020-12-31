@@ -27,9 +27,9 @@ $.extend($.fn.dataTable.defaults, {
     'stateSave': true,
 
     // グローバルフィルタ、ページ数切替、ページネーションボタン等の部品のレイアウトを調整
-    'dom': "<'row'<'col-18 d-inline-flex'fB><'col-18 text-right'l>>"
-        + "<'row'<'col-36'tr>>"
-        + "<'row'<'col-15'i><'col-21'p>>",
+    'dom': "<'row'<'col-18 d-inline-flex'fB><'col-18 text-right'l>>" +
+        "<'row'<'col-36'tr>>" +
+        "<'row'<'col-15'i><'col-21'p>>",
 
     // 日本語化
     'language': {
@@ -81,7 +81,7 @@ function addFieldFilter(table) {
         if (e.which == 13 || this.value.length == 0) {
             var idx = $(this).attr('data-column');
             table.column(idx).search(this.value).draw();
-//            fnRecoverFieldSearch(table);
+            //            fnRecoverFieldSearch(table);
         }
     });
 
@@ -98,7 +98,22 @@ function fnRecoverFieldSearch(table) {
         var idx = this.index();
         var str = this.search();
         if (str != undefined) {
-            $('#col_filter_' + idx).val(str);
+
+            var element = document.getElementById('col_filter_' + idx);
+            // Selectの場合
+            if (element != undefined && element.length != undefined) {
+                var array = this.search().split(',');
+
+                $('#col_filter_' + idx).val(array);
+
+                if (element.className.split(' ').indexOf("multipleSelect") !== -1) {
+                    $('#col_filter_' + idx).multipleSelect('setSelects', array)
+                }
+
+            } else {
+                // Inputの場合
+                $('#col_filter_' + idx).val(str);
+            }
         }
     });
 }
@@ -119,13 +134,22 @@ function addFieldFilter2(table) {
 
     // 項目単位フィルタのためのイベント処理を設定する。(Select用)
     $('select.dataTables_column_filter').on('change', function (e, s) {
-            var th = $(this).parents('th')[0];
-            var visIndex = th.cellIndex;
-            table.column(visIndex + ':visIdx').search(this.value).draw();
+        var th = $(this).parents('th')[0];
+        var visIndex = th.cellIndex;
+        var value = "";
+        for (var i = 0; i < this.length; i++) {
+            if (this[i].selected) {
+                if (value != "") {
+                    value += ","
+                }
+                value += this[i].value;
+            }
+        }
+        table.column(visIndex + ':visIdx').search(value).draw();
     });
 
     fnRecoverFieldSearch(table);
-//    restoreColumnFilterByColReOrder(table);
+    //    restoreColumnFilterByColReOrder(table);
 
 }
 
@@ -168,9 +192,6 @@ function fnGlobalFilterOnReturn(table) {
         }
     });
 }
-
-
-
 
 
 /**

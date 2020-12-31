@@ -2,12 +2,15 @@ package jp.co.stnet.cms.app.admin.variable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -117,5 +120,105 @@ public class VariableListRow implements Serializable {
      * 値5
      */
     private String value5;
+
+    /**
+     * 値6
+     */
+    private String value6;
+
+    /**
+     * 値7
+     */
+    private String value7;
+
+    /**
+     * 値8
+     */
+    private String value8;
+
+    /**
+     * 値9
+     */
+    private String value9;
+
+    /**
+     * 値10
+     */
+    private String value10;
+
+    /**
+     * 日付1
+     */
+    @JsonFormat(pattern="yyyy/MM/dd")
+    private LocalDate date1;
+
+    /**
+     * 日付2
+     */
+    @JsonFormat(pattern="yyyy/MM/dd")
+    private LocalDate date2;
+
+    /**
+     * 日付3
+     */
+    @JsonFormat(pattern="yyyy/MM/dd")
+    private LocalDate date3;
+
+    /**
+     * 日付4
+     */
+    @JsonFormat(pattern="yyyy/MM/dd")
+    private LocalDate date4;
+
+    /**
+     * 日付5
+     */
+    @JsonFormat(pattern="yyyy/MM/dd")
+    private LocalDate date5;
+
+    /**
+     * 整数1
+     */
+    private Integer valint1;
+
+    /**
+     * 整数2
+     */
+    private Integer valint2;
+
+    /**
+     * 整数3
+     */
+    private Integer valint3;
+
+    /**
+     * 整数4
+     */
+    private Integer valint4;
+
+    /**
+     * 整数5
+     */
+    private Integer valint5;
+
+    /**
+     * テキストエリア
+     */
+    private String textarea;
+
+    /**
+     * ファイル1
+     */
+    private String file1Uuid;
+
+    /**
+     * ファイル1
+     */
+    private FileManaged file1Managed;
+
+    /**
+     * 備考
+     */
+    private String remark;
 
 }

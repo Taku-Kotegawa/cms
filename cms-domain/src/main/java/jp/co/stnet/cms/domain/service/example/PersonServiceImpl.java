@@ -9,7 +9,6 @@ import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.ja.JapaneseAnalyzer;
 import org.apache.lucene.analysis.ja.JapaneseTokenizer;
 import org.apache.lucene.analysis.ja.tokenattributes.BaseFormAttribute;
 import org.apache.lucene.analysis.ja.tokenattributes.InflectionAttribute;
@@ -20,8 +19,8 @@ import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.*;
 import org.apache.tika.exception.TikaException;
 import org.hibernate.search.backend.lucene.LuceneBackend;
 import org.hibernate.search.engine.backend.Backend;
@@ -40,8 +39,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
@@ -95,7 +92,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
             if (entity == null || entity.getAttachedFile01Uuid() == null) {
                 content = null;
             } else if (current == null || current.getAttachedFile01Uuid() == null
-                        || !Objects.equals(entity.getAttachedFile01Uuid(), current.getAttachedFile01Uuid())) {
+                    || !Objects.equals(entity.getAttachedFile01Uuid(), current.getAttachedFile01Uuid())) {
 
                 content = fileManagedSharedService.getContent(entity.getAttachedFile01Uuid());
                 content = content.replaceAll("[　]+", " ")
@@ -134,7 +131,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 //                .where(f -> f.wildcard()
                         .fields("content")
 //                        .matching("*" + term + "*"))
-                .matching(term))
+                        .matching(term))
                 .fetch(20);
 
         long totalHitCount = result.total().hitCount();
@@ -158,7 +155,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
         List<String> tokens = analyze(term);
         System.out.println(StringUtils.join(tokens, " + "));
 
-        AggregationKey<Map<String, Long>> countsByGenreKey = AggregationKey.of( "countsByGenre" );
+        AggregationKey<Map<String, Long>> countsByGenreKey = AggregationKey.of("countsByGenre");
 
         int pageSize = 5;
         long offset = 0;
@@ -174,12 +171,12 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 //                              .fields("content")
 //                              .matching("*" + term + "*")
 
-                 f -> f.simpleQueryString()
-                        .fields("content")
-                        .matching(StringUtils.join(tokens, " + "))
+                        f -> f.simpleQueryString()
+                                .fields("content")
+                                .matching(StringUtils.join(tokens, " + "))
                 )
-                .aggregation( countsByGenreKey, f -> f.terms()
-                        .field( "code", String.class ) )
+                .aggregation(countsByGenreKey, f -> f.terms()
+                        .field("code", String.class))
                 .sort(f -> f.score())
                 .fetch((int) offset, pageSize);
 
@@ -193,11 +190,6 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 //                text = "";
 //            }
 //        }
-
-
-
-
-
 
         return result;
     }
@@ -222,7 +214,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
                 tokens.add(term.toString());
                 System.out.println(term.toString() + "\t" // 表層形
-                        + offset.startOffset() + "-" +  offset.endOffset() + "," // 文字列中の位置
+                        + offset.startOffset() + "-" + offset.endOffset() + "," // 文字列中の位置
                         + partOfSpeech.getPartOfSpeech() + "," // 品詞-品詞細分類1-品詞細分類2
                         + inflection.getInflectionType() + "," // 活用型
                         + inflection.getInflectionForm() + "," // 活用形
@@ -241,16 +233,24 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
     }
 
+    @Override
+    protected boolean isFilterINClause(String fieldName) {
+        if ("status".equals(fieldName)) {
+            return true;
+        }
+        return false;
+    }
+
     public String highlight(String text, String term) {
 
         try {
 
 
-            SearchMapping mapping = Search.mapping( entityManager.getEntityManagerFactory() );
-            IndexManager indexManager = mapping.indexManager( "Person" );
+            SearchMapping mapping = Search.mapping(entityManager.getEntityManagerFactory());
+            IndexManager indexManager = mapping.indexManager("Person");
             Backend backend = mapping.backend();
-            LuceneBackend luceneBackend = backend.unwrap( LuceneBackend.class );
-            Analyzer analyzer = luceneBackend.analyzer( "japanese" ).orElseThrow(() -> new IllegalStateException());
+            LuceneBackend luceneBackend = backend.unwrap(LuceneBackend.class);
+            Analyzer analyzer = luceneBackend.analyzer("japanese").orElseThrow(() -> new IllegalStateException());
 
 //            Directory indexDirectory = FSDirectory.open(Paths.get(indexDirectoryPath + "/" + "Person"));
 //
@@ -275,7 +275,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
 
             String fragsString = "";
-            for(String f : Arrays.asList(frags)) {
+            for (String f : Arrays.asList(frags)) {
                 fragsString = fragsString + f + " ";
             }
 
@@ -290,6 +290,8 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
         return "";
 
     }
+
+
 
 
 }

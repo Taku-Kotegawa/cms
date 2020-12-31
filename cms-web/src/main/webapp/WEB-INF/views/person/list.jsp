@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/views/common/includes/include-datatables.jsp" %>
+<%@ include file="/WEB-INF/views/common/includes/include-multipleselect.jsp" %>
 
 <section class="content-header">
   <div class="container-flued mx-5">
@@ -27,8 +28,8 @@
           <th></th>
           <th></th>
           <th data-filter="disable">
-            <select id="col_filter_4" data-column="4" class="dataTables_column_filter form-control">
-              <option value=""></option>
+            <select id="col_filter_4" data-column="4" class="dataTables_column_filter form-control multipleSelect" multiple>
+              <!-- <option value=""></option> -->
               <c:forEach items="${CL_STATUS}" var="obj">
                 <option value="${obj.key}">${obj.value}</option>
               </c:forEach>

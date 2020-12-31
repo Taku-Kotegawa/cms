@@ -33,7 +33,7 @@
 
           <!-- 一覧に戻る -->
           <c:if test="${buttonState.gotoList__view}">
-            <a id="gotoList" href="${pageContext.request.contextPath}${op.getListUrl()}" class="btn btn-button mr-2"
+            <a id="gotoList" href="${pageContext.request.contextPath}${op.getListUrl()}?type=${variable.type}" class="btn btn-button mr-2"
               <c:if test="${buttonState.gotoList__disabled}">disabled</c:if>>${op.getLABEL_LIST()}</a>
           </c:if>
 

@@ -78,10 +78,14 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     /**
      * 保存前処理
      */
-    protected void beforeSave(T entity, T current){};
+    protected void beforeSave(T entity, T current) {
+    }
+
+    ;
 
     /**
      * 保存処理
+     *
      * @param entity 更新するエンティティ
      * @return entity 保存後のエンティティ
      */
@@ -177,12 +181,6 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * @param input
      * @param count
      * @param clazz
@@ -242,7 +240,13 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 }
                 String originalColumnName = column.getData();
                 String convertedColumnName = convertColumnName(originalColumnName);
-                if (isDate(convertedColumnName)) {
+
+                if (isFilterINClause(convertedColumnName)) {
+                    sql.append("c." + convertedColumnName);
+                    sql.append(" IN (:");
+                    sql.append(convertedColumnName);
+                    sql.append(")");
+                } else if (isDate(convertedColumnName)) {
                     sql.append("function('date_format', c.");
                     sql.append(convertedColumnName);
                     sql.append(", '%Y/%m/%d') LIKE :");
@@ -359,9 +363,15 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
         // フィールドフィルタ
         for (Column column : input.getColumns()) {
+            String originalColumnName = column.getData();
+            String convertColumnName = convertColumnName(originalColumnName);
             if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
                 // 検索文字列を%で囲む
-                typedQuery.setParameter(convertColumnName(column.getData()), QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
+                if (isFilterINClause(convertColumnName)) {
+                    typedQuery.setParameter(convertColumnName(column.getData()), Arrays.asList(StringUtils.split(column.getSearch().getValue(), ",")));
+                } else {
+                    typedQuery.setParameter(convertColumnName(column.getData()), QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
+                }
             }
         }
 
@@ -419,6 +429,10 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         if (getRelationEntity(fieldName) != null) {
             return true;
         }
+        return false;
+    }
+
+    protected boolean isFilterINClause(String fieldName) {
         return false;
     }
 

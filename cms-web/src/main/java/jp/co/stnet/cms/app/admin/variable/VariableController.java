@@ -76,8 +76,64 @@ public class VariableController {
      * 一覧画面の表示
      */
     @GetMapping(value = "list")
-    public String list(Model model) {
+    public String list(Model model, RedirectAttributes redirectAttributes) {
+
+        for (VariableType v : VariableType.values()) {
+            redirectAttributes.addFlashAttribute("stateSaveClear", "true");
+            return "redirect:/admin/variable/list?type=" + v.name();
+        }
+
         return JSP_LIST;
+    }
+
+    /**
+     * 一覧画面の表示
+     */
+    @GetMapping(value = "list", params = "type")
+    public String listByType(Model model, @RequestParam(value = "type", required = false) String type) {
+
+        VariableType variableType = null;
+        if (type != null && VariableType.valueOf(type) != null) {
+            model.addAttribute("variableType", VariableType.valueOf(type));
+            model.addAttribute("columnVisible", getJSArrayColumnVisible(VariableType.valueOf(type)));
+        }
+
+        return JSP_LIST;
+    }
+
+    private String getJSArrayColumnVisible(VariableType variableType) {
+
+        String javaScriptArray = "";
+
+        if (variableType == null) {
+            throw new IllegalArgumentException();
+        }
+
+        javaScriptArray += "let columnVisible = {};\n";
+        javaScriptArray += "columnVisible['value1'] = " + (variableType.getLabelValue1().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value2'] = " + (variableType.getLabelValue2().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value3'] = " + (variableType.getLabelValue3().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value4'] = " + (variableType.getLabelValue4().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value5'] = " + (variableType.getLabelValue5().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value6'] = " + (variableType.getLabelValue6().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value7'] = " + (variableType.getLabelValue7().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value8'] = " + (variableType.getLabelValue8().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value9'] = " + (variableType.getLabelValue9().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['value10'] = " + (variableType.getLabelValue10().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['valint1'] = " + (variableType.getLabelValint1().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['valint2'] = " + (variableType.getLabelValint2().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['valint3'] = " + (variableType.getLabelValint3().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['valint4'] = " + (variableType.getLabelValint4().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['valint5'] = " + (variableType.getLabelValint5().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['date1'] = " + (variableType.getLabelDate1().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['date2'] = " + (variableType.getLabelDate2().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['date3'] = " + (variableType.getLabelDate3().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['date4'] = " + (variableType.getLabelDate4().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['date5'] = " + (variableType.getLabelDate5().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['textarea'] = " + (variableType.getLabelTextarea().isEmpty() ? "false;" : "true;") + "\n";
+        javaScriptArray += "columnVisible['faile1'] = " + (variableType.getLabelFile1().isEmpty() ? "false;" : "true;") + "\n";
+
+        return javaScriptArray;
     }
 
     /**
