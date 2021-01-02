@@ -483,7 +483,6 @@ public final class AdminAccountController {
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
             fieldState.setInputTrueAll();
-            fieldState.setViewFalse("state");
         }
 
         // 編集

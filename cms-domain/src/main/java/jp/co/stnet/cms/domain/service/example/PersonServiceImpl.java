@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
+import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
 @Slf4j
 @Service

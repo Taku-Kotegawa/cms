@@ -40,18 +40,18 @@ public class LoggedInUserDetailsService implements UserDetailsService {
             }
 
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            List<String> roleIds = new ArrayList<>();
-
-            if (!account.getRoles().isEmpty()) {
-                for (String roleLabel : account.getRoles()) {
-                    authorities.add(new SimpleGrantedAuthority("ROLE_" + roleLabel));
-                    roleIds.add(roleLabel);
-                }
-            }
-
-            for (PermissionRole permissionRole : permissionRoleSharedService.findAllByRole(roleIds)) {
-                authorities.add(new SimpleGrantedAuthority(permissionRole.getPermission().name()));
-            }
+//            List<String> roleIds = new ArrayList<>();
+//
+//            if (!account.getRoles().isEmpty()) {
+//                for (String roleLabel : account.getRoles()) {
+//                    authorities.add(new SimpleGrantedAuthority("ROLE_" + roleLabel));
+//                    roleIds.add(roleLabel);
+//                }
+//            }
+//
+//            for (PermissionRole permissionRole : permissionRoleSharedService.findAllByRole(roleIds)) {
+//                authorities.add(new SimpleGrantedAuthority(permissionRole.getPermission().name()));
+//            }
 
             return new LoggedInUser(account,
                     accountSharedService.isLocked(username),

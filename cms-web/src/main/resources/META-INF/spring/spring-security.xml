@@ -11,15 +11,14 @@
 
     <sec:http pattern="/resources/**" security="none"/>
 
-    <sec:http>
-        <sec:form-login login-page="/login"
-                        login-processing-url="/login" username-parameter="username"
-                        password-parameter="password"/>
+    <sec:http entry-point-ref="loginUrlAuthenticationEntryPoint">
         <sec:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler"
                     delete-cookies="JSESSIONID"/>
         <sec:csrf request-matcher-ref="csrfMatcher"/>
         <sec:access-denied-handler ref="accessDeniedHandler"/>
         <sec:custom-filter ref="userIdMDCPutFilter" after="ANONYMOUS_FILTER"/>
+        <sec:custom-filter
+                position="FORM_LOGIN_FILTER" ref="customUsernamePasswordAuthenticationFilter" />
         <sec:session-management />
         <sec:intercept-url pattern="/login/**" access="permitAll"/>
         <sec:intercept-url pattern="/account/create" access="permitAll"/>
@@ -35,12 +34,65 @@
 
     </sec:http>
 
-    <sec:authentication-manager>
-        <sec:authentication-provider
-                user-service-ref="loggedInUserDetailsService">
-            <sec:password-encoder ref="passwordEncoder"/>
-        </sec:authentication-provider>
+<!-- 認証機能(ログイン画面)の拡張 -->
+
+    <bean id="loginUrlAuthenticationEntryPoint"
+          class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <constructor-arg value="/login" />
+    </bean>
+
+    <bean id="customUsernamePasswordAuthenticationFilter"
+          class="jp.co.stnet.cms.app.common.authentication.CustomUsernamePasswordAuthenticationFilter">
+        <!-- (5) -->
+        <property name="requiresAuthenticationRequestMatcher">
+            <bean class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+                <constructor-arg index="0" value="/login" />
+                <constructor-arg index="1" value="POST" />
+            </bean>
+        </property>
+        <!-- (6) -->
+        <property name="authenticationManager" ref="authenticationManager" />
+        <!-- (7) -->
+        <property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy" />
+        <!-- (8) -->
+        <property name="authenticationFailureHandler">
+            <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+                <constructor-arg value="/login?error=true" />
+            </bean>
+        </property>
+        <!-- (9) -->
+        <property name="authenticationSuccessHandler">
+            <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler" />
+        </property>
+    </bean>
+
+
+    <sec:authentication-manager alias="authenticationManager">
+        <sec:authentication-provider ref="customUsernamePasswordAuthenticationProvider" />
     </sec:authentication-manager>
+
+    <bean id="customUsernamePasswordAuthenticationProvider"
+          class="jp.co.stnet.cms.app.common.authentication.CustomUsernamePasswordAuthenticationProvider">
+        <property name="userDetailsService" ref="loggedInUserDetailsService" />
+        <property name="passwordEncoder" ref="passwordEncoder" />
+    </bean>
+
+    <bean id="sessionAuthenticationStrategy"
+          class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
+        <constructor-arg>
+            <util:list>
+                <bean class="org.springframework.security.web.csrf.CsrfAuthenticationStrategy">
+                    <constructor-arg ref="csrfTokenRepository" />
+                </bean>
+                <bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy" />
+            </util:list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="csrfTokenRepository"
+          class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository" />
+
+
 
     <!-- CSRF Protection -->
     <bean id="accessDeniedHandler"

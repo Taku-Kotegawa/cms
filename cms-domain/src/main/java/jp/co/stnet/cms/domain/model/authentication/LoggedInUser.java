@@ -1,11 +1,14 @@
 package jp.co.stnet.cms.domain.model.authentication;
 
+import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+@Getter
 public class LoggedInUser extends User {
 
     private final Account account;
@@ -20,14 +23,6 @@ public class LoggedInUser extends User {
                 !isLocked, authorities);
         this.account = account;
         this.lastLoginDate = lastLoginDate;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public LocalDateTime getLastLoginDate() {
-        return lastLoginDate;
     }
 
 }

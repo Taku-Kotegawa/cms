@@ -56,9 +56,12 @@
                         </div>
                         <!-- /.col -->
                     </div>
-                </form:form>
-                <br><br>
-
+                <br>
+                <div class="form-check-inline">
+                    <input type="checkbox" class="ml-0 mr-1" id="loginAsAdministrator" name="loginAsAdministrator" value="true" />
+                    <label for="loginAsAdministrator">login as Administrator</label>
+                </div>
+            </form:form>
                 <p class="mb-1">
                     <a id="create"
                         href="${f:h(pageContext.request.contextPath)}/account/create?form">Create
@@ -69,6 +72,7 @@
                         href="${f:h(pageContext.request.contextPath)}/reissue/create?form">I've
                         forgotten my password</a>
                 </p>
+
             </div>
             <!-- /.login-card-body -->
         </div>

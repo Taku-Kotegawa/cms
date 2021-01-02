@@ -23,10 +23,8 @@
     <div class="content-wrapper">
       <tiles:insertAttribute name="body" />
 
-      <%--
       <br>
       <%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
-      --%>
 
     </div>
   </div>
