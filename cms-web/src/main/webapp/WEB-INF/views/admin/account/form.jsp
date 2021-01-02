@@ -3,7 +3,7 @@
     <div class="row mb-2 border-bottom">
       <div class="col-18">
         <!-- ページタイトルを記入 -->
-        <h4>アカウント新規登録</h4>
+        <h4>アカウント登録・編集(管理者)</h4>
       </div>
       <div class="col-18">
         <!-- ページタイトル右の余白 -->
@@ -152,7 +152,7 @@
           <!-- 入力 -->
           <c:if test="${fieldState.password__input}">
             <form:input type="password" path="password" cssClass="form-control" cssErrorClass="form-control is-invalid"
-              disabled="${fieldState.password__disabled}" readonly="${fieldState.password__readonly}" />
+              disabled="${fieldState.password__disabled}" readonly="${fieldState.password__readonly}" autocomplete="new-password"/>
             新規は必須、変更は必要な場合のみ
             <form:errors path="password" cssClass="invalid-feedback" />
           </c:if>
@@ -225,6 +225,39 @@
       </div>
 
       <div class="row mb-3">
+        <div class="col-24">
+          <!-- ラベル -->
+          <c:if test="${fieldState.roles__input || fieldState.roles__view}">
+            <form:label path="roles">ロール</form:label>
+          </c:if>
+          <!-- 入力 -->
+          <c:if test="${fieldState.roles__input}">
+            <div class="form-check-inline" style="width:100%">
+              <form:checkboxes path="roles" cssClass="" cssErrorClass="is-invalid" items="${CL_ROLE}"  />
+            </div>
+            <form:errors path="roles" cssClass="invalid-feedback" />
+          </c:if>
+          <!-- 隠しフィールド-->
+          <c:if test="${fieldState.roles__hidden}">
+            <form:hidden path="roles" />
+          </c:if>
+          <!-- 参照用-->
+          <c:if test="${fieldState.roles__view}">
+            <div class="form-control form-control__view">
+              <c:forEach var="item" items="${CL_ROLE}" varStatus="status">
+                <span>
+                  <c:if test="${status.index != 0}">,&nbsp</c:if>
+                  <c:if test="${account.roles.contains(item.key)}">[レ]</c:if>
+                  <c:if test="${!account.roles.contains(item.key)}">[　]</c:if>
+                  ${item.value}
+                </span>
+              </c:forEach>
+            </div>
+          </c:if>
+        </div>
+      </div>      
+
+      <div class="row mb-3">
         <div class="col-12">
           <!-- ステータスは新規登録時非表示、それ以外は常に表示のみ -->
           <!-- ラベル -->
@@ -239,7 +272,7 @@
         </div>
       </div>
 
-      <br />
+      <br>
 
       <div class="col-36">
 

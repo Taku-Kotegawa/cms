@@ -42,4 +42,14 @@
         <constructor-arg value="jp.co.stnet.cms.domain.model.common.VariableType" />
     </bean>
 
+    <bean id="CL_ROLE"
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList">
+        <constructor-arg value="jp.co.stnet.cms.domain.model.authentication.Role" />
+    </bean>
+
+    <bean id="CL_PERMISSION"
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList">
+        <constructor-arg value="jp.co.stnet.cms.domain.model.authentication.Permission" />
+    </bean>
+
 </beans>

@@ -2,11 +2,17 @@ package jp.co.stnet.cms.app.admin.account;
 
 import jp.co.stnet.cms.domain.common.validation.NotContainControlChars;
 import jp.co.stnet.cms.domain.common.validation.NotContainControlCharsExceptNewlines;
+import jp.co.stnet.cms.domain.model.authentication.Role;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
+
+//TODO キーの重複チェックの追加
 @Data
 public class AccountForm {
 
@@ -47,6 +53,10 @@ public class AccountForm {
     @NotNull
     @NotContainControlCharsExceptNewlines
     private String profile;
+
+
+    private List<String> roles;
+
 
     public interface Create {
     }

@@ -3,29 +3,27 @@
     <!-- Left navbar links -->
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#"
-                role="button"><i class="fas fa-bars"></i></a>
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="${f:h(pageContext.request.contextPath)}/" class="nav-link">Home</a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
+        <!-- <li class="nav-item d-none d-sm-inline-block">
             <a href="#" class="nav-link">Contact</a>
-        </li>
+        </li> -->
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
+    <!-- <form class="form-inline ml-3">
         <div class="input-group input-group-sm">
-            <input class="form-control form-control-navbar" type="search"
-                placeholder="Search" aria-label="Search">
+            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
             <div class="input-group-append">
                 <button class="btn btn-navbar" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
         </div>
-    </form>
+    </form> -->
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
@@ -39,13 +37,8 @@
                 <!-- <span class="dropdown-item dropdown-header"></span> -->
 
                 <a href="${f:h(pageContext.request.contextPath)}/account/" class="dropdown-item">
-                    <i class="fas fa-database mr-2"></i>アカウント情報
+                    <i class="fas fa-database mr-2"></i>マイアカウント情報
                 </a>
-
-                <div class="dropdown-divider"></div>
-                  <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">
-                    <button id="logout" class="dropdown-item"><i class="fas fa-database mr-2"></i>ログアウト</button>
-                  </form:form>
 
                 <div class="dropdown-divider"></div>
                 <a href="${f:h(pageContext.request.contextPath)}/admin/" class="dropdown-item">
@@ -53,14 +46,9 @@
                 </a>
 
                 <div class="dropdown-divider"></div>
-                <a href="${f:h(pageContext.request.contextPath)}/simpleentity/list" class="dropdown-item">
-                    <i class="fas fa-database mr-2"></i>サンプル
-                </a>
-
-
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer"></a>
-
+                    <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">
+                        <button id="logout" class="dropdown-item dropdown-footer">ログアウト</button>
+                    </form:form>
             </div>
         </li>
     </ul>

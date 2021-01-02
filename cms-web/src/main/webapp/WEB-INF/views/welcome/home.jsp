@@ -1,7 +1,7 @@
 <c:if test="${not empty shortMessage}">
   <div class="shortMessage container-flued py-1 px-3">
     ${f:br(f:h(shortMessage))}
-  </div>  
+  </div>
 </c:if>
 <section class="content-header">
   <div class="container">
@@ -34,11 +34,24 @@
         </ul>
       </div>
     </div>
+
+
+
+    <div class="row">
+      <div class="col-36">
+        <div class="card">
+          <div class="card-body">
+            <h5>ヒント</h5>
+            <p><code>cms-web/src/main/webapp/WEB-INF/views/layout/template.jsp</code>の
+              <code>include-debug.jsp</code>のコメントを外すとページ下部にデバッグ情報が表示される様になる。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ここより上にメインコンテンツを記入 -->
   </div>
 
-  <!-- ここより上にメインコンテンツを記入 -->
-  </div>
-  
 </section>
 
 <!-- <footer class="main-footer">

@@ -156,6 +156,7 @@ public final class AdminAccountController {
             Account source = accountService.findById(copy);
             beanMapper.map(source, form);
             form.setUsername(null);
+            form.setPassword(null);
         }
 
         // ボタンの状態を設定
