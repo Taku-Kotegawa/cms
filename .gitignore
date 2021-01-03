@@ -85,3 +85,5 @@ fabric.properties
 **/target
 /cms-batch/lib/
 /cms-web/files/
+/cms-domain/lucene/
+/.idea/
