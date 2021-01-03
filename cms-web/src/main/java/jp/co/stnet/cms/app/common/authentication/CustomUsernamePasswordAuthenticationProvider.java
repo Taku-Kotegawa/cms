@@ -82,7 +82,7 @@ public class CustomUsernamePasswordAuthenticationProvider extends DaoAuthenticat
             authorities.add(new SimpleGrantedAuthority(permissionRole.getPermission().name()));
         }
 
-        return new CustomUsernamePasswordAuthenticationToken(user,
+        return new CustomUsernamePasswordAuthenticationToken(principal,
                 authentication.getCredentials(), loginAsAdministrator,
                 authorities);
 

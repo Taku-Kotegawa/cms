@@ -14,6 +14,8 @@
             <c:if test="${!empty exceptionCode}">[${f:h(exceptionCode)}]</c:if>
             <spring:message code="e.sl.fw.7003" />
         </div>
+        <br>
+        <a href="${pageContext.request.contextPath}/">Back To Top Page</a>
 
 <br>
 <br>

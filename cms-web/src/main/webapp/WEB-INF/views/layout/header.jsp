@@ -28,6 +28,10 @@
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
 
+        <sec:authorize access="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')">
+            <a class="nav-link blink text-danger" href="${f:h(pageContext.request.contextPath)}/logout/impersonate">ユーザ切り替え中</a>                
+        </sec:authorize>
+
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
@@ -49,6 +53,13 @@
                     <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">
                         <button id="logout" class="dropdown-item dropdown-footer">ログアウト</button>
                     </form:form>
+
+                    <sec:authorize access="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')">
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item dropdown-footer" href="${f:h(pageContext.request.contextPath)}/logout/impersonate">ユーザ切替を中断</a>                
+                    </sec:authorize>
+
+
             </div>
         </li>
     </ul>

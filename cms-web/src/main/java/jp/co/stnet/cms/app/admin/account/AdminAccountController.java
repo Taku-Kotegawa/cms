@@ -131,6 +131,7 @@ public final class AdminAccountController {
         link.append("<a class=\"dropdown-item\" href=\"" + op.getViewUrl(id) + "\">" + op.getLABEL_VIEW() + "</a>");
         link.append("<a class=\"dropdown-item\" href=\"" + op.getCopyUrl(id) + "\">" + op.getLABEL_COPY() + "</a>");
         link.append("<a class=\"dropdown-item\" href=\"" + op.getInvalidUrl(id) + "\">" + op.getLABEL_INVALID() + "</a>");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getSwitchUserUrl(id) + "\">" + op.getLABEL_SWITCH_USER() + "</a>");
         link.append("</div>");
         link.append("</div>");
 
@@ -362,6 +363,7 @@ public final class AdminAccountController {
 
         return JSP_FORM;
     }
+
 
     // ---------------- ロック解除 ---------------------------------------------------------
 

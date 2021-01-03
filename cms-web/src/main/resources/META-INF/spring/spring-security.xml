@@ -17,14 +17,15 @@
         <sec:csrf request-matcher-ref="csrfMatcher"/>
         <sec:access-denied-handler ref="accessDeniedHandler"/>
         <sec:custom-filter ref="userIdMDCPutFilter" after="ANONYMOUS_FILTER"/>
-        <sec:custom-filter
-                position="FORM_LOGIN_FILTER" ref="customUsernamePasswordAuthenticationFilter" />
+        <sec:custom-filter position="FORM_LOGIN_FILTER" ref="customUsernamePasswordAuthenticationFilter" />
+        <sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
         <sec:session-management />
         <sec:intercept-url pattern="/login/**" access="permitAll"/>
         <sec:intercept-url pattern="/account/create" access="permitAll"/>
         <sec:intercept-url pattern="/reissue/**" access="permitAll"/>
         <sec:intercept-url pattern="/api/receivedmail" access="permitAll"/>
         <sec:intercept-url pattern="/unlock/**" access="hasRole('ADMIN')"/>
+        <sec:intercept-url pattern="/admin/account/impersonate/**" access="hasRole('ADMIN')"/>
 
         <!-- /** は一番下 -->
         <sec:intercept-url pattern="/**" access="isAuthenticated()"/>
@@ -180,6 +181,16 @@
                 </bean>
             </util:list>
         </constructor-arg>
+    </bean>
+
+    <!-- ユーザなりすまし機能 -->
+    <!-- GET /login/impersonate?username=loginIdOfTheNewUser -->
+    <!-- GET /logout/impersonate -->
+    <bean id="switchUserProcessingFilter" class="org.springframework.security.web.authentication.switchuser.SwitchUserFilter">
+        <property name="userDetailsService" ref="loggedInUserDetailsService" />
+        <property name="switchUserUrl" value="/admin/account/impersonate" />
+        <property name="exitUserUrl" value="/logout/impersonate" />
+        <property name="targetUrl" value="/" />
     </bean>
 
 </beans>

@@ -23,7 +23,9 @@
 
     <div>
       <p>ロールとパーミッションを用いてセキュリティの細かな調整を行えます。ロールは特定のパーミッションの組み合わせを定義するために使われます。<br>
-      <a href="${f:h(pageContext.request.contextPath)}/admin/permission/list">パーミッション</a>ページで、ロートとパーミッションの組み合わせを設定できます。</p>
+        <a
+          href="${f:h(pageContext.request.contextPath)}/admin/permission/list">パーミッション</a>ページで、ロートとパーミッションの組み合わせを設定できます。
+      </p>
       <p>なお、ロール自体の追加はこの画面からできません。ロールEnum(jp.co.stnet.cms.domain.model.authentication.Role)を編集してください。</p>
     </div>
 
@@ -39,10 +41,16 @@
       <tbody>
         <c:forEach var="obj" items="${roleList}" varStatus="status">
           <tr>
-            <td><c:out value="${status.index}"/></td>
-            <td><c:out value="${obj.value}"/></td>
-            <td><c:out value="${obj.label}"/></td>          
-            <td><a href="#">権限の編集</a></td>          
+            <td>
+              <c:out value="${status.index}" />
+            </td>
+            <td>
+              <c:out value="${obj.codeValue}" />
+            </td>
+            <td>
+              <c:out value="${obj.codeLabel}" />
+            </td>
+            <td><a href="#">権限の編集(未実装)</a></td>
           </tr>
         </c:forEach>
       </tbody>
@@ -51,4 +59,3 @@
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
 </section>
-

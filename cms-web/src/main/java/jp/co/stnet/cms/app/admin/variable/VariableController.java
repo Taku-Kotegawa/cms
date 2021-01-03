@@ -94,9 +94,14 @@ public class VariableController {
 
         VariableType variableType = null;
         if (type != null && VariableType.valueOf(type) != null) {
-            model.addAttribute("variableType", VariableType.valueOf(type));
-            model.addAttribute("columnVisible", getJSArrayColumnVisible(VariableType.valueOf(type)));
+            variableType = VariableType.valueOf(type);
+
+        } else if (VariableType.values().length > 0){
+            variableType = VariableType.values()[0];
         }
+
+        model.addAttribute("variableType", variableType);
+        model.addAttribute("columnVisible", getJSArrayColumnVisible(variableType));
 
         return JSP_LIST;
     }
