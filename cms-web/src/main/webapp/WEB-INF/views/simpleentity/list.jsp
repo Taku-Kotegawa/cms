@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/views/common/includes/include-datatables.jsp" %>
+<%@ include file="/WEB-INF/views/common/includes/include-multipleselect.jsp" %>
 
 <section class="content-header px-5">
   <div class="container-fluid">
@@ -17,6 +18,10 @@
 
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
+    <p>
+    fixedColumnsやScroll-Xを利用することで、大きな一覧表を表示する例。<br>
+    固定ヘッダーや固定列内でtoggle-buttonやmultiple-selectを使うと見切れてしまうので、使用する場合は特に注意が必要。現時点で#列の項目フィルターが機能していない。
+    </p>
 
     <div class="form-check-inline" style="width:100%">
       <input id="draft" type="checkbox" checked="checked">
@@ -127,6 +132,10 @@
           },
 
           "scrollX": true,
+
+          fixedColumns:   {
+            leftColumns: 3
+          },          
 
           // 一覧に表示する項目とJSONの項目にマッピング
           'columns': [{

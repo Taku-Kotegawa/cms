@@ -69,3 +69,25 @@
 	0% {opacity: 0;}
 	100% {opacity: 1;}
 }
+
+
+.list-inline>li {
+    display: inline-block;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.list-inline {
+  padding-left: 0;
+  list-style: none;
+  width: max-content !important;
+}
+
+.dropdown-menu.list-inline {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap !important;
+}

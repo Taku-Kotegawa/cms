@@ -28,8 +28,8 @@
 
 
 <!-- fiexed Column-->
-<!-- <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.min.css"> -->
-<!-- <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.min.js"></script> -->
-<!-- <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/js/fixedColumns.bootstrap4.min.js"></script> -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.min.css">
+<script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/js/fixedColumns.bootstrap4.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/resources/app/js/datatables-default.js"></script>

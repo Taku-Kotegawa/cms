@@ -35,3 +35,15 @@ table.dataTable > tbody > tr > td {
   border-bottom: 1px solid #e6e4df;
 }
 
+
+
+.DTFC_LeftBodyLiner,
+.DTFC_RightBodyLiner {
+  overflow-y: auto !important;
+  width: unset !important;
+}
+
+.DTFC_LeftBodyLiner>table>thead>tr,
+.DTFC_RightBodyLiner>table>thead>tr {
+  height: 0 !important;
+}

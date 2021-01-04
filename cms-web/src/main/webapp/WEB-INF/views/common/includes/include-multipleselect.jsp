@@ -8,7 +8,10 @@
             function () {
 
                 $(".multipleSelect").multipleSelect(
-                    {filter: true}
+                    {
+                        filter: true,
+                        maxHeight: 20
+                        }
                 );
 
             });

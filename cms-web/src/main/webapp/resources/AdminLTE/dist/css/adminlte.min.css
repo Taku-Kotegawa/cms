@@ -33239,6 +33239,17 @@ table.dataTable > tbody > tr > td {
   border-bottom: 1px solid #e6e4df;
 }
 
+.DTFC_LeftBodyLiner,
+.DTFC_RightBodyLiner {
+  overflow-y: auto !important;
+  width: unset !important;
+}
+
+.DTFC_LeftBodyLiner > table > thead > tr,
+.DTFC_RightBodyLiner > table > thead > tr {
+  height: 0 !important;
+}
+
 :focus {
   outline-width: 0 !important;
 }
@@ -33295,5 +33306,28 @@ table.dataTable > tbody > tr > td {
   100% {
     opacity: 1;
   }
+}
+
+.list-inline > li {
+  display: inline-block;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.list-inline {
+  padding-left: 0;
+  list-style: none;
+  width: -webkit-max-content !important;
+  width: -moz-max-content !important;
+  width: max-content !important;
+}
+
+.dropdown-menu.list-inline {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap !important;
 }
 /*# sourceMappingURL=adminlte.min.css.map */

@@ -92,6 +92,12 @@
               <c:if test="${buttonState.delete__disabled}">disabled</c:if> >${op.getLABEL_DELETE()}</a>
           </c:if>
 
+          <!-- 複製 -->
+          <c:if test="${buttonState.copy__view}">
+            <a id="copy" href="${pageContext.request.contextPath}${op.getCopyUrl(id)}" class="btn btn-button mr-2"
+              <c:if test="${buttonState.copy__disabled}">disabled</c:if> >${op.getLABEL_COPY()}</a>
+          </c:if>
+
         </div>
       </div>
 
