@@ -33250,6 +33250,12 @@ table.dataTable > tbody > tr > td {
   height: 0 !important;
 }
 
+.dataTable .dropdown-menu {
+  min-width: -webkit-fit-content !important;
+  min-width: -moz-fit-content !important;
+  min-width: fit-content !important;
+}
+
 :focus {
   outline-width: 0 !important;
 }

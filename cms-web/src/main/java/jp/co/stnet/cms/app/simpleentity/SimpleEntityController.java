@@ -289,13 +289,30 @@ public class SimpleEntityController {
     private String getToggleButton(String id, OperationsUtil op) {
 
         // fixedColumnを使うとトグルボタンは使えない。
+//        StringBuffer link = new StringBuffer();
+//        link.append("<div class=\"whitespace-nowrap\">");
+//        link.append("<a class=\"whitespace-nowrap\" href=\"" + op.getEditUrl(id) + "\">" + op.getLABEL_EDIT() + "</a>");
+//        link.append(" | ");
+//        link.append("<a class=\"whitespace-nowrap\" href=\"" + op.getViewUrl(id) + "\">" + op.getLABEL_VIEW() + "</a></li>");
+//        link.append("</div>");
+
+
         StringBuffer link = new StringBuffer();
-        link.append("<div class=\"whitespace-nowrap\">");
-        link.append("<a class=\"whitespace-nowrap\" href=\"" + op.getEditUrl(id) + "\">" + op.getLABEL_EDIT() + "</a>");
-        link.append(" | ");
-        link.append("<a class=\"whitespace-nowrap\" href=\"" + op.getViewUrl(id) + "\">" + op.getLABEL_VIEW() + "</a></li>");
+        link.append("<div class=\"btn-group\">");
+        link.append("<a href=\"" + op.getEditUrl(id) + "\" class=\"btn btn-button btn-sm\" style=\"white-space: nowrap\">" + op.getLABEL_EDIT() + "</a>");
+        link.append("<button type=\"button\" class=\"btn btn-button btn-sm dropdown-toggle dropdown-toggle-split\"data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">");
+        link.append("</button>");
+        link.append("<div class=\"dropdown-menu\">");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getViewUrl(id) + "\">" + op.getLABEL_VIEW() + "</a>");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getCopyUrl(id) + "\">" + op.getLABEL_COPY() + "</a>");
+        link.append("<a class=\"dropdown-item\" href=\"" + op.getInvalidUrl(id) + "\">" + op.getLABEL_INVALID() + "</a>");
         link.append("</div>");
+        link.append("</div>");
+
+
         return link.toString();
+
+
     }
 
     protected OperationsUtil op() {

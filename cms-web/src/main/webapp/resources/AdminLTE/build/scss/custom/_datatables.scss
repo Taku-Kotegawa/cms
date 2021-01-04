@@ -47,3 +47,7 @@ table.dataTable > tbody > tr > td {
 .DTFC_RightBodyLiner>table>thead>tr {
   height: 0 !important;
 }
+
+.dataTable .dropdown-menu {
+  min-width: fit-content !important;
+}

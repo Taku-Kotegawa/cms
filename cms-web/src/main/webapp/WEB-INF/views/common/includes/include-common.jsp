@@ -11,6 +11,10 @@
 <!-- マネージドファイル ------------------------------------------------------------------------------------------------->
 <script src="${pageContext.request.contextPath}/resources/app/js/filemanaged.js"></script>
 
+<!-- popper           ------------------------------------------------------------------------------------------------->
+<script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/popper/popper.min.js">
+</script>
+
 <!-- Bootstrap 4 ------------------------------------------------------------------------------------------------------>
 <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js">
 </script>
