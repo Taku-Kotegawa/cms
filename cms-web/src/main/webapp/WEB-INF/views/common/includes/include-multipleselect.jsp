@@ -10,7 +10,6 @@
                 $(".multipleSelect").multipleSelect(
                     {
                         filter: true,
-                        maxHeight: 20
                         }
                 );
 
