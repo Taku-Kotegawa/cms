@@ -33256,6 +33256,22 @@ table.dataTable > tbody > tr > td {
   min-width: fit-content !important;
 }
 
+table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected {
+  color: inherit;
+}
+
+table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
+  background-color: transparent;
+}
+
+table.dataTable tbody > tr:nth-of-type(even).selected, table.dataTable tbody > tr:nth-of-type(even) > .selected {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+table.dataTable tbody tr.selected a, table.dataTable tbody th.selected a, table.dataTable tbody td.selected a {
+  color: inherit;
+}
+
 :focus {
   outline-width: 0 !important;
 }

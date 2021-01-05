@@ -151,6 +151,21 @@ function addFieldFilter2(table) {
     fnRecoverFieldSearch(table);
     //    restoreColumnFilterByColReOrder(table);
 
+
+    // fixedColumns 上の検索項目はレンダリングのタイムラグがある
+    setTimeout(
+        function () {
+          $('.DTFC_LeftWrapper input.dataTables_column_filter').on('keyup', function (e, s) {
+            if (e.which == 13 || this.value.length == 0) {
+                var th = $(this).parents('th')[0];
+                var visIndex = th.cellIndex;
+                table.column(visIndex + ':visIdx').search(this.value).draw();
+            }
+          });
+        }, 
+        "3000"
+        );
+
 }
 
 
@@ -305,3 +320,17 @@ $.fn.dataTable.ext.buttons.upload = {
         window.location.href = "upload?form";
     }
 };
+
+
+/**
+ * checkboxesで選択されている行のキーの一覧を取得する
+ */
+function getSelectedKey(table, checkboxesColumnNo) {
+    let rowsSelected = table.column(checkboxesColumnNo).checkboxes.selected()
+    let checked = [];
+    for (var i = 0; i < rowsSelected.length; i++) {
+        checked.push(rowsSelected[i]);
+    }
+    alert(checked.join(','));
+    return checked.join(',');
+}

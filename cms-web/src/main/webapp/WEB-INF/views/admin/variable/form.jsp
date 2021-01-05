@@ -16,6 +16,15 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
+    <div>
+      <p>
+        新規登録時、「タイプ」を選択し、「保存」ボタンを押下するとフィールドラベルがタイプ別の値に更新される。<br>
+        「タイプ」を切り替えたときに、全フィールドを空欄にしつつ、再描画する様な動作が望ましい。<br>
+        「タイプ」の説明をどこかに表示したい。
+      </p>
+    </div>
+
+
     <!-- １．フォームタグで囲む -->
     <form:form modelAttribute="variableForm" enctype="multipart/form-data" autocomplete="off">
       <!-- EnterキーによるPOSTを無効化 -->

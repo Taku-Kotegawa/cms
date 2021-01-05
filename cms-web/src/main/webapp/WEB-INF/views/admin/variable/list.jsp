@@ -17,6 +17,10 @@
 
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
+    <div>
+      <p>変更してもコードリストに即時反映しません。再起動が必要。(TODO: コードリストのリロード機能を追加)<br>
+      新規登録ボタン押下し登録フォームを開いたときに、一覧画面で選択している「タイプ」を初期値設定する様にしたい。</p>
+    </div>
 
     <table id="list" class="table-sm table-striped">
       <thead>

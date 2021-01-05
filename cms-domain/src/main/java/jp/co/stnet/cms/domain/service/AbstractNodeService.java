@@ -439,7 +439,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     protected String getRelationEntity(String fieldName) {
 
         String entityName = null;
-        if (fieldName.contains(".")) {
+        if (fieldName != null && fieldName.contains(".")) {
             entityName = fieldName.substring(0, fieldName.indexOf("."));
         }
 

@@ -34,7 +34,7 @@ public class OperationsUtil {
     // 12
     private String LABEL_DOWNLOAD = "ダウンロード";
     // 13
-    private String LABEL_SWITCH_USER = "スイッチユーザ";
+    private String LABEL_SWITCH_USER = "スイッチ";
 
     // 1
     private String URL_CREATE = "create?form";

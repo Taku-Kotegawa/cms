@@ -85,7 +85,7 @@
           <div class="input-group">
             <input class="form-control" name="q" value="${f:h(q)}" />
             <div class="input-group-append">
-              <button class="btn btn-button">検索</button>
+              <button class="btn btn-button py-0">検索</button>
             </div>
           </div>
         </div>

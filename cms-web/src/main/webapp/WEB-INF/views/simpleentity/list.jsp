@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/views/common/includes/include-datatables.jsp" %>
-<%@ include file="/WEB-INF/views/common/includes/include-multipleselect.jsp" %>
+<%-- <%@ include file="/WEB-INF/views/common/includes/include-multipleselect.jsp" %> --%>
 
 <section class="content-header px-5">
   <div class="container-fluid">
@@ -20,7 +20,7 @@
     <!-- ここより下にメインコンテンツを記入 -->
     <p>
     fixedColumnsやScroll-Xを利用することで、大きな一覧表を表示する例。<br>
-    固定ヘッダーや固定列内でtoggle-buttonやmultiple-selectを使うと見切れてしまうので、使用する場合は特に注意が必要。現時点で#列の項目フィルターが機能していない。
+    固定ヘッダーや固定列内でtoggle-buttonやmultiple-selectを使うと見切れてしまうので、使用する場合は特に注意が必要。
     </p>
 
     <div class="form-check-inline" style="width:100%">
@@ -131,21 +131,24 @@
             'data': myflatten
           },
 
-          "scrollX": true,
+          scrollX: true,
 
-          fixedColumns:   {
+          fixedColumns: {
             leftColumns: 3
           },          
 
+          // select: 'multi',         
+
           // 一覧に表示する項目とJSONの項目にマッピング
-          'columns': [{
+          'columns': [
+            {
               data: 'id',
               className: 'text-center',
               orderable: false,
               searchable: false,
               checkboxes: {
-                selectRow: true
-              },
+               'selectRow': false
+              }
             },
             {
               data: 'operations',
@@ -155,6 +158,8 @@
           //<!-- (3) Start -->
             {
               data: 'id',
+              orderable: true,
+              searchable: true,
             },
             {
               data: 'text01',
@@ -262,6 +267,7 @@
           'initComplete': function (settings, json) {
             // グローバルフィルターのEnterキーでサーバに送信
             fnGlobalFilterOnReturn(table);
+
           },
         });
 
@@ -270,20 +276,20 @@
           $('html, body').animate({
             scrollTop: 0
           }, 300);
+
+          // checkboxesテスト
+          getSelectedKey(table, 0);
         });
-
-        // 項目単位フィルタの追加
-        // addFieldFilter(table)
-
-        // 項目単位フィルタを追加(列の並び順対応版)
-        addFieldFilter2(table)
-
 
         $('#draft').change().on('change', function (e, s) {
           localStorage.dataTables_Draft = e.target.checked;
           table.draw();
           fnColumns(table);
         });
+
+        // 項目単位フィルタの追加
+        // addFieldFilter(table) // 通常版
+        addFieldFilter2(table) // (列の並び順対応版)
 
         // 画面表示時の下書きチェックボックスの復元
         if (localStorage.dataTables_Draft == 'false') {

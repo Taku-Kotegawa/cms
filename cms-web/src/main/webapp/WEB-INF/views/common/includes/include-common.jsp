@@ -12,8 +12,7 @@
 <script src="${pageContext.request.contextPath}/resources/app/js/filemanaged.js"></script>
 
 <!-- popper           ------------------------------------------------------------------------------------------------->
-<script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/popper/popper.min.js">
-</script>
+<!-- <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/popper/popper.min.js"></script> -->
 
 <!-- Bootstrap 4 ------------------------------------------------------------------------------------------------------>
 <script src="${pageContext.request.contextPath}/resources/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js">
@@ -39,6 +38,22 @@
 <!-- Font Awesome Icons ----------------------------------------------------------------------------------------------->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/fontawesome-free/css/all.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/fontawesome-free/css/v4-shims.min.css">
+
+
+
+<!-- DataTables CSS スタイルシートの適用順番の関係でCSSはここで読み込む。JSは必要なときのみインクルード -------------------------->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<!-- <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css"> -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+<!-- <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedheader/css/fixedHeader.bootstrap4.min.css"> -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-colreorder/css/colReorder.bootstrap4.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/AdminLTE/plugins/datatables-select/css/select.bootstrap4.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/jquery-datatables-checkboxes/css/dataTables.checkboxes.css">
+
+
+
+
 
 <!-- Admin LTE & Custom Style ----------------------------------------------------------------------------------------->
 <!-- (一番最後) -->
