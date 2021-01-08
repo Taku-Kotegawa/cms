@@ -40,6 +40,7 @@ import org.terasoluna.gfw.web.token.transaction.TransactionTokenCheck;
 import org.terasoluna.gfw.web.token.transaction.TransactionTokenType;
 
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
@@ -609,6 +610,63 @@ public class SimpleEntityController {
         model.addAttribute(fileManagedSharedService.findByUuid(uuid));
         return "fileManagedDownloadView";
     }
+
+
+    @PostMapping("bulk_delete")
+    public String bulkDelete(Model model, String selectedKey, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        simpleEntityService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
+
+        String[] strKeys = selectedKey.split(",");
+        List<SimpleEntity> deleteEntities = new ArrayList<>();
+        for(String key : strKeys) {
+            SimpleEntity entity = simpleEntityService.findById(Long.valueOf(key));
+            if (entity.getStatus().equals(Status.INVALID.getCodeValue())) {
+                deleteEntities.add(entity);
+            }
+        }
+
+        simpleEntityService.delete(deleteEntities);
+
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0003));
+        return "redirect:" + op().getListUrl();
+    }
+
+    @PostMapping("bulk_invalid")
+    public String bulkInvalid(Model model, String selectedKey, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        simpleEntityService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
+
+        String[] strKeys = selectedKey.split(",");
+        List<SimpleEntity> deleteEntities = new ArrayList<>();
+        for(String key : strKeys) {
+            SimpleEntity entity = simpleEntityService.findById(Long.valueOf(key));
+            if (entity.getStatus().equals(Status.VALID.getCodeValue())) {
+                simpleEntityService.invalid(entity.getId());
+            }
+        }
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
+        return "redirect:" + op().getListUrl();
+    }
+
+    @PostMapping("bulk_valid")
+    public String bulkValid(Model model, String selectedKey, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        simpleEntityService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
+
+        String[] strKeys = selectedKey.split(",");
+        List<SimpleEntity> deleteEntities = new ArrayList<>();
+        for(String key : strKeys) {
+            SimpleEntity entity = simpleEntityService.findById(Long.valueOf(key));
+            if (entity.getStatus().equals(Status.INVALID.getCodeValue())) {
+                simpleEntityService.valid(entity.getId());
+            }
+        }
+        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
+        return "redirect:" + op().getListUrl();
+    }
+
+
 
     /**
      * ボタンの状態設定

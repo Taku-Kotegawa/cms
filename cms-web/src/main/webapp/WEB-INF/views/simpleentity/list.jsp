@@ -23,15 +23,18 @@
     固定ヘッダーや固定列内でtoggle-buttonやmultiple-selectを使うと見切れてしまうので、使用する場合は特に注意が必要。
     </p>
 
-    <div class="form-check-inline" style="width:100%">
-      <input id="draft" type="checkbox" checked="checked">
-      <label for="draft">下書きを含む</label>
+    <div class="row mb-3">
+      
+      <div class="form-check-inline">
+        <input id="draft" type="checkbox" checked="checked">
+        <label for="draft">下書きを含む</label>
+      </div>  
     </div>
 
     <table id="list" class="table-sm table-striped">
       <thead>
         <tr class="filter">
-          <th class="text-center px-1" data-filter="disable"></th>
+          <th class="text-center px-2" data-filter="disable"></th>
           <th data-filter="disable"></th>
           <!-- (1) Start -->
           <th></th>
@@ -61,7 +64,7 @@
           <th></th>
           <th></th>
           <th data-filter="disable">
-            <select id="col_filter_9" data-column="9" class="dataTables_column_filter form-control">
+            <select id="col_filter_22" data-column="22" class="dataTables_column_filter form-control">
               <option value=""></option>
               <c:forEach items="${CL_STATUS}" var="obj">
                 <option value="${obj.key}">${obj.value}</option>
@@ -102,6 +105,8 @@
       </thead>
       <tbody></tbody>
     </table>
+
+    <form:form id="bulk-operation-form"></form:form>
 
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
@@ -261,7 +266,7 @@
           ],
 
           // ボタンの表示
-          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'exceldownload', 'upload', 'createnew'],
+          'buttons': ['bulkdelete', 'bulkinvalid', 'bulkvalid','colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'exceldownload', 'upload', 'createnew'],
 
           // データロード後処理
           'initComplete': function (settings, json) {
@@ -271,25 +276,23 @@
           },
         });
 
+        // 項目単位フィルタの追加
+        // addFieldFilter(table) // 通常版
+        addFieldFilter2(table) // (列の並び順対応版)
+
         // ページネーション後に画面トップに戻る
         table.on('page.dt', function () {
-          $('html, body').animate({
+            $('html, body').animate({
             scrollTop: 0
           }, 300);
-
-          // checkboxesテスト
-          getSelectedKey(table, 0);
         });
 
+        // 下書きチェックボックス押下時の操作
         $('#draft').change().on('change', function (e, s) {
           localStorage.dataTables_Draft = e.target.checked;
           table.draw();
           fnColumns(table);
         });
-
-        // 項目単位フィルタの追加
-        // addFieldFilter(table) // 通常版
-        addFieldFilter2(table) // (列の並び順対応版)
 
         // 画面表示時の下書きチェックボックスの復元
         if (localStorage.dataTables_Draft == 'false') {

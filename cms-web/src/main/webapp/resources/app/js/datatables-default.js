@@ -27,7 +27,7 @@ $.extend($.fn.dataTable.defaults, {
     'stateSave': true,
 
     // グローバルフィルタ、ページ数切替、ページネーションボタン等の部品のレイアウトを調整
-    'dom': "<'row'<'col-18 d-inline-flex'fB><'col-18 text-right'l>>" +
+    'dom':"<'row'<'col-18 d-inline-flex'fB><'col-18 text-right'l>>" +        
         "<'row'<'col-36'tr>>" +
         "<'row'<'col-15'i><'col-21'p>>",
 
@@ -321,6 +321,75 @@ $.fn.dataTable.ext.buttons.upload = {
     }
 };
 
+function postBulkOperation(operation, data) {
+    let form = document.getElementById('bulk-operation-form');
+    form.action = operation;
+
+    if (data !== undefined) {
+        for (var paramName in data) {
+         var input = document.createElement('input');
+         input.setAttribute('type', 'hidden');
+         input.setAttribute('name', paramName);
+         input.setAttribute('value', data[paramName]);
+         form.appendChild(input);
+        }
+       }
+       // submit
+       form.submit();
+
+}
+
+function confirmbulkOperation(dt, operation, message) {
+    const formatter = new Intl.NumberFormat('ja-JP');
+    let data = {};
+    let selectedKey = getSelectedKey(dt, 0);
+    data.selectedKey = selectedKey.join(',');
+    let replacedMessage = message.replace('%i', formatter.format(selectedKey.length));
+
+    if (selectedKey.length == 0) {
+        alert('データが選択されていません。');
+        return false;
+    }
+
+    if(confirm(replacedMessage)){
+        postBulkOperation(operation, data);
+    }
+}
+
+
+/**
+ * 一括操作(削除)
+ */
+$.fn.dataTable.ext.buttons.bulkdelete = {
+    text: '<i class="fa fa-trash" aria-hidden="true"></i> *',
+    titleAttr: '選択された無効データの一括削除',
+    action: function (e, dt, node, config) {
+        confirmbulkOperation(dt, 'bulk_delete', '選択された %i 件のデータのうち、無効なデータを削除します。\n(ステータスが「無効」以外はスキップされます)');
+    }
+};
+
+
+/**
+ * 一括操作(無効化)
+ */
+$.fn.dataTable.ext.buttons.bulkinvalid = {
+    text: '<i class="fa fa-ban" aria-hidden="true"></i> *',
+    titleAttr: '選択された有効データの無効化',
+    action: function (e, dt, node, config) {
+        confirmbulkOperation(dt, 'bulk_invalid', '選択された %i 件のデータのうち、有効なデータを無効にします。\n(ステータスが「有効」以外はスキップされます)');
+    }
+};
+
+/**
+ * 一括操作(有効化)
+ */
+$.fn.dataTable.ext.buttons.bulkvalid = {
+    text: '<i class="fa fa-check-square" aria-hidden="true"></i> *',
+    titleAttr: '選択された無効データの有効化',
+    action: function (e, dt, node, config) {
+        confirmbulkOperation(dt, 'bulk_valid', '選択された %i 件のデータのうち、無効なデータを有効にします。\n(ステータスが「無効」以外はスキップされます)');
+    }
+};
 
 /**
  * checkboxesで選択されている行のキーの一覧を取得する
@@ -331,6 +400,5 @@ function getSelectedKey(table, checkboxesColumnNo) {
     for (var i = 0; i < rowsSelected.length; i++) {
         checked.push(rowsSelected[i]);
     }
-    alert(checked.join(','));
-    return checked.join(',');
+    return checked;
 }
