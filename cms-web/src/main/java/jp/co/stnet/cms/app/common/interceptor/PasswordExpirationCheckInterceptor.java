@@ -17,6 +17,7 @@ package jp.co.stnet.cms.app.common.interceptor;
 
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
+import jp.co.stnet.cms.domain.model.authentication.Role;
 import jp.co.stnet.cms.domain.service.authentication.AccountSharedService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,7 +44,7 @@ public class PasswordExpirationCheckInterceptor extends
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
                 LoggedInUser userDetails = (LoggedInUser) principal;
-                if ((!userDetails.getAccount().getRoles().contains(Constants.ROLE.ADMIN) && accountSharedService
+                if ((!userDetails.getAccount().getRoles().contains(Role.ADMIN.name()) && accountSharedService
                         .isCurrentPasswordExpired(userDetails.getUsername()))
                         || accountSharedService.isInitialPassword(userDetails
                         .getUsername())) {

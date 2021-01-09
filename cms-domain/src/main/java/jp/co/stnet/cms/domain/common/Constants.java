@@ -2,10 +2,10 @@ package jp.co.stnet.cms.domain.common;
 
 public final class Constants {
 
-    public static final class ROLE {
-        public static final String ADMIN = "ADMIN";
-        public static final String USER = "USER";
-    }
+//    public static final class ROLE {
+//        public static final String ADMIN = "ADMIN";
+//        public static final String USER = "USER";
+//    }
 
     public static final class OPERATION {
         public static final String CREATE = "create";
@@ -21,6 +21,9 @@ public final class Constants {
         public static final String DOWNLOAD = "download";
         public static final String UPLOAD = "upload";
         public static final String COPY = "copy";
+        public static final String BULK_DELETE = "bulkDelete";
+        public static final String BULK_INVALID = "bulkInvalid";
+        public static final String BULK_VALID = "bulkValid";
     }
 
     public static final class BUTTON {
@@ -41,12 +44,18 @@ public final class Constants {
         public static final String VALIDATE = "validate";
         public static final String GOHOME = "goHome";
         public static final String COPY = "copy";
+        public static final String BULK_DELETE = "bulkDelete";
+        public static final String BULK_INVALID = "bulkInvalid";
+        public static final String BULK_VALID = "bulkValid";
     }
 
     public static final class CSV {
         public static final Integer MAX_LENGTH = 99999;
     }
 
+    public static final class EXCEL {
+        public static final Integer MAX_LENGTH = 9999;
+    }
     public static final class MSG {
         public static final String VALIDATION_ERROR_STOP = "入力チェックでエラーを検出したため、処理を中断しました。";
         public static final String DB_ACCESS_ERROR_STOP = "データベース更新時にエラーが発生したため、処理を中断しました。";

@@ -18,6 +18,7 @@ package jp.co.stnet.cms.domain.common.validation;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.PasswordHistory;
+import jp.co.stnet.cms.domain.model.authentication.Role;
 import jp.co.stnet.cms.domain.service.authentication.AccountSharedService;
 import jp.co.stnet.cms.domain.service.authentication.PasswordHistorySharedService;
 import org.passay.PasswordData;
@@ -88,7 +89,7 @@ public class NotReusedPasswordValidator implements
 
         boolean result = checkNewPasswordDifferentFromCurrentPassword(
                 newPassword, currentPassword, context);
-        if (result && account.getRoles().contains(Constants.ROLE.ADMIN)) {
+        if (result && account.getRoles().contains(Role.ADMIN.name())) {
             result = checkHistoricalPassword(username, newPassword, context);
         }
 

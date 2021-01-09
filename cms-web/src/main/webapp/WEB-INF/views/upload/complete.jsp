@@ -21,7 +21,7 @@
     処理完了まで時間が要する場合があります。
     </p>
 
-    <a href="${pageContext.request.contextPath}/${returnBackUrl}" class="btn btn-button">${f:h(returnBackBtn)}</a>
+    <a href="${pageContext.request.contextPath}${returnBackUrl}" class="btn btn-button">${f:h(returnBackBtn)}</a>
 
     <a href="${pageContext.request.contextPath}/job/joblog?jobexecutionid=${jobExecutionId}"
              target="_blank" class="btn btn-button">ジョブログを確認する</a>
