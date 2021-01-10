@@ -1,6 +1,7 @@
 package jp.co.stnet.cms.app.simpleentity;
 
 import jp.co.stnet.cms.domain.model.common.FileManaged;
+import jp.co.stnet.cms.domain.model.example.LineItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class SimpleEntityForm implements Serializable {
     /**
      * テキストフィールド(複数の値)
      */
-    private Collection<String> text05;
+    private List<String> text05;
     /**
      * ラジオボタン(真偽値)
      */
@@ -111,6 +113,8 @@ public class SimpleEntityForm implements Serializable {
      * 添付ファイル(FileManaged)
      */
     private FileManaged attachedFile01Managed;
+
+    private List<LineItem> lineItems;
 
     public interface Create {
     }

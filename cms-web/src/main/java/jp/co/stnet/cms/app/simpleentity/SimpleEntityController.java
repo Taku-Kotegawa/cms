@@ -14,6 +14,7 @@ import jp.co.stnet.cms.domain.common.scheduled.CsvUtils;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
+import jp.co.stnet.cms.domain.model.example.LineItem;
 import jp.co.stnet.cms.domain.model.example.SimpleEntity;
 import jp.co.stnet.cms.domain.model.example.SimpleEntityRevision;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
@@ -145,6 +146,7 @@ public class SimpleEntityController {
 
     /**
      * CSVファイルのダウンロード
+     *
      * @param input DataTablesからの要求(Server-side処理)
      * @param model モデル
      * @return ファイルダウンロード用View
@@ -161,6 +163,7 @@ public class SimpleEntityController {
 
     /**
      * TSVファイルのダウンロード
+     *
      * @param input DataTablesからの要求(Server-side処理)
      * @param model モデル
      * @return ファイルダウンロード用View
@@ -177,6 +180,7 @@ public class SimpleEntityController {
 
     /**
      * Excelファイルのダウンロード
+     *
      * @param input DataTablesからの要求(Server-side処理)
      * @param model モデル
      * @return ファイルダウンロード用View
@@ -193,6 +197,7 @@ public class SimpleEntityController {
 
     /**
      * csvDownloadViewに渡すデータ準備
+     *
      * @param input DataTablesからの要求(Server-side処理)
      * @param model データをセットするモデル
      */
@@ -231,7 +236,7 @@ public class SimpleEntityController {
      */
     private List<SimpleEntityBean> getBeanList(List<SimpleEntity> entities) {
         List<SimpleEntityBean> beans = new ArrayList<>();
-        for(SimpleEntity entity : entities) {
+        for (SimpleEntity entity : entities) {
             SimpleEntityBean bean = beanMapper.map(entity, SimpleEntityBean.class);
 
             // ラジオボタン(真偽値)ラベル
@@ -241,7 +246,7 @@ public class SimpleEntityController {
 
             // チェックボックス(文字列)ラベル
             if (entity.getCheckbox01() != null) {
-                bean.setCheckbox01Label("はい".equals(entity.getCheckbox01()) ? "☑" : "□"  + "利用規約に合意する");
+                bean.setCheckbox01Label("はい".equals(entity.getCheckbox01()) ? "☑" : "□" + "利用規約に合意する");
             }
 
             // チェックボックス(複数の値)ラベル
@@ -309,7 +314,8 @@ public class SimpleEntityController {
 
     /**
      * CSVファイル固有要件のデータ変換
-     * @param row 変換後のCSVビーン
+     *
+     * @param row          変換後のCSVビーン
      * @param simpleEntity エンティティ
      */
     private void customMap(SimpleEntityCsvBean row, SimpleEntity simpleEntity) {
@@ -318,12 +324,13 @@ public class SimpleEntityController {
 
     /**
      * リビジョンテーブルのデータを通常のエンティティに変換
+     *
      * @param entities リビジョンエンティティのリスト
      * @return エンティティのリスト
      */
     private List<SimpleEntityBean> getBeanListByRev(List<SimpleEntityRevision> entities) {
         List<SimpleEntity> beans = new ArrayList<>();
-        for(SimpleEntityRevision entity : entities) {
+        for (SimpleEntityRevision entity : entities) {
             SimpleEntity bean = beanMapper.map(entities, SimpleEntity.class);
             beans.add(bean);
         }
@@ -332,6 +339,7 @@ public class SimpleEntityController {
 
     /**
      * 一覧画面のトグルボタンHTMLの生成
+     *
      * @param id エンティティの内部ID
      * @param op OperationsUtil リンクURLを生成するクラス
      * @return HTML
@@ -394,7 +402,7 @@ public class SimpleEntityController {
 
         String[] strKeys = selectedKey.split(",");
         List<SimpleEntity> deleteEntities = new ArrayList<>();
-        for(String key : strKeys) {
+        for (String key : strKeys) {
             SimpleEntity entity = simpleEntityService.findById(Long.valueOf(key));
             if (entity.getStatus().equals(Status.INVALID.getCodeValue())) {
                 deleteEntities.add(entity);
@@ -415,15 +423,18 @@ public class SimpleEntityController {
 
         simpleEntityService.hasAuthority(Constants.OPERATION.BULK_INVALID, loggedInUser);
 
-        // TODO: 一括操作のサービスメソッド化
         String[] strKeys = selectedKey.split(",");
-        List<SimpleEntity> deleteEntities = new ArrayList<>();
-        for(String key : strKeys) {
-            SimpleEntity entity = simpleEntityService.findById(Long.valueOf(key));
+        List<Long> ids = new ArrayList<>();
+        for (String key : strKeys) {
+            Long id = Long.valueOf(key);
+            SimpleEntity entity = simpleEntityService.findById(id);
             if (entity.getStatus().equals(Status.VALID.getCodeValue())) {
-                simpleEntityService.invalid(entity.getId());
+                ids.add(id);
             }
         }
+
+        simpleEntityService.invalid(ids);
+
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
         return "redirect:" + op().getListUrl();
     }
@@ -436,15 +447,18 @@ public class SimpleEntityController {
 
         simpleEntityService.hasAuthority(Constants.OPERATION.BULK_VALID, loggedInUser);
 
-        // TODO: 一括操作のサービスメソッド化
         String[] strKeys = selectedKey.split(",");
-        List<SimpleEntity> deleteEntities = new ArrayList<>();
-        for(String key : strKeys) {
-            SimpleEntity entity = simpleEntityService.findById(Long.valueOf(key));
+        List<Long> ids = new ArrayList<>();
+        for (String key : strKeys) {
+            Long id = Long.valueOf(key);
+            SimpleEntity entity = simpleEntityService.findById(id);
             if (entity.getStatus().equals(Status.INVALID.getCodeValue())) {
-                simpleEntityService.valid(entity.getId());
+                ids.add(id);
             }
         }
+
+        simpleEntityService.valid(ids);
+
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
         return "redirect:" + op().getListUrl();
     }
@@ -469,6 +483,14 @@ public class SimpleEntityController {
 
         setFileManagedToForm(form);
 
+        // 明細業を１行準備
+        if (form.getLineItems() == null) {
+            form.setLineItems(new ArrayList<LineItem>());
+        }
+        if (form.getLineItems().size() == 0) {
+            form.getLineItems().add(new LineItem());
+        }
+
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, null).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.CREATE, null).asMap());
         model.addAttribute("op", op());
@@ -478,6 +500,7 @@ public class SimpleEntityController {
 
     /**
      * UUIDからFileManagedオブジェクトを取得し、formにセットする。
+     *
      * @param form フォーム
      */
     private void setFileManagedToForm(SimpleEntityForm form) {
@@ -497,6 +520,24 @@ public class SimpleEntityController {
 //            entity.setAttachedFile01Managed(fileManagedSharedService.findByUuid(entity.getAttachedFile01Uuid()));
 //        }
 //    }
+
+    @PostMapping(value = "create", params = "addlineitem")
+    @TransactionTokenCheck
+    public String createAddLineItem(@Validated({Create.class, Default.class}) SimpleEntityForm form,
+                                    BindingResult bindingResult,
+                                    Model model,
+                                    RedirectAttributes redirect,
+                                    @AuthenticationPrincipal LoggedInUser loggedInUser,
+                                    @RequestParam(value = "saveDraft", required = false) String saveDraft) {
+
+        if (form.getLineItems() == null) {
+            form.setLineItems(new ArrayList<LineItem>());
+        }
+        form.getLineItems().add(new LineItem());
+
+        return createForm(form, model, loggedInUser, null);
+
+    }
 
     /**
      * 新規登録
@@ -569,6 +610,28 @@ public class SimpleEntityController {
 
         return JSP_FORM;
     }
+
+    /**
+     * 行追加ボタン押下時
+     */
+    @PostMapping(value = "{id}/update", params = "addlineitem")
+    @TransactionTokenCheck
+    public String updateAddLineItem(SimpleEntityForm form,
+                                    BindingResult bindingResult,
+                                    Model model,
+                                    RedirectAttributes redirect,
+                                    @AuthenticationPrincipal LoggedInUser loggedInUser,
+                                    @PathVariable("id") Long id,
+                                    @RequestParam(value = "saveDraft", required = false) String saveDraft) {
+
+        if (form.getLineItems() == null) {
+            form.setLineItems(new ArrayList<LineItem>());
+        }
+        form.getLineItems().add(new LineItem());
+
+        return updateForm(form, model, loggedInUser, id);
+    }
+
 
     /**
      * 更新
@@ -926,7 +989,7 @@ public class SimpleEntityController {
     public String uploadComplete(Model model, @RequestParam Map<String, String> params, @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
         model.addAttribute("returnBackBtn", "一覧画面に戻る");
-        model.addAttribute("returnBackUrl", "op().getListUrl()");
+        model.addAttribute("returnBackUrl", op().getListUrl());
         model.addAttribute("jobName", params.get("jobName"));
         model.addAttribute("jobExecutionId", params.get("jobExecutionId"));
         return JSP_UPLOAD_COMPLETE;

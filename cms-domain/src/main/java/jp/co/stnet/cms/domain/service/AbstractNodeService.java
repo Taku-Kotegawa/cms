@@ -81,8 +81,6 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     protected void beforeSave(T entity, T current) {
     }
 
-    ;
-
     /**
      * 保存処理
      *
@@ -138,7 +136,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T invalid(ID id) {
-        T entity = beanMapper.map(findById(id), clazz);
+        T entity = findById(id);
         if (!entity.getStatus().equals(Status.VALID.getCodeValue())) {
             throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2003)));
         }
@@ -147,13 +145,37 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     }
 
     @Override
+    public Iterable<T> invalid(Iterable<ID> ids) {
+        List<T> saveds = new ArrayList<>();
+        for (ID id : ids) {
+            T entity = findById(id);
+            if (entity.getStatus().equals(Status.VALID.getCodeValue())) {
+                saveds.add(invalid(id));
+            }
+        }
+        return saveds;
+    }
+
+    @Override
     public T valid(ID id) {
-        T entity = beanMapper.map(findById(id), clazz);
+        T entity = findById(id);
         if (!entity.getStatus().equals(Status.INVALID.getCodeValue())) {
             throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2004)));
         }
         entity.setStatus(Status.VALID.getCodeValue());
         return save(entity);
+    }
+
+    @Override
+    public Iterable<T> valid(Iterable<ID> ids) {
+        List<T> saveds = new ArrayList<>();
+        for (ID id : ids) {
+            T entity = findById(id);
+            if (entity.getStatus().equals(Status.INVALID.getCodeValue())) {
+                saveds.add(valid(id));
+            }
+        }
+        return saveds;
     }
 
     @Override
@@ -176,16 +198,15 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 (Long) getJPQLQuery(input, true, clazz).getSingleResult());
     }
 
+    /**
+     * JPQLの作成
+     */
     protected Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz) {
         return getJPQLQuery(input, count, clazz, null);
     }
 
     /**
-     * @param input
-     * @param count
-     * @param clazz
-     * @param maxRevClazz
-     * @return
+     * JPQLの作成
      */
     protected Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz, Class maxRevClazz) {
 

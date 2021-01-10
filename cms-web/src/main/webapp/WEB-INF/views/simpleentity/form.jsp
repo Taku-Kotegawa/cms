@@ -94,8 +94,8 @@
 
           <!-- 複製 -->
           <c:if test="${buttonState.copy__view}">
-            <a id="copy" href="${pageContext.request.contextPath}${op.getCopyUrl(id)}" class="btn btn-button mr-2"
-              <c:if test="${buttonState.copy__disabled}">disabled</c:if> >${op.getLABEL_COPY()}</a>
+            <a id="copy" href="${pageContext.request.contextPath}${op.getCopyUrl(id)}" class="btn btn-button mr-2" <c:if
+              test="${buttonState.copy__disabled}">disabled</c:if> >${op.getLABEL_COPY()}</a>
           </c:if>
 
         </div>
@@ -672,21 +672,21 @@
                 <input id="attachedFile01" type="file" class="form-control form-control-file file-managed"
                   data-file-type="simpleentity" data-extention-pattern="png jpg gif" <c:if
                   test="${simpleEntityForm.attachedFile01Uuid != null}">style="display: none;"</c:if> />
-                <form:errors path="attachedFile01Uuid" cssClass="invalid-feedback" />
-                <c:if test="${simpleEntityForm.attachedFile01Managed != null}">
-                  <div id="attachedFile01__attached-block" class="input-group">
-                    <span>
-                      <i class="far fa-file ml-2"></i>
-                      <a href="${pageContext.request.contextPath}${op.getDownloadUrl(simpleEntityForm.attachedFile01Uuid)}"
-                        target="_blank"
-                        class="link-attached">${simpleEntityForm.attachedFile01Managed.originalFilename}</a>
-                      <c:if test="${fieldState.attachedFile01Uuid__input && !fieldState.attachedFile01Uuid__readonly}">
-                        <i class="far fa-trash-alt" style="color: brown;" onclick="file_detach('attachedFile01')"></i>
-                      </c:if>
-                      <form:input type="hidden" path="attachedFile01Uuid" />
-                    </span>
-                  </div>
-                </c:if>
+              <form:errors path="attachedFile01Uuid" cssClass="invalid-feedback" />
+              <c:if test="${simpleEntityForm.attachedFile01Managed != null}">
+                <div id="attachedFile01__attached-block" class="input-group">
+                  <span>
+                    <i class="far fa-file ml-2"></i>
+                    <a href="${pageContext.request.contextPath}${op.getDownloadUrl(simpleEntityForm.attachedFile01Uuid)}"
+                      target="_blank"
+                      class="link-attached">${simpleEntityForm.attachedFile01Managed.originalFilename}</a>
+                    <c:if test="${fieldState.attachedFile01Uuid__input && !fieldState.attachedFile01Uuid__readonly}">
+                      <i class="far fa-trash-alt" style="color: brown;" onclick="file_detach('attachedFile01')"></i>
+                    </c:if>
+                    <form:input type="hidden" path="attachedFile01Uuid" />
+                  </span>
+                </div>
+              </c:if>
               </c:if>
               <!-- 参照用-->
               <c:if test="${fieldState.attachedFile01Uuid__view}">
@@ -704,6 +704,53 @@
           </div>
 
 
+        </div>
+      </div>
+
+      <br>
+      <div class="row">
+        <div class="col-30">
+
+          <table id="lineItemTable" class="table-sm">
+            <thead>
+              <tr>
+                <td class="row">
+                  <div class="col-18">商品名</div>
+                  <div class="col-6">単価</div>
+                  <div class="col-9">数量</div>
+                  <div class="col-3 text-center">削除</div>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <c:forEach var="item" items="${simpleEntityForm.lineItems}" varStatus="status">
+                <tr>
+                  <td class="row">
+                    <div class="col-18">
+                      <form:input path="lineItems[${status.index}].itemName" class="form-control" />
+                    </div>
+                    <div class="col-6">
+                      <form:input type="number" path="lineItems[${status.index}].unitPrise" class="form-control" />
+                    </div>
+                    <div class="col-9">
+                      <form:input type="number" path="lineItems[${status.index}].itemNumber" class="form-control" />
+                    </div>
+                    <div class="col-3 text-center">
+                      <button type="button" class="btn-button" onclick="lineDelete(this)">削除</button>
+                    </div>
+
+                  </td>
+                </tr>
+              </c:forEach>
+            </tbody>
+          </table>
+
+          <div class="row">
+            <div class="col-36">
+              <button name="addlineitem" class="btn-button">行追加(POST)</button>
+              <button type="button" class="btn-button" onclick="addLine('lineItemTable')">行追加(JavaScript)</button>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -711,9 +758,32 @@
     </form:form>
 
     <br>
-    <br>
 
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
 </section>
 <script src="${pageContext.request.contextPath}/resources/app/js/form-onload-default.js"></script>
+
+<script>
+  function lineDelete(e) {
+
+    let table = e.closest('table')
+    if (table.rows.length == 2) {
+      alert('全ての行は削除できません。');
+      return false;
+    }
+    let tr = e.closest('tr').remove();
+  }
+
+  function addLine(table_id) {
+    let table = document.getElementById(table_id);
+    let newRowIdx = table.rows.length - 1;
+    let firstRow = table.rows[1];
+    let newRow = firstRow.cloneNode(true);
+    let replaceRowHTML = newRow.innerHTML.replace(/lineItems\[0\]/g, 'lineItems[' + newRowIdx + ']');
+    replaceRowHTML = replaceRowHTML.replace(/lineItems0/g, 'lineItems' + newRowIdx);
+    replaceRowHTML = replaceRowHTML.replace(/value=".*"/g, '');
+    let row = table.insertRow(-1);
+    row.innerHTML = replaceRowHTML;  
+  }
+</script>

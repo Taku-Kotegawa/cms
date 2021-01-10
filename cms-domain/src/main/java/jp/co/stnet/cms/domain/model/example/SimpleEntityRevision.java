@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -146,5 +147,8 @@ public class SimpleEntityRevision extends AbstractRevisionEntity implements Seri
     @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "attachedFile01Uuid", referencedColumnName = "uuid", unique=true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private FileManaged attachedFile01Managed;
+
+    @ElementCollection
+    private Collection<LineItem> lineItems;
 
 }

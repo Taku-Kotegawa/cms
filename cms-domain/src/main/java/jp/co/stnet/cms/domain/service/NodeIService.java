@@ -45,11 +45,19 @@ public interface NodeIService<T extends AbstractEntity<ID>, ID> {
     T invalid(ID id);
 
     /**
+     * 複数件の無効化
+     */
+    Iterable<T> invalid(Iterable<ID> ids);
+
+    /**
      * 1件の有効化
-     * @param id
-     * @return
      */
     T valid(ID id);
+
+    /**
+     * 複数件の有効化
+     */
+    Iterable<T> valid(Iterable<ID> ids);
 
     /**
      * １件の削除

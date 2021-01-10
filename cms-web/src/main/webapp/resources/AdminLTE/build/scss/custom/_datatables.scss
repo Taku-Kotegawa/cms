@@ -35,6 +35,12 @@ table.dataTable > tbody > tr > td {
   border-bottom: 1px solid #e6e4df;
 }
 
+.DTFC_LeftWrapper, 
+.DTFC_RightWrapper {
+  min-width: min-content;
+} 
+
+
 .DTFC_LeftBodyLiner,
 .DTFC_RightBodyLiner {
   overflow-y: auto !important;
