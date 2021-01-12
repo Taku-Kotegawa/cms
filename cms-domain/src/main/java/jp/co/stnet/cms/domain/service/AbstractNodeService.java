@@ -136,7 +136,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T invalid(ID id) {
-        T entity = findById(id);
+        T entity = beanMapper.map(findById(id), clazz);
         if (!entity.getStatus().equals(Status.VALID.getCodeValue())) {
             throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2003)));
         }
@@ -158,7 +158,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T valid(ID id) {
-        T entity = findById(id);
+        T entity = beanMapper.map(findById(id), clazz);
         if (!entity.getStatus().equals(Status.INVALID.getCodeValue())) {
             throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2004)));
         }

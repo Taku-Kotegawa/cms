@@ -365,6 +365,7 @@ $.fn.dataTable.ext.buttons.bulkdelete = {
     titleAttr: '選択された無効データの一括削除',
     action: function (e, dt, node, config) {
         confirmbulkOperation(dt, 'bulk_delete', '選択された %i 件のデータのうち、無効なデータを削除します。\n(ステータスが「無効」以外はスキップされます)');
+        dt.columns().checkboxes.deselectAll();
     }
 };
 
