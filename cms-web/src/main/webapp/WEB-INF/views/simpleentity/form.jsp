@@ -747,7 +747,7 @@
 
           <div class="row">
             <div class="col-36">
-              <button name="addlineitem" class="btn-button">行追加(POST)</button>
+              <button id="addLinebutton" formaction="#addLinebutton" name="addlineitem" class="btn-button">行追加(POST)</button>
               <button type="button" class="btn-button" onclick="addLine('lineItemTable')">行追加(JavaScript)</button>
             </div>
           </div>
