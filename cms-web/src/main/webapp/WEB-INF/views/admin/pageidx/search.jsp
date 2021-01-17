@@ -1,11 +1,16 @@
 <%@ include file="/WEB-INF/views/common/includes/include-datatables.jsp" %>
 <%@ include file="/WEB-INF/views/common/includes/include-multipleselect.jsp" %>
 
+<style>
+  .dataTables_filter, .dataTables_info { display: none; }
+</style>
+
+
 <section class="content-header">
   <div class="container-flued mx-5">
     <div class="row mb-2">
       <div class="col-18">
-        <h4>従業員一覧</h4>
+        <h4>お客さま番号検索</h4>
       </div>
       <div class="col-18 text-right">
       </div>
@@ -19,42 +24,33 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
-    <table id="list" class="table-sm table-striped table-hover">
+    <table id="list" class="table-sm table-striped">
       <thead>
         <tr class="filter">
-          <th class="text-center px-1" data-filter="disable"></th>
+          <th></th>
+          <th></th>
           <th data-filter="disable"></th>
-
+          <th data-filter="disable"></th>
+          <th data-filter="disable"></th>
           <th></th>
-          <th></th>
-          <th data-filter="disable">
-            <select id="col_filter_4" data-column="4" class="dataTables_column_filter form-control multipleSelect" multiple>
-              <!-- <option value=""></option> -->
-              <c:forEach items="${CL_STATUS}" var="obj">
-                <option value="${obj.key}">${obj.value}</option>
-              </c:forEach>
-            </select>
-          </th>
-          <th></th>
-          <th></th>
-          <th></th>
-
+          <th data-filter="disable"></th>
+          <th data-filter="disable"></th>
         </tr>
         <tr class="title">
-          <th class="text-center px-0"></th>
-          <th class="text-center">操作</th>
-
-          <th class="text-center">ID</th>
-          <th class="text-center">バージョン</th>
-          <th class="text-center">ステータス</th>
-          <th class="text-center">氏名</th>
-          <th class="text-center">年齢</th>
-          <th class="text-center">ファイル名</th>
-
+          <th class="text-center">お客さま番号</th>
+          <th class="text-center">お客さま名</th>
+          <th class="text-center">開始ページ番号</th>
+          <th class="text-center">添付ファイル</th>
+          <th class="text-center">ドキュメントID</th>
+          <th class="text-center">キーワード1</th>
+          <th class="text-center">キーワード2</th>
+          <th class="text-center">キーワード3</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
+
+    <form:form id="bulk-operation-form"></form:form>
 
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
@@ -80,50 +76,43 @@
         var table = $('#list').DataTable({
 
           'ajax': {
-            'url': 'list/json',
-            'data': myflatten
+            'url': 'search/json',
+            'data': flatten
           },
 
           // 一覧に表示する項目とJSONの項目にマッピング
-          'columns': [{
-              data: 'id',
-              className: 'text-center',
-              orderable: false,
-              searchable: false,
-              checkboxes: {
-                selectRow: true
-              },
-            },
+          'columns': [
             {
-              data: 'operations',
-              orderable: false,
-              searchable: false,
-            },
-
-            {
-              data: 'id',
+              data: 'customerNumber',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'version',
+              data: 'customerName',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'statusLabel',
+              data: 'startPage',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'name',
+              data: 'attachedFileUuid',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'age',
+              data: 'documentId',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'attachedFile01Managed.originalFilename',
+              data: 'document.shopCode',
               render: $.fn.dataTable.render.text(),
-              "defaultContent": "",
+            },
+            {
+              data: 'document.shop.title',
+              render: $.fn.dataTable.render.text(),
+            },
+            {
+              data: 'keyword3',
+              render: $.fn.dataTable.render.text(),
             },
           ],
 
@@ -133,7 +122,8 @@
           ],
 
           // ボタンの表示
-          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'createnew'],
+          'buttons': ['colvis', 'stateClear'
+          ],
 
           // データロード後処理
           'initComplete': function (settings, json) {
@@ -169,13 +159,4 @@
 
       });
 
-  function myflatten(params, settings) {
-    params = flatten(params, settings);
-    if ($('#draft')[0] == undefined) {
-        params.draft = true;
-    } else {
-        params.draft = $('#draft')[0].checked
-    }
-    return params;
-  }
 </script>

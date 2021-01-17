@@ -5,7 +5,7 @@
   <div class="container-flued mx-5">
     <div class="row mb-2">
       <div class="col-18">
-        <h4>従業員一覧</h4>
+        <h4>店所一覧</h4>
       </div>
       <div class="col-18 text-right">
       </div>
@@ -19,16 +19,20 @@
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
 
-    <table id="list" class="table-sm table-striped table-hover">
+    <div class="form-check-inline" style="width:100%">
+      <input id="draft" type="hidden" checked="checked">
+      <!-- <label for="checkbox011">下書きを含む</label> -->
+    </div>
+
+    <table id="list" class="table-sm table-striped">
       <thead>
         <tr class="filter">
           <th class="text-center px-1" data-filter="disable"></th>
           <th data-filter="disable"></th>
-
-          <th></th>
           <th></th>
           <th data-filter="disable">
-            <select id="col_filter_4" data-column="4" class="dataTables_column_filter form-control multipleSelect" multiple>
+            <select id="col_filter_3" data-column="3" class="dataTables_column_filter form-control multipleSelect"
+              multiple>
               <!-- <option value=""></option> -->
               <c:forEach items="${CL_STATUS}" var="obj">
                 <option value="${obj.key}">${obj.value}</option>
@@ -38,23 +42,21 @@
           <th></th>
           <th></th>
           <th></th>
-
         </tr>
         <tr class="title">
           <th class="text-center px-0"></th>
           <th class="text-center">操作</th>
-
           <th class="text-center">ID</th>
-          <th class="text-center">バージョン</th>
           <th class="text-center">ステータス</th>
-          <th class="text-center">氏名</th>
-          <th class="text-center">年齢</th>
-          <th class="text-center">ファイル名</th>
-
+          <th class="text-center">店所コード</th>
+          <th class="text-center">並び順</th>
+          <th class="text-center">店所名</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
+
+    <form:form id="bulk-operation-form"></form:form>
 
     <!-- ここより上にメインコンテンツを記入 -->
   </div>
@@ -99,13 +101,8 @@
               orderable: false,
               searchable: false,
             },
-
             {
               data: 'id',
-              render: $.fn.dataTable.render.text(),
-            },
-            {
-              data: 'version',
               render: $.fn.dataTable.render.text(),
             },
             {
@@ -113,17 +110,16 @@
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'name',
+              data: 'shopCode',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'age',
+              data: 'weight',
               render: $.fn.dataTable.render.text(),
             },
             {
-              data: 'attachedFile01Managed.originalFilename',
+              data: 'title',
               render: $.fn.dataTable.render.text(),
-              "defaultContent": "",
             },
           ],
 
@@ -133,7 +129,9 @@
           ],
 
           // ボタンの表示
-          'buttons': ['colvis', 'stateClear', 'csvdownload', 'tsvdownload', 'createnew'],
+          'buttons': ['bulkdelete', 'bulkinvalid', 'bulkvalid', 'colvis', 'stateClear', 'csvdownload',
+            'tsvdownload', 'exceldownload', 'upload', 'createnew'
+          ],
 
           // データロード後処理
           'initComplete': function (settings, json) {
@@ -171,11 +169,7 @@
 
   function myflatten(params, settings) {
     params = flatten(params, settings);
-    if ($('#draft')[0] == undefined) {
-        params.draft = true;
-    } else {
-        params.draft = $('#draft')[0].checked
-    }
+    params.draft = $('#draft')[0].checked;
     return params;
   }
 </script>

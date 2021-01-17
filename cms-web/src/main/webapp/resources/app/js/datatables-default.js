@@ -27,7 +27,7 @@ $.extend($.fn.dataTable.defaults, {
     'stateSave': true,
 
     // グローバルフィルタ、ページ数切替、ページネーションボタン等の部品のレイアウトを調整
-    'dom':"<'row'<'col-18 d-inline-flex'fB><'col-18 text-right'l>>" +        
+    'dom':"<'row'<'col-32 d-inline-flex'fB><'col-4 text-right'l>>" +
         "<'row'<'col-36'tr>>" +
         "<'row'<'col-15'i><'col-21'p>>",
 

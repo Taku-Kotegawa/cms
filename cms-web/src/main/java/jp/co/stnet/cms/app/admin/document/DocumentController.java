@@ -1,9 +1,9 @@
-package jp.co.stnet.cms.app.simpleentity;
+package jp.co.stnet.cms.app.admin.document;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.app.admin.document.DocumentForm.Create;
+import jp.co.stnet.cms.app.admin.document.DocumentForm.Update;
 import jp.co.stnet.cms.app.admin.upload.UploadForm;
-import jp.co.stnet.cms.app.simpleentity.SimpleEntityForm.Create;
-import jp.co.stnet.cms.app.simpleentity.SimpleEntityForm.Update;
 import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.common.StateMap;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInputDraft;
@@ -14,12 +14,11 @@ import jp.co.stnet.cms.domain.common.scheduled.CsvUtils;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
-import jp.co.stnet.cms.domain.model.example.LineItem;
-import jp.co.stnet.cms.domain.model.example.SimpleEntity;
-import jp.co.stnet.cms.domain.model.example.SimpleEntityRevision;
+import jp.co.stnet.cms.domain.model.report.Document;
+import jp.co.stnet.cms.domain.model.report.Report;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import jp.co.stnet.cms.domain.service.example.MyBatchService;
-import jp.co.stnet.cms.domain.service.example.SimpleEntityService;
+import jp.co.stnet.cms.domain.service.report.DocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobInstanceAlreadyExistsException;
@@ -45,16 +44,15 @@ import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
-@RequestMapping("simpleentity")
-@TransactionTokenCheck("simpleentity")
-public class SimpleEntityController {
+@RequestMapping("admin/document")
+@TransactionTokenCheck("document")
+public class DocumentController {
 
     // JSPのパス設定
-    private final String BASE_PATH = "simpleentity";
+    private final String BASE_PATH = "admin/document";
     private final String JSP_LIST = BASE_PATH + "/list";
     private final String JSP_FORM = BASE_PATH + "/form";
     private final String JSP_VIEW = BASE_PATH + "/view";
@@ -62,13 +60,13 @@ public class SimpleEntityController {
     private final String JSP_UPLOAD_COMPLETE = "upload/complete";
 
     // CSV/Excelのファイル名(拡張子除く)
-    private final String DOWNLOAD_FILENAME = "simpleentity";
+    private final String DOWNLOAD_FILENAME = "document";
 
     // アップロード用のインポートジョブID
     private final String UPLOAD_JOB_ID = "job03";
 
     @Autowired
-    SimpleEntityService simpleEntityService;
+    DocumentService documentService;
 
     @Autowired
     FileManagedSharedService fileManagedSharedService;
@@ -87,8 +85,8 @@ public class SimpleEntityController {
     Mapper beanMapper;
 
     @ModelAttribute
-    private SimpleEntityForm setUp() {
-        return new SimpleEntityForm();
+    private DocumentForm setUp() {
+        return new DocumentForm();
     }
 
     /**
@@ -107,35 +105,35 @@ public class SimpleEntityController {
      */
     @ResponseBody
     @GetMapping(value = "/list/json")
-    public DataTablesOutput<SimpleEntityListRow> listJson(@Validated DataTablesInputDraft input) {
+    public DataTablesOutput<DocumentListRow> listJson(@Validated DataTablesInputDraft input) {
 
-        List<SimpleEntityListRow> listRows = new ArrayList<>();
-        List<SimpleEntity> simpleEntityList = new ArrayList<>();
+        List<DocumentListRow> listRows = new ArrayList<>();
+        List<Document> documentList = new ArrayList<>();
         Long recordsFiltered = 0L;
 
         if (input.getDraft()) { // 下書き含む最新
-            Page<SimpleEntity> simpleEntityPage = simpleEntityService.findPageByInput(input);
-            simpleEntityList.addAll(simpleEntityPage.getContent());
-            recordsFiltered = simpleEntityPage.getTotalElements();
+            Page<Document> documentPage = documentService.findPageByInput(input);
+            documentList.addAll(documentPage.getContent());
+            recordsFiltered = documentPage.getTotalElements();
 
         } else {
-            Page<SimpleEntityRevision> simpleEntityPage2 = simpleEntityService.findMaxRevPageByInput(input);
-            for (SimpleEntityRevision simpleEntityRevision : simpleEntityPage2.getContent()) {
-                simpleEntityList.add(beanMapper.map(simpleEntityRevision, SimpleEntity.class));
-            }
-            recordsFiltered = simpleEntityPage2.getTotalElements();
+//            Page<DocumentRevision> documentPage2 = documentService.findMaxRevPageByInput(input);
+//            for (DocumentRevision documentRevision : documentPage2.getContent()) {
+//                documentList.add(beanMapper.map(documentRevision, Document.class));
+//            }
+//            recordsFiltered = documentPage2.getTotalElements();
         }
 
-        for (SimpleEntityBean bean : getBeanList(simpleEntityList)) {
-            SimpleEntityListRow simpleEntityListRow = beanMapper.map(bean, SimpleEntityListRow.class);
-            simpleEntityListRow.setOperations(getToggleButton(bean.getId().toString(), op(null)));
-            simpleEntityListRow.setDT_RowId(bean.getId().toString());
+        for (DocumentBean bean : getBeanList(documentList)) {
+            DocumentListRow documentListRow = beanMapper.map(bean, DocumentListRow.class);
+            documentListRow.setOperations(getToggleButton(bean.getId().toString(), op(null)));
+            documentListRow.setDT_RowId(bean.getId().toString());
             // ステータスラベル
-            simpleEntityListRow.setStatusLabel(Status.getByValue(bean.getStatus()).getCodeLabel());
-            listRows.add(simpleEntityListRow);
+            documentListRow.setStatusLabel(Status.getByValue(bean.getStatus()).getCodeLabel());
+            listRows.add(documentListRow);
         }
 
-        DataTablesOutput<SimpleEntityListRow> output = new DataTablesOutput<>();
+        DataTablesOutput<DocumentListRow> output = new DataTablesOutput<>();
         output.setData(listRows);
         output.setDraw(input.getDraw());
         output.setRecordsTotal(0);
@@ -190,7 +188,7 @@ public class SimpleEntityController {
         input.setStart(0);
         input.setLength(Constants.EXCEL.MAX_LENGTH);
         // TODO: 汎用的な仕組みに改造が必要
-        model.addAttribute("list", simpleEntityService.findPageByInput(input).getContent());
+        model.addAttribute("list", documentService.findPageByInput(input).getContent());
         model.addAttribute("excelFileName", DOWNLOAD_FILENAME + ".xlsx");
         return "excelDownloadView";
     }
@@ -203,29 +201,30 @@ public class SimpleEntityController {
      */
     private void setModelForCsv(DataTablesInputDraft input, Model model) {
 
-        List<SimpleEntityCsvBean> csvBeans = new ArrayList<>();
-        List<SimpleEntity> simpleEntityList = new ArrayList<>();
+        List<DocumentCsvBean> csvBeans = new ArrayList<>();
+        List<Document> documentList = new ArrayList<>();
 
         if (input.getDraft() == null || input.getDraft()) { // 下書き含む最新
-            Page<SimpleEntity> simpleEntityPage = simpleEntityService.findPageByInput(input);
-            simpleEntityList.addAll(simpleEntityPage.getContent());
+            Page<Document> documentPage = documentService.findPageByInput(input);
+            documentList.addAll(documentPage.getContent());
 
         } else {
-            Page<SimpleEntityRevision> simpleEntityPage2 = simpleEntityService.findMaxRevPageByInput(input);
-            for (SimpleEntityRevision simpleEntityRevision : simpleEntityPage2.getContent()) {
-                simpleEntityList.add(beanMapper.map(simpleEntityRevision, SimpleEntity.class));
-            }
+//            Page<DocumentRevision> documentPage2 = documentService.findMaxRevPageByInput(input);
+//            for (DocumentRevision documentRevision : documentPage2.getContent()) {
+//                documentList.add(beanMapper.map(documentRevision, Document.class));
+//            }
         }
 
-        for (SimpleEntity simpleEntity : getBeanList(simpleEntityList)) {
-            SimpleEntityCsvBean row = beanMapper.map(simpleEntity, SimpleEntityCsvBean.class);
-            customMap(row, simpleEntity);
-            row.setStatusLabel(Status.getByValue(simpleEntity.getStatus()).getCodeLabel());
+        for (Document document : getBeanList(documentList)) {
+            DocumentCsvBean row = beanMapper.map(document, DocumentCsvBean.class);
+            customMap(row, document);
+            row.setStatusLabel(Status.getByValue(document.getStatus()).getCodeLabel());
+
             csvBeans.add(row);
         }
 
         model.addAttribute("exportCsvData", csvBeans);
-        model.addAttribute("class", SimpleEntityCsvBean.class);
+        model.addAttribute("class", DocumentCsvBean.class);
     }
 
     /**
@@ -234,79 +233,10 @@ public class SimpleEntityController {
      * @param entities
      * @return
      */
-    private List<SimpleEntityBean> getBeanList(List<SimpleEntity> entities) {
-        List<SimpleEntityBean> beans = new ArrayList<>();
-        for (SimpleEntity entity : entities) {
-            SimpleEntityBean bean = beanMapper.map(entity, SimpleEntityBean.class);
-
-            // ラジオボタン(真偽値)ラベル
-            if (entity.getRadio01() != null) {
-                bean.setRadio01Label(entity.getRadio01() ? "はい" : "いいえ");
-            }
-
-            // チェックボックス(文字列)ラベル
-            if (entity.getCheckbox01() != null) {
-                bean.setCheckbox01Label("はい".equals(entity.getCheckbox01()) ? "☑" : "□" + "利用規約に合意する");
-            }
-
-            // チェックボックス(複数の値)ラベル
-            if (entity.getCheckbox02() != null) {
-                String s = entity.getCheckbox02().stream()
-                        .map(str -> statusCodeList.asMap().get(str))
-                        .collect(Collectors.joining(", "));
-                bean.setCheckbox02Label(s);
-            }
-
-            // セレクト(単一の値)ラベル
-            if (entity.getSelect01() != null) {
-                bean.setSelect01Label(statusCodeList.asMap().get(entity.getSelect01()));
-            }
-
-            // セレクト(複数の値)
-            if (entity.getSelect02() != null) {
-                String t = entity.getSelect02().stream()
-                        .map(str -> statusCodeList.asMap().get(str))
-                        .collect(Collectors.joining(", "));
-                bean.setSelect02Label(t);
-            }
-
-            // セレクト(単一の値, select2)
-            if (entity.getSelect03() != null) {
-                bean.setSelect03Label(statusCodeList.asMap().get(entity.getSelect03()));
-            }
-
-            // セレクト(複数の値, select2)
-            String u = entity.getSelect04().stream()
-                    .map(str -> statusCodeList.asMap().get(str))
-                    .collect(Collectors.joining(", "));
-            bean.setSelect04Label(u);
-
-            // コンボボックス(単一の値, Select2)
-            if (entity.getCombobox02() != null) {
-                bean.setCombobox02Label(statusCodeList.asMap().get(entity.getCombobox02()));
-            }
-
-            // コンボボックス(複数の値, Select2)
-            if (entity.getCombobox03() != null) {
-                String v = entity.getCombobox03().stream()
-                        .map(str -> statusCodeList.asMap().get(str))
-                        .collect(Collectors.joining(", "));
-                bean.setCombobox03Label(v);
-            }
-
-            // 添付ファイル名
-//            if (entity.getAttachedFile01Uuid() != null) {
-//                bean.setAttachedFile01Managed(fileManagedSharedService.findByUuid(entity.getAttachedFile01Uuid()));
-//                if (bean.getAttachedFile01Managed() != null) {
-//                    bean.setAttachedFile01FileName(bean.getAttachedFile01Managed().getOriginalFilename());
-//                }
-//            }
-
-            if (entity.getAttachedFile01Managed() != null) {
-                bean.setAttachedFile01FileName(bean.getAttachedFile01Managed().getOriginalFilename());
-            }
-
-
+    private List<DocumentBean> getBeanList(List<Document> entities) {
+        List<DocumentBean> beans = new ArrayList<>();
+        for (Document entity : entities) {
+            DocumentBean bean = beanMapper.map(entity, DocumentBean.class);
             beans.add(bean);
         }
         return beans;
@@ -315,27 +245,26 @@ public class SimpleEntityController {
     /**
      * CSVファイル固有要件のデータ変換
      *
-     * @param row          変換後のCSVビーン
-     * @param simpleEntity エンティティ
+     * @param row      変換後のCSVビーン
+     * @param document エンティティ
      */
-    private void customMap(SimpleEntityCsvBean row, SimpleEntity simpleEntity) {
+    private void customMap(DocumentCsvBean row, Document document) {
 
     }
 
-    /**
-     * リビジョンテーブルのデータを通常のエンティティに変換
-     *
-     * @param entities リビジョンエンティティのリスト
-     * @return エンティティのリスト
-     */
-    private List<SimpleEntityBean> getBeanListByRev(List<SimpleEntityRevision> entities) {
-        List<SimpleEntity> beans = new ArrayList<>();
-        for (SimpleEntityRevision entity : entities) {
-            SimpleEntity bean = beanMapper.map(entities, SimpleEntity.class);
-            beans.add(bean);
-        }
-        return getBeanList(beans);
-    }
+//    /**
+//     * リビジョンテーブルのデータを通常のエンティティに変換
+//     * @param entities リビジョンエンティティのリスト
+//     * @return エンティティのリスト
+//     */
+//    private List<DocumentBean> getBeanListByRev(List<DocumentRevision> entities) {
+//        List<Document> beans = new ArrayList<>();
+//        for(DocumentRevision entity : entities) {
+//            Document bean = beanMapper.map(entities, Document.class);
+//            beans.add(bean);
+//        }
+//        return getBeanList(beans);
+//    }
 
     /**
      * 一覧画面のトグルボタンHTMLの生成
@@ -386,7 +315,7 @@ public class SimpleEntityController {
             @PathVariable("uuid") String uuid,
             @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.DOWNLOAD, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.DOWNLOAD, loggedInUser);
 
         model.addAttribute(fileManagedSharedService.findByUuid(uuid));
         return "fileManagedDownloadView";
@@ -398,18 +327,18 @@ public class SimpleEntityController {
     @PostMapping("bulk_delete")
     public String bulkDelete(Model model, String selectedKey, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.BULK_DELETE, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.BULK_DELETE, loggedInUser);
 
         String[] strKeys = selectedKey.split(",");
-        List<SimpleEntity> deleteEntities = new ArrayList<>();
+        List<Document> deleteEntities = new ArrayList<>();
         for (String key : strKeys) {
-            SimpleEntity entity = simpleEntityService.findById(Long.valueOf(key));
+            Document entity = documentService.findById(Long.valueOf(key));
             if (entity.getStatus().equals(Status.INVALID.getCodeValue())) {
                 deleteEntities.add(entity);
             }
         }
 
-        simpleEntityService.delete(deleteEntities);
+        documentService.delete(deleteEntities);
 
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0003));
         return "redirect:" + op().getListUrl();
@@ -421,19 +350,19 @@ public class SimpleEntityController {
     @PostMapping("bulk_invalid")
     public String bulkInvalid(Model model, String selectedKey, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.BULK_INVALID, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.BULK_INVALID, loggedInUser);
 
         String[] strKeys = selectedKey.split(",");
         List<Long> ids = new ArrayList<>();
         for (String key : strKeys) {
             Long id = Long.valueOf(key);
-            SimpleEntity entity = simpleEntityService.findById(id);
+            Document entity = documentService.findById(id);
             if (entity.getStatus().equals(Status.VALID.getCodeValue())) {
                 ids.add(id);
             }
         }
 
-        simpleEntityService.invalid(ids);
+        documentService.invalid(ids);
 
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
         return "redirect:" + op().getListUrl();
@@ -445,19 +374,19 @@ public class SimpleEntityController {
     @PostMapping("bulk_valid")
     public String bulkValid(Model model, String selectedKey, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.BULK_VALID, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.BULK_VALID, loggedInUser);
 
         String[] strKeys = selectedKey.split(",");
         List<Long> ids = new ArrayList<>();
         for (String key : strKeys) {
             Long id = Long.valueOf(key);
-            SimpleEntity entity = simpleEntityService.findById(id);
+            Document entity = documentService.findById(id);
             if (entity.getStatus().equals(Status.INVALID.getCodeValue())) {
                 ids.add(id);
             }
         }
 
-        simpleEntityService.valid(ids);
+        documentService.valid(ids);
 
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
         return "redirect:" + op().getListUrl();
@@ -468,28 +397,20 @@ public class SimpleEntityController {
      */
     @GetMapping(value = "create", params = "form")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
-    public String createForm(SimpleEntityForm form,
+    public String createForm(DocumentForm form,
                              Model model,
                              @AuthenticationPrincipal LoggedInUser loggedInUser,
                              @RequestParam(value = "copy", required = false) Long copy) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
         if (copy != null) {
-            SimpleEntity source = simpleEntityService.findById(copy);
+            Document source = documentService.findById(copy);
             beanMapper.map(source, form);
             form.setId(null);
         }
 
         setFileManagedToForm(form);
-
-        // 明細業を１行準備
-        if (form.getLineItems() == null) {
-            form.setLineItems(new ArrayList<LineItem>());
-        }
-        if (form.getLineItems().size() == 0) {
-            form.getLineItems().add(new LineItem());
-        }
 
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, null).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.CREATE, null).asMap());
@@ -503,10 +424,10 @@ public class SimpleEntityController {
      *
      * @param form フォーム
      */
-    private void setFileManagedToForm(SimpleEntityForm form) {
+    private void setFileManagedToForm(DocumentForm form) {
         // TODO ファイルフィールドごとに調整
-        if (form.getAttachedFile01Uuid() != null) {
-            form.setAttachedFile01Managed(fileManagedSharedService.findByUuid(form.getAttachedFile01Uuid()));
+        if (form.getAttachedFileUuid() != null) {
+            form.setAttachedFileManaged(fileManagedSharedService.findByUuid(form.getAttachedFileUuid()));
         }
     }
 
@@ -514,58 +435,44 @@ public class SimpleEntityController {
 //     * UUIDからFileManagedオブジェクトを取得し、Entityにセットする。
 //     * @param entity エンティティ
 //     */
-//    private void setFileManagedToEntity(SimpleEntity entity) {
+//    private void setFileManagedToEntity(Document entity) {
 //        // TODO ファイルフィールドごとに調整
 //        if (entity.getAttachedFile01Uuid() != null) {
 //            entity.setAttachedFile01Managed(fileManagedSharedService.findByUuid(entity.getAttachedFile01Uuid()));
 //        }
 //    }
 
-    @PostMapping(value = "create", params = "addlineitem")
-    @TransactionTokenCheck
-    public String createAddLineItem(@Validated({Create.class, Default.class}) SimpleEntityForm form,
-                                    BindingResult bindingResult,
-                                    Model model,
-                                    RedirectAttributes redirect,
-                                    @AuthenticationPrincipal LoggedInUser loggedInUser,
-                                    @RequestParam(value = "saveDraft", required = false) String saveDraft) {
-
-        if (form.getLineItems() == null) {
-            form.setLineItems(new ArrayList<LineItem>());
-        }
-        form.getLineItems().add(new LineItem());
-
-        return createForm(form, model, loggedInUser, null);
-
-    }
-
     /**
      * 新規登録
      */
     @PostMapping(value = "create")
     @TransactionTokenCheck
-    public String create(@Validated({Create.class, Default.class}) SimpleEntityForm form,
+    public String create(@Validated({Create.class, Default.class}) DocumentForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
                          @AuthenticationPrincipal LoggedInUser loggedInUser,
                          @RequestParam(value = "saveDraft", required = false) String saveDraft) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.CREATE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
             return createForm(form, model, loggedInUser, null);
         }
 
-        SimpleEntity simpleEntity = beanMapper.map(form, SimpleEntity.class);
+        Document document = beanMapper.map(form, Document.class);
+
+        // レポートコード -> Enum
+//        document.setReport(Report.valueOf(form.getReportCode()));
+
 
         try {
             if ("true".equals(saveDraft)) {
-                simpleEntity.setStatus(Status.VALID.getCodeValue());
-                simpleEntityService.saveDraft(simpleEntity);
+//                document.setStatus(Status.VALID.getCodeValue());
+//                documentService.saveDraft(document);
             } else {
-                simpleEntity.setStatus(Status.VALID.getCodeValue());
-                simpleEntityService.save(simpleEntity);
+                document.setStatus(Status.VALID.getCodeValue());
+                documentService.save(document);
             }
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
@@ -574,7 +481,7 @@ public class SimpleEntityController {
 
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0001));
 
-        return "redirect:" + op().getEditUrl(simpleEntity.getId().toString());
+        return "redirect:" + op().getEditUrl(document.getId().toString());
     }
 
     /**
@@ -582,63 +489,41 @@ public class SimpleEntityController {
      */
     @GetMapping(value = "{id}/update", params = "form")
     @TransactionTokenCheck(type = TransactionTokenType.BEGIN)
-    public String updateForm(SimpleEntityForm form, Model model,
+    public String updateForm(DocumentForm form, Model model,
                              @AuthenticationPrincipal LoggedInUser loggedInUser,
                              @PathVariable("id") Long id) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
-        SimpleEntity simpleEntity = simpleEntityService.findById(id);
-        model.addAttribute("simpleEntity", simpleEntity);
+        Document document = documentService.findById(id);
+        model.addAttribute("document", document);
 
         // 状態=無効の場合、参照画面に強制遷移
-        if (simpleEntity.getStatus().equals(Status.INVALID.getCodeValue())) {
+        if (document.getStatus().equals(Status.INVALID.getCodeValue())) {
             model.addAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0008));
             return view(model, loggedInUser, id, null);
         }
 
         // 入力チェック再表示の場合、formの情報をDBの値で上書きしない
         if (form.getVersion() == null) {
-            beanMapper.map(simpleEntity, form);
+            beanMapper.map(document, form);
         }
 
         setFileManagedToForm(form);
 
-        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.SAVE, simpleEntity).asMap());
-        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.SAVE, simpleEntity).asMap());
+        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.SAVE, document).asMap());
+        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.SAVE, document).asMap());
         model.addAttribute("op", op());
 
         return JSP_FORM;
     }
 
     /**
-     * 行追加ボタン押下時
-     */
-    @PostMapping(value = "{id}/update", params = "addlineitem")
-    @TransactionTokenCheck
-    public String updateAddLineItem(SimpleEntityForm form,
-                                    BindingResult bindingResult,
-                                    Model model,
-                                    RedirectAttributes redirect,
-                                    @AuthenticationPrincipal LoggedInUser loggedInUser,
-                                    @PathVariable("id") Long id,
-                                    @RequestParam(value = "saveDraft", required = false) String saveDraft) {
-
-        if (form.getLineItems() == null) {
-            form.setLineItems(new ArrayList<LineItem>());
-        }
-        form.getLineItems().add(new LineItem());
-
-        return updateForm(form, model, loggedInUser, id);
-    }
-
-
-    /**
      * 更新
      */
     @PostMapping(value = "{id}/update")
     @TransactionTokenCheck
-    public String update(@Validated({Update.class, Default.class}) SimpleEntityForm form,
+    public String update(@Validated({Update.class, Default.class}) DocumentForm form,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirect,
@@ -646,20 +531,20 @@ public class SimpleEntityController {
                          @PathVariable("id") Long id,
                          @RequestParam(value = "saveDraft", required = false) String saveDraft) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
         if (bindingResult.hasErrors()) {
             return updateForm(form, model, loggedInUser, id);
         }
 
-        SimpleEntity simpleEntity = beanMapper.map(form, SimpleEntity.class);
+        Document document = beanMapper.map(form, Document.class);
 
         try {
             if ("true".equals(saveDraft)) {
-                simpleEntityService.saveDraft(simpleEntity);
+//                documentService.saveDraft(document);
             } else {
-                simpleEntity.setStatus(Status.VALID.getCodeValue());
-                simpleEntityService.save(simpleEntity);
+                document.setStatus(Status.VALID.getCodeValue());
+                documentService.save(document);
             }
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
@@ -668,7 +553,7 @@ public class SimpleEntityController {
 
         redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0004));
 
-        return "redirect:" + op().getEditUrl(simpleEntity.getId().toString());
+        return "redirect:" + op().getEditUrl(document.getId().toString());
     }
 
     /**
@@ -678,10 +563,10 @@ public class SimpleEntityController {
     public String delete(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                          @PathVariable("id") Long id) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.DELETE, loggedInUser);
 
         try {
-            simpleEntityService.delete(id);
+            documentService.delete(id);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
         }
@@ -698,12 +583,12 @@ public class SimpleEntityController {
     public String invalid(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                           @PathVariable("id") Long id) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.INVALID, loggedInUser);
 
-        SimpleEntity entity = simpleEntityService.findById(id);
+        Document entity = documentService.findById(id);
 
         try {
-            entity = simpleEntityService.invalid(id);
+            entity = documentService.invalid(id);
         } catch (BusinessException e) {
             redirect.addFlashAttribute(e.getResultMessages());
             return "redirect:" + op().getEditUrl(id.toString());
@@ -721,13 +606,13 @@ public class SimpleEntityController {
     public String valid(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
                         @PathVariable("id") Long id) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.VALID, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.VALID, loggedInUser);
 
         // 存在チェックを兼ねる
-        SimpleEntity entity = simpleEntityService.findById(id);
+        Document entity = documentService.findById(id);
 
         try {
-            entity = simpleEntityService.valid(id);
+            entity = documentService.valid(id);
         } catch (BusinessException e) {
             redirect.addFlashAttribute(e.getResultMessages());
             return "redirect:" + op().getViewUrl(id.toString());
@@ -738,33 +623,33 @@ public class SimpleEntityController {
         return "redirect:" + op().getEditUrl(id.toString());
     }
 
-    /**
-     * 下書き取消
-     */
-    @GetMapping(value = "{id}/cancel_draft")
-    public String cancelDraft(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
-                              @PathVariable("id") Long id) {
-
-        simpleEntityService.hasAuthority(Constants.OPERATION.CANCEL_DRAFT, loggedInUser);
-
-        // 存在チェックを兼ねる
-        SimpleEntity entity = simpleEntityService.findById(id);
-
-        try {
-            entity = simpleEntityService.cancelDraft(id);
-        } catch (BusinessException e) {
-            redirect.addFlashAttribute(e.getResultMessages());
-            return "redirect:" + op().getEditUrl(id.toString());
-        }
-
-        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
-
-        if (entity != null) {
-            return "redirect:" + op().getEditUrl(id.toString());
-        } else {
-            return "redirect:" + op().getListUrl();
-        }
-    }
+//    /**
+//     * 下書き取消
+//     */
+//    @GetMapping(value = "{id}/cancel_draft")
+//    public String cancelDraft(Model model, RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser,
+//                              @PathVariable("id") Long id) {
+//
+//        documentService.hasAuthority(Constants.OPERATION.CANCEL_DRAFT, loggedInUser);
+//
+//        // 存在チェックを兼ねる
+//        Document entity = documentService.findById(id);
+//
+//        try {
+//            entity = documentService.cancelDraft(id);
+//        } catch (BusinessException e) {
+//            redirect.addFlashAttribute(e.getResultMessages());
+//            return "redirect:" + op().getEditUrl(id.toString());
+//        }
+//
+//        redirect.addFlashAttribute(ResultMessages.info().add(MessageKeys.I_CM_FW_0002));
+//
+//        if (entity != null) {
+//            return "redirect:" + op().getEditUrl(id.toString());
+//        } else {
+//            return "redirect:" + op().getListUrl();
+//        }
+//    }
 
     /**
      * 参照画面の表示
@@ -774,31 +659,31 @@ public class SimpleEntityController {
                        @PathVariable("id") Long id,
                        @RequestParam(value = "rev", required = false) Long rev) {
 
-        simpleEntityService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
+        documentService.hasAuthority(Constants.OPERATION.VIEW, loggedInUser);
 
-        // SimpleEntity simpleEntity = simpleEntityService.findById(id);　// TODO: リビジョン管理がない場合はシンプルにできる
+        // Document document = documentService.findById(id);　// TODO: リビジョン管理がない場合はシンプルにできる
 
-        SimpleEntity simpleEntity;
+        Document document = null;
 
         if (rev == null) {
             // 下書きを含む最新
-            simpleEntity = simpleEntityService.findById(id);
+            document = documentService.findById(id);
 
         } else if (rev == 0) {
             // 有効な最新リビジョン
-            simpleEntity = beanMapper.map(simpleEntityService.findByIdLatestRev(id), SimpleEntity.class);
+//            document = beanMapper.map(documentService.findByIdLatestRev(id), Document.class);
 
         } else {
             // リビジョン番号指定
-            simpleEntity = beanMapper.map(simpleEntityService.findByRid(rev), SimpleEntity.class);
+//            document = beanMapper.map(documentService.findByRid(rev), Document.class);
         }
 
-//        setFileManagedToEntity(simpleEntity);
+//        setFileManagedToEntity(document);
 
-        model.addAttribute("simpleEntity", simpleEntity);
+        model.addAttribute("document", document);
 
-        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
-        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.VIEW, simpleEntity).asMap());
+        model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.VIEW, document).asMap());
+        model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.VIEW, document).asMap());
         model.addAttribute("op", op());
 
         return JSP_FORM;
@@ -807,10 +692,10 @@ public class SimpleEntityController {
     /**
      * ボタンの状態設定
      */
-    private StateMap getButtonStateMap(String operation, SimpleEntity record) {
+    private StateMap getButtonStateMap(String operation, Document record) {
 
         if (record == null) {
-            record = new SimpleEntity();
+            record = new Document();
         }
 
         List<String> includeKeys = new ArrayList<>();
@@ -822,8 +707,8 @@ public class SimpleEntityController {
         includeKeys.add(Constants.BUTTON.VALID);
         includeKeys.add(Constants.BUTTON.DELETE);
         includeKeys.add(Constants.BUTTON.UNLOCK);
-        includeKeys.add(Constants.BUTTON.SAVE_DRAFT);
-        includeKeys.add(Constants.BUTTON.CANCEL_DRAFT);
+//        includeKeys.add(Constants.BUTTON.SAVE_DRAFT);
+//        includeKeys.add(Constants.BUTTON.CANCEL_DRAFT);
         includeKeys.add(Constants.BUTTON.COPY);
 
         StateMap buttonState = new StateMap(Default.class, includeKeys, new ArrayList<>());
@@ -834,22 +719,22 @@ public class SimpleEntityController {
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
             buttonState.setViewTrue(Constants.BUTTON.SAVE);
-            buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
+//            buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
         }
 
         // 編集
         if (Constants.OPERATION.SAVE.equals(operation)) {
 
             if (Status.DRAFT.getCodeValue().equals(record.getStatus())) {
-                buttonState.setViewTrue(Constants.BUTTON.CANCEL_DRAFT);
-                buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
+//                buttonState.setViewTrue(Constants.BUTTON.CANCEL_DRAFT);
+//                buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
                 buttonState.setViewTrue(Constants.BUTTON.SAVE);
                 buttonState.setViewTrue(Constants.BUTTON.VIEW);
                 buttonState.setViewTrue(Constants.BUTTON.COPY);
             }
 
             if (Status.VALID.getCodeValue().equals(record.getStatus())) {
-                buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
+//                buttonState.setViewTrue(Constants.BUTTON.SAVE_DRAFT);
                 buttonState.setViewTrue(Constants.BUTTON.SAVE);
                 buttonState.setViewTrue(Constants.BUTTON.VIEW);
                 buttonState.setViewTrue(Constants.BUTTON.INVALID);
@@ -890,14 +775,14 @@ public class SimpleEntityController {
     /**
      * フィールドの状態設定
      */
-    private StateMap getFiledStateMap(String operation, SimpleEntity record) {
+    private StateMap getFiledStateMap(String operation, Document record) {
 
         // 常設の隠しフィールドは状態管理しない
         List<String> excludeKeys = new ArrayList<>();
         excludeKeys.add("id");
         excludeKeys.add("version");
 
-        StateMap fieldState = new StateMap(SimpleEntityForm.class, new ArrayList<>(), excludeKeys);
+        StateMap fieldState = new StateMap(DocumentForm.class, new ArrayList<>(), excludeKeys);
 
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
@@ -935,7 +820,7 @@ public class SimpleEntityController {
         FileManaged uploadFileManaged = fileManagedSharedService.findByUuid(form.getUploadFileUuid());
         form.setUploadFileManaged(uploadFileManaged);
 
-        model.addAttribute("pageTitle", "Import SimpleEntity");
+        model.addAttribute("pageTitle", "Import Document");
         model.addAttribute("referer", "list");
 
         return JSP_UPLOAD_FORM;

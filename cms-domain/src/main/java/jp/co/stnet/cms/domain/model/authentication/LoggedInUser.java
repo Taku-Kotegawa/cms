@@ -1,10 +1,12 @@
 package jp.co.stnet.cms.domain.model.authentication;
 
 import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -17,7 +19,9 @@ public class LoggedInUser extends User {
 
     public LoggedInUser(Account account, boolean isLocked,
                         LocalDateTime lastLoginDate,
-                        List<SimpleGrantedAuthority> authorities) {
+//                        List<SimpleGrantedAuthority> authorities) {
+                        Collection<? extends GrantedAuthority> authorities) {
+
         super(account.getUsername(), account.getPassword(),
                 true, true, true,
                 !isLocked, authorities);

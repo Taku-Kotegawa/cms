@@ -46,7 +46,7 @@ public class ManageController {
 
         try {
             indexSharedService.reindexing(entityName);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 

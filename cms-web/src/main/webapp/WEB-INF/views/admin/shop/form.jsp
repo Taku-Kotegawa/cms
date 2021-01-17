@@ -3,7 +3,7 @@
     <div class="row mb-2">
       <div class="col-18">
         <!-- ページタイトルを記入 -->
-        <h4>従業員編集</h4>
+        <h4>店所編集</h4>
       </div>
       <div class="col-18">
         <!-- ページタイトル右の余白 -->
@@ -17,7 +17,7 @@
     <!-- ここより下にメインコンテンツを記入 -->
 
     <!-- １．フォームタグで囲む -->
-    <form:form modelAttribute="personForm" enctype="multipart/form-data" autocomplete="off">
+    <form:form modelAttribute="shopForm" enctype="multipart/form-data" autocomplete="off">
       <!-- EnterキーによるPOSTを無効化 -->
       <input type="submit" disabled style="display:none" />
 
@@ -29,7 +29,7 @@
         <!-- 右寄せに配置 -->
         <div class="col-12">
 
-          <c:set var="id" value="${person.id}" />
+          <c:set var="id" value="${shop.id}" />
 
           <!-- 一覧に戻る -->
           <c:if test="${buttonState.gotoList__view}">
@@ -99,7 +99,7 @@
                 <!-- ラベル -->
                 <form:label path="status">ステータス</form:label>
                 <div class="form-control__view">
-                  ${f:h(CL_STATUS[person.status])}
+                  ${f:h(CL_STATUS[shop.status])}
                 </div>
               </div>
             </div>
@@ -108,49 +108,23 @@
           <div class="row mb-3">
             <div class="col-12">
               <!-- ラベル -->
-              <c:if test="${fieldState.name__input || fieldState.name__view}">
-                <form:label path="name">氏名</form:label>
+              <c:if test="${fieldState.shopCode__input || fieldState.shopCode__view}">
+                <form:label path="shopCode">店所コード</form:label>
               </c:if>
               <!-- 入力 -->
-              <c:if test="${fieldState.name__input}">
-                <form:input path="name" cssClass="form-control" cssErrorClass="form-control is-invalid"
-                  disabled="${fieldState.name__disabled}" readonly="${fieldState.name__readonly}" />
-                <form:errors path="name" cssClass="invalid-feedback" />
+              <c:if test="${fieldState.shopCode__input}">
+                <form:input path="shopCode" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                  disabled="${fieldState.shopCode__disabled}" readonly="${fieldState.shopCode__readonly}" />
+                <form:errors path="shopCode" cssClass="invalid-feedback" />
               </c:if>
               <!-- 隠しフィールド-->
-              <c:if test="${fieldState.name__hidden}">
-                <form:hidden path="name" />
+              <c:if test="${fieldState.shopCode__hidden}">
+                <form:hidden path="shopCode" />
               </c:if>
               <!-- 参照用-->
-              <c:if test="${fieldState.name__view}">
+              <c:if test="${fieldState.shopCode__view}">
                 <div class="form-control form-control__view">
-                  ${f:h(person.name)}
-                </div>
-              </c:if>
-            </div>
-          </div>
-
-
-          <div class="row mb-3">
-            <div class="col-12">
-              <!-- ラベル -->
-              <c:if test="${fieldState.age__input || fieldState.age__view}">
-                <form:label path="age">年齢</form:label>
-              </c:if>
-              <!-- 入力 -->
-              <c:if test="${fieldState.age__input}">
-                <form:input path="age" cssClass="form-control" cssErrorClass="form-control is-invalid"
-                  disabled="${fieldState.age__disabled}" readonly="${fieldState.age__readonly}" />
-                <form:errors path="age" cssClass="invalid-feedback" />
-              </c:if>
-              <!-- 隠しフィールド-->
-              <c:if test="${fieldState.age__hidden}">
-                <form:hidden path="age" />
-              </c:if>
-              <!-- 参照用-->
-              <c:if test="${fieldState.age__view}">
-                <div class="form-control form-control__view">
-                  ${f:h(person.age)}
+                  ${f:h(shop.shopCode)}
                 </div>
               </c:if>
             </div>
@@ -159,74 +133,52 @@
           <div class="row mb-3">
             <div class="col-12">
               <!-- ラベル -->
-              <c:if test="${fieldState.code__input || fieldState.code__view}">
-                <form:label path="code">コード</form:label>
+              <c:if test="${fieldState.title__input || fieldState.title__view}">
+                <form:label path="title">店所名</form:label>
               </c:if>
               <!-- 入力 -->
-              <c:if test="${fieldState.code__input}">
-                <form:select path="code" cssClass="form-control select2"
-                  cssErrorClass="form-control select2 is-invalid">
-                  <form:option value="" label="--Select--" />
-                  <form:options items="${CL_SAMPLE}" />
-                </form:select>
-                <form:errors path="code" cssClass="invalid-feedback" />
+              <c:if test="${fieldState.title__input}">
+                <form:input path="title" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                  disabled="${fieldState.title__disabled}" readonly="${fieldState.title__readonly}" />
+                <form:errors path="title" cssClass="invalid-feedback" />
               </c:if>
               <!-- 隠しフィールド-->
-              <c:if test="${fieldState.code__hidden}">
-                <form:hidden path="code" />
+              <c:if test="${fieldState.title__hidden}">
+                <form:hidden path="title" />
               </c:if>
               <!-- 参照用-->
-              <c:if test="${fieldState.code__view}">
+              <c:if test="${fieldState.title__view}">
                 <div class="form-control form-control__view">
-                  ${f:h(CL_SAMPLE[person.code])}
+                  ${f:h(shop.title)}
                 </div>
               </c:if>
             </div>
           </div>
-
 
           <div class="row mb-3">
-            <div class="col-24">
+            <div class="col-12">
               <!-- ラベル -->
-              <c:if test="${fieldState.attachedFile01Uuid__input || fieldState.attachedFile01Uuid__view}">
-                <form:label path="attachedFile01Uuid">ファイル</form:label>
+              <c:if test="${fieldState.weight__input || fieldState.weight__view}">
+                <form:label path="weight">並び順</form:label>
               </c:if>
               <!-- 入力 -->
-              <c:if test="${fieldState.attachedFile01Uuid__input}">
-                <input id="attachedFile01" type="file" class="form-control form-control-file file-managed"
-                  data-file-type="person" data-extention-pattern="png jpg gif" <c:if
-                  test="${personForm.attachedFile01Uuid != null}">style="display: none;"</c:if> />
-                <form:errors path="attachedFile01Uuid" cssClass="invalid-feedback" />
-                <c:if test="${personForm.attachedFile01Managed != null}">
-                  <div id="attachedFile01__attached-block" class="input-group">
-                    <span>
-                      <i class="far fa-file ml-2"></i>
-                      <a href="${pageContext.request.contextPath}${op.getDownloadUrl(personForm.attachedFile01Uuid)}"
-                        target="_blank"
-                        class="link-attached">${personForm.attachedFile01Managed.originalFilename}</a>
-                      <c:if test="${fieldState.attachedFile01Uuid__input && !fieldState.attachedFile01Uuid__readonly}">
-                        <i class="far fa-trash-alt" style="color: brown;" onclick="file_detach('attachedFile01')"></i>
-                      </c:if>
-                      <form:input type="hidden" path="attachedFile01Uuid" />
-                    </span>
-                  </div>
-                </c:if>
+              <c:if test="${fieldState.weight__input}">
+                <form:input type="number" path="weight" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                  disabled="${fieldState.weight__disabled}" readonly="${fieldState.weight__readonly}" />
+                <form:errors path="weight" cssClass="invalid-feedback" />
+              </c:if>
+              <!-- 隠しフィールド-->
+              <c:if test="${fieldState.weight__hidden}">
+                <form:hidden path="weight" />
               </c:if>
               <!-- 参照用-->
-              <c:if test="${fieldState.attachedFile01Uuid__view}">
-                <div>
-                  <c:if test="${person.attachedFile01Managed != null}">
-                    <span>
-                      <i class="far fa-file ml-2"></i>
-                      <a href="${pageContext.request.contextPath}${op.getDownloadUrl(person.attachedFile01Managed.uuid)}"
-                        target="_blank" class="link-attached">${person.attachedFile01Managed.originalFilename}</a>
-                    </span>
-                  </c:if>
+              <c:if test="${fieldState.weight__view}">
+                <div class="form-control form-control__view">
+                  ${f:h(shop.weight)}
                 </div>
               </c:if>
             </div>
           </div>
-
 
     </form:form>
 

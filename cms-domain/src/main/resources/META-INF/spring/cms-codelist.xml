@@ -27,6 +27,8 @@
         <property name="labelColumn" value="VALUE1" />
     </bean>
 
+
+
     <bean id="CL_STATUS"
           class="org.terasoluna.gfw.common.codelist.EnumCodeList">
         <constructor-arg value="jp.co.stnet.cms.domain.model.common.Status" />
@@ -50,6 +52,19 @@
     <bean id="CL_PERMISSION"
           class="org.terasoluna.gfw.common.codelist.EnumCodeList">
         <constructor-arg value="jp.co.stnet.cms.domain.model.authentication.Permission" />
+    </bean>
+
+    <!-- 帳票管理 -->
+
+    <bean id="CL_REPORT"
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList">
+        <constructor-arg value="jp.co.stnet.cms.domain.model.report.Report" />
+    </bean>
+
+    <bean id="CL_SHOP" parent="AbstractJdbcCodeList">
+        <property name="querySql" value="SELECT SHOP_CODE, TITLE || case when STATUS = 2 then '(無効)' else '' end as TITLE FROM SHOP ORDER BY STATUS, WEIGHT, SHOP_CODE" />
+        <property name="valueColumn" value="SHOP_CODE" />
+        <property name="labelColumn" value="TITLE" />
     </bean>
 
 </beans>

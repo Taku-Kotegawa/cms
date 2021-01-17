@@ -44,10 +44,12 @@
                     <i class="fas fa-database mr-2"></i>マイアカウント情報
                 </a>
 
-                <div class="dropdown-divider"></div>
-                <a href="${f:h(pageContext.request.contextPath)}/admin/" class="dropdown-item">
-                    <i class="fas fa-database mr-2"></i>管理メニュー
-                </a>
+                <sec:authorize access="hasRole('ROLE_ADMIN')">
+                    <div class="dropdown-divider"></div>
+                    <a href="${f:h(pageContext.request.contextPath)}/admin/" class="dropdown-item">
+                        <i class="fas fa-database mr-2"></i>管理メニュー
+                    </a>
+                </sec:authorize>
 
                 <div class="dropdown-divider"></div>
                     <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">
@@ -58,7 +60,6 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item dropdown-footer" href="${f:h(pageContext.request.contextPath)}/logout/impersonate">ユーザ切替を中断</a>                
                     </sec:authorize>
-
 
             </div>
         </li>

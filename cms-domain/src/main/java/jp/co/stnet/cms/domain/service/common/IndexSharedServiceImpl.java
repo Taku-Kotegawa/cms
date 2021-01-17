@@ -1,8 +1,6 @@
 package jp.co.stnet.cms.domain.service.common;
 
-import jp.co.stnet.cms.domain.model.example.Person;
 import lombok.extern.slf4j.Slf4j;
-
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -22,14 +20,27 @@ public class IndexSharedServiceImpl implements IndexSharedService {
 
 
     @Override
-    public void reindexing(String entityName) throws InterruptedException {
+    public void reindexing(String entityName) throws InterruptedException, ClassNotFoundException {
 
-        SearchSession searchSession = Search.session( entityManager );
+        try {
 
-        MassIndexer indexer = searchSession.massIndexer( Person.class )
-                .threadsToLoadObjects( 7 );
+            Class<?> clazz = Class.forName(entityName);
+            SearchSession searchSession = Search.session(entityManager);
+            MassIndexer indexer = searchSession.massIndexer(clazz)
+                    .threadsToLoadObjects(7);
+            indexer.startAndWait();
 
-        indexer.startAndWait();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+//        SearchSession searchSession = Search.session( entityManager );
+//
+//        MassIndexer indexer = searchSession.massIndexer( Person.class )
+//                .threadsToLoadObjects( 7 );
+//
+//        indexer.startAndWait();
 
 
     }

@@ -37,6 +37,8 @@
 
 <!-- 認証機能(ログイン画面)の拡張 -->
 
+
+
     <bean id="loginUrlAuthenticationEntryPoint"
           class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
         <constructor-arg value="/login" />
@@ -63,10 +65,9 @@
         </property>
         <!-- (9) -->
         <property name="authenticationSuccessHandler">
-            <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler" />
+            <bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler" />
         </property>
     </bean>
-
 
     <sec:authentication-manager alias="authenticationManager">
         <sec:authentication-provider ref="customUsernamePasswordAuthenticationProvider" />

@@ -108,6 +108,38 @@
           </ul>
         </div>
 
+        <div class="admin-panel">
+          <h5>帳票管理</h5>
+          <hr>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+              <i class="fas fa-angle-right"></i>
+              <a href="${f:h(pageContext.request.contextPath)}/admin/shop/list">
+                店所マスタ
+              </a>
+            </li>
+          </ul>
+
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+              <i class="fas fa-angle-right"></i>
+              <a href="${f:h(pageContext.request.contextPath)}/admin/document/list">
+                ドキュメント管理
+              </a>
+            </li>
+          </ul>
+
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+              <i class="fas fa-angle-right"></i>
+              <a href="${f:h(pageContext.request.contextPath)}/admin/pageidx/list">
+                ページ番号管理
+              </a>
+            </li>
+          </ul>
+
+        </div>
+
       </div>
 
     </div>

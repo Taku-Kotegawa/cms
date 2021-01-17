@@ -17,9 +17,9 @@
     <!-- ここより下にメインコンテンツを記入 -->
 
     <ul>
-      <li><a href="${f:h(pageContext.request.contextPath)}/admin/index/Person/reindexing">Person</a></li>
-
-
+      <li><a href="${f:h(pageContext.request.contextPath)}/admin/index/jp.co.stnet.cms.domain.model.example.Person/reindexing">Person</a></li>
+      <li><a href="${f:h(pageContext.request.contextPath)}/admin/index/jp.co.stnet.cms.domain.model.report.Document/reindexing">Document</a></li>
+      <li><a href="${f:h(pageContext.request.contextPath)}/admin/index/jp.co.stnet.cms.domain.model.report.PageIdx/reindexing">PageIdx</a></li>
 
     </ul>
 

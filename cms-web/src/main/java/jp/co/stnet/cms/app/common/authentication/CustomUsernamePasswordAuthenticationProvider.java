@@ -59,7 +59,9 @@ public class CustomUsernamePasswordAuthenticationProvider extends DaoAuthenticat
 
         Boolean loginAsAdministrator = customUsernamePasswordAuthentication.getLoginAsAdministrator();
 
-        Account account = ((LoggedInUser) user).getAccount();
+        LoggedInUser loggedInUser = (LoggedInUser) user;
+
+        Account account = loggedInUser.getAccount();
 
         Collection<GrantedAuthority> authorities = new HashSet<>();
 
@@ -81,6 +83,11 @@ public class CustomUsernamePasswordAuthenticationProvider extends DaoAuthenticat
         for (PermissionRole permissionRole : permissionRoleSharedService.findAllByRole(roleIds)) {
             authorities.add(new SimpleGrantedAuthority(permissionRole.getPermission().name()));
         }
+
+        principal = new LoggedInUser(account,
+                !loggedInUser.isAccountNonLocked(),
+                loggedInUser.getLastLoginDate(),
+                authorities);
 
         return new CustomUsernamePasswordAuthenticationToken(principal,
                 authentication.getCredentials(), loginAsAdministrator,

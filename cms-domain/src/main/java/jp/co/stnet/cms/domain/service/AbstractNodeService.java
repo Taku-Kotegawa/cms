@@ -136,7 +136,9 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T invalid(ID id) {
-        T entity = beanMapper.map(findById(id), clazz);
+//        T entity = beanMapper.map(findById(id), clazz);
+        T entity = findById(id);
+        entityManager.detach(entity);
         if (!entity.getStatus().equals(Status.VALID.getCodeValue())) {
             throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2003)));
         }
@@ -158,7 +160,9 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     @Override
     public T valid(ID id) {
-        T entity = beanMapper.map(findById(id), clazz);
+//        T entity = beanMapper.map(findById(id), clazz);
+        T entity = findById(id);
+        entityManager.detach(entity);
         if (!entity.getStatus().equals(Status.INVALID.getCodeValue())) {
             throw new IllegalStateBusinessException(ResultMessages.warning().add((MessageKeys.W_CM_FW_2004)));
         }
@@ -261,51 +265,57 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 }
                 String originalColumnName = column.getData();
                 String convertedColumnName = convertColumnName(originalColumnName);
+                String replacedColumnName = replacedColumnName(originalColumnName);
 
                 if (isFilterINClause(convertedColumnName)) {
                     sql.append("c." + convertedColumnName);
                     sql.append(" IN (:");
-                    sql.append(convertedColumnName);
+                    sql.append(replacedColumnName);
+                    sql.append(")");
+                } else if (isEnum(convertedColumnName)) {
+                    sql.append("c." + convertedColumnName);
+                    sql.append(" IN (:");
+                    sql.append(replacedColumnName);
                     sql.append(")");
                 } else if (isDate(convertedColumnName)) {
                     sql.append("function('date_format', c.");
                     sql.append(convertedColumnName);
                     sql.append(", '%Y/%m/%d') LIKE :");
-                    sql.append(convertedColumnName);
+                    sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
                 } else if (isDateTime(convertedColumnName)) {
                     sql.append("function('date_format', c.");
                     sql.append(convertedColumnName);
                     sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :");
-                    sql.append(convertedColumnName);
+                    sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
                 } else if (isNumeric(convertedColumnName)) {
                     sql.append("function('CONVERT', c.");
                     sql.append(convertedColumnName);
                     sql.append(", CHAR) LIKE :");
-                    sql.append(convertedColumnName);
+                    sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
                 } else if (isCollection(convertedColumnName)) {
                     sql.append(convertedColumnName);
                     sql.append(" LIKE :");
-                    sql.append(convertedColumnName);
+                    sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
                 } else if (isRelation(originalColumnName)) {
                     sql.append("c." + originalColumnName);
                     sql.append(" LIKE :");
-                    sql.append(convertedColumnName);
+                    sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
                 } else if (isBoolean(convertedColumnName)) {
                     sql.append("function('FORMAT', c.");
                     sql.append(convertedColumnName);
                     sql.append(", 0) LIKE :");
-                    sql.append(convertedColumnName);
+                    sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
                 } else {
                     sql.append("c.");
                     sql.append(convertedColumnName);
                     sql.append(" LIKE :");
-                    sql.append(convertedColumnName);
+                    sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
                 }
             }
@@ -319,32 +329,32 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 if (column.getSearchable()) {
                     sql.append(" OR ");
                     String originalColumnName = column.getData();
-                    String convertColumnName = convertColumnName(originalColumnName);
-                    if (isDate(convertColumnName)) {
+                    String convertedColumnName = convertColumnName(originalColumnName);
+                    if (isDate(convertedColumnName)) {
                         sql.append("function('date_format', c.");
-                        sql.append(convertColumnName);
+                        sql.append(convertedColumnName);
                         sql.append(", '%Y/%m/%d') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isDateTime(convertColumnName)) {
+                    } else if (isDateTime(convertedColumnName)) {
                         sql.append("function('date_format', c.");
-                        sql.append(convertColumnName);
+                        sql.append(convertedColumnName);
                         sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isNumeric(convertColumnName)) {
+                    } else if (isNumeric(convertedColumnName)) {
                         sql.append("function('CONVERT', c.");
-                        sql.append(convertColumnName);
+                        sql.append(convertedColumnName);
                         sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
-                    } else if (isCollection(convertColumnName)) {
-                        sql.append(convertColumnName);
+                    } else if (isCollection(convertedColumnName)) {
+                        sql.append(convertedColumnName);
                         sql.append(" LIKE :globalSearch ESCAPE '~'");
-                    } else if (isBoolean(convertColumnName)) {
+                    } else if (isBoolean(convertedColumnName)) {
                         sql.append("function('CONVERT', c.");
-                        sql.append(convertColumnName);
+                        sql.append(convertedColumnName);
                         sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
                     } else if (isRelation(originalColumnName)) {
                         sql.append("c." + originalColumnName);
                         sql.append(" LIKE :globalSearch ESCAPE '~'");
                     } else {
                         sql.append("c.");
-                        sql.append(convertColumnName);
+                        sql.append(convertedColumnName);
                         sql.append(" LIKE :globalSearch ESCAPE '~'");
                     }
                 }
@@ -386,12 +396,20 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         for (Column column : input.getColumns()) {
             String originalColumnName = column.getData();
             String convertColumnName = convertColumnName(originalColumnName);
+            String replacedColumnName = replacedColumnName(originalColumnName);
             if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
                 // 検索文字列を%で囲む
                 if (isFilterINClause(convertColumnName)) {
-                    typedQuery.setParameter(convertColumnName(column.getData()), Arrays.asList(StringUtils.split(column.getSearch().getValue(), ",")));
+                    typedQuery.setParameter(replacedColumnName, Arrays.asList(StringUtils.split(column.getSearch().getValue(), ",")));
+
+                } else if (isEnum(convertColumnName)) {
+                    typedQuery.setParameter(
+                            replacedColumnName,
+                            getEnumListByName(convertColumnName, Arrays.asList(StringUtils.split(column.getSearch().getValue(), ","))));
+
                 } else {
-                    typedQuery.setParameter(convertColumnName(column.getData()), QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
+                    typedQuery.setParameter(replacedColumnName, QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
+
                 }
             }
         }
@@ -429,11 +447,26 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         return "java.lang.Boolean".equals(fieldMap.get(fieldName));
     }
 
+    protected boolean isEnum(String fieldName) {
+
+        try {
+            Class<?> c = Class.forName(fieldMap.get(fieldName));
+            return c.isEnum();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    protected List<Object> getEnumListByName(String fieldName, List<String> values) {
+        return new ArrayList<>();
+    }
+
     protected String convertColumnName(String org) {
 
-        if (StringUtils.contains(org, ".")) {
-            return StringUtils.substring(org, org.indexOf(".") + 1);
-        }
+        // 一旦削除
+//        if (StringUtils.contains(org, ".")) {
+//            return StringUtils.substring(org, org.indexOf(".") + 1);
+//        }
 
         if (StringUtils.endsWith(org, "Label")) {
             return StringUtils.left(org, org.length() - 5);
@@ -441,6 +474,12 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
             return org;
         }
     }
+
+    protected String replacedColumnName(String fieldName) {
+        return convertColumnName(fieldName).replace('.', '_');
+    }
+
+
 
     protected boolean isCollectionElement(String fieldName) {
         return elementCollectionFieldsMap.containsKey(fieldName);

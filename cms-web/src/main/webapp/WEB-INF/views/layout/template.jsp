@@ -6,6 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width" />
 
+  <link rel="icon" href="${f:h(pageContext.request.contextPath)}/favicon.ico">
+  <%-- <link rel="icon" type="image/png" href="${f:h(pageContext.request.contextPath)}/favicon.png"> --%>
+
   <%@ include file="/WEB-INF/views/common/includes/include-common.jsp" %>
 
   <c:set var="titleKey">
@@ -23,9 +26,10 @@
     <div class="content-wrapper">
       <tiles:insertAttribute name="body" />
 
-      <%-- <br>
+      <%--
       <%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
       --%>
+
     </div>
   </div>
 </body>

@@ -245,7 +245,7 @@
             {
               data: 'attachedFile01Managed.originalFilename',
               render: $.fn.dataTable.render.text(),
-              "defaultContent": " - ",
+              "defaultContent": "",
             },            
             {
               data: 'statusLabel',
