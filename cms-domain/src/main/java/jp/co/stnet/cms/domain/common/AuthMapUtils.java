@@ -91,7 +91,7 @@ public class AuthMapUtils {
 
     public static void addKey(Map<String, Boolean> authMap, String fieldName) {
         for (String attribute : attributes) {
-            authMap.put(fieldName + "__" + attribute, new Boolean(false));
+            authMap.put(fieldName + "__" + attribute, Boolean.FALSE);
         }
     }
 
