@@ -74,13 +74,14 @@ public class PageIdx extends AbstractEntity<Long> implements Serializable, Statu
      * ドキュメントID
      */
     @Column(nullable = false)
-    private String documentId;
+    private Long documentId;
 
     @IndexedEmbedded
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
+//    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne
-    @JoinColumn(name = "documentId", referencedColumnName = "id", unique = true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "documentId", referencedColumnName = "id", unique = false, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Document document;
 
     /**

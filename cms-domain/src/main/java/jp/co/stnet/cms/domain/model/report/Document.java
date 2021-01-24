@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Indexed
+//@Indexed
 @Entity
 @Data
 @Builder
@@ -76,7 +76,7 @@ public class Document extends AbstractEntity<Long> implements Serializable, Stat
     private String shopCode;
 
     @ManyToOne
-    @JoinColumn(name = "shopCode", referencedColumnName = "shopCode", unique=true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "shopCode", referencedColumnName = "shopCode", unique=false, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Shop shop;
 
     /**

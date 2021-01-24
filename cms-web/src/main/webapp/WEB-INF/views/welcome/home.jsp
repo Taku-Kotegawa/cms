@@ -31,6 +31,7 @@
           <li> <a href="${f:h(pageContext.request.contextPath)}/select/list">Select</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/pdfbox?form">pdfbox</a></li>
           <li> <a href="${f:h(pageContext.request.contextPath)}/account/">Accout + Modal Dialog</a></li>
+          <li> <a href="${f:h(pageContext.request.contextPath)}/admin/pageidx/search">お客さま番号検索</a></li>
         </ul>
       </div>
     </div>
