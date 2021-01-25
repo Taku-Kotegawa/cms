@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-//@Indexed
+@Indexed
 @Entity
 @Data
 @Builder
@@ -59,7 +59,7 @@ public class Document extends AbstractEntity<Long> implements Serializable, Stat
      * レポート(Enum)
      */
     @IndexedEmbedded
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Report report;

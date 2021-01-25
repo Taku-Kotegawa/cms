@@ -131,23 +131,22 @@
               <form:input class="form-control" path="CustomerNumber" />
               <div class="input-group-append">
                 <button class="btn btn-button py-0">検索</button>
+                <a href="${f:h(pageContext.request.contextPath)}/pageidx/search" class="btn btn-button">クリア</a>
               </div>
             </div>
             <br>
 
-            <h6>店所</h6>
-            <hr>
-            <c:forEach var="item" items="${shopList}">
+            <h6 class="border-bottom">店所</h6>
+            <c:forEach var="shop" items="${shopList}" varStatus="status">
               <div>
-                <form:checkbox path="shopCodes" value="${item.key}"></form:checkbox> <label
-                  class="for=period${status.index + 1}" form-check-label">${item.value}</label>
+                <form:checkbox path="shopCodes" value="${shop.key}"></form:checkbox>
+                <label for="shopCodes${status.index + 1}" class="form-check-label">${shop.value}</label>
               </div>
             </c:forEach>
 
             <br>
             <div>
-              <h6>年度</h6>
-              <hr>
+              <h6 class="border-bottom">年度</h6>
               <c:forEach var="year" items="${countsByYear}" varStatus="status">
                 <div>
                   <form:checkbox path="year" value="${year.key}"></form:checkbox>
@@ -159,8 +158,7 @@
 
             <br>
             <div>
-              <h6>年月</h6>
-              <hr>
+              <h6 class="border-bottom">年月</h6>
               <c:forEach var="period" items="${countsByPeriod}" varStatus="status">
                 <div>
                   <form:checkbox path="period" value="${period.key}"></form:checkbox>
@@ -180,7 +178,7 @@
 </section>
 
 
-<script>
+<!-- <script>
   $(document)
     .ready(
       function () {
@@ -188,4 +186,4 @@
           $('form').submit();
         });
       });
-</script>
+</script> -->

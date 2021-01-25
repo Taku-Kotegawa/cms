@@ -9,6 +9,7 @@ import jp.co.stnet.cms.domain.model.report.PageIdxCriteria;
 import jp.co.stnet.cms.domain.repository.report.PageIdxRepository;
 import jp.co.stnet.cms.domain.service.AbstractNodeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.search.engine.search.aggregation.AggregationKey;
 import org.hibernate.search.engine.search.predicate.dsl.BooleanPredicateClausesStep;
 import org.hibernate.search.engine.search.query.SearchResult;
@@ -118,35 +119,41 @@ public class PageIdxServiceImpl extends AbstractNodeService<PageIdx, Long> imple
                 .where(
                         f -> {
                             BooleanPredicateClausesStep<?> b = f.bool();
-                            int cnt = 0;
+                            boolean hasFilter = false;
 
                             if (criteria.getCustomerNumber() != null) {
                                 b = b.must(f.match().field("customerNumber").matching(criteria.getCustomerNumber()));
+                                hasFilter = true;
                             }
 
-                            if (criteria.getShopCodes() != null) {
+                            if (CollectionUtils.isNotEmpty(criteria.getShopCodes())) {
+                                BooleanPredicateClausesStep<?> c = f.bool();
                                 for (String shopCode : criteria.getShopCodes()) {
-                                    b = b.must(f.match().field("document.shopCode").matching(shopCode));
-                                    cnt++;
+                                    c = c.should(f.match().field("document.shopCode").matching(shopCode));
                                 }
+                                b = b.must(c);
+                                hasFilter = true;
                             }
 
-                            if (criteria.getYear() != null) {
+                            if (CollectionUtils.isNotEmpty(criteria.getYear())) {
+                                BooleanPredicateClausesStep<?> c = f.bool();
                                 for (Integer year : criteria.getYear()) {
-                                    b = b.must(f.match().field("document.year").matching(year));
-                                    cnt++;
+                                    c = c.should(f.match().field("document.year").matching(year));
                                 }
+                                b = b.must(c);
+                                hasFilter = true;
                             }
 
-                            if (criteria.getPeriod() != null) {
+                            if (CollectionUtils.isNotEmpty(criteria.getPeriod())) {
+                                BooleanPredicateClausesStep<?> c = f.bool();
                                 for (Integer period : criteria.getPeriod()) {
-                                    b = b.must(f.match().field("document.period").matching(period));
-                                    cnt++;
+                                    c = c.should(f.match().field("document.period").matching(period));
                                 }
+                                b = b.must(c);
+                                hasFilter = true;
                             }
 
-
-                            if (cnt == 0) {
+                            if (!hasFilter) {
                                 return b.must(f.matchAll());
                             }
 

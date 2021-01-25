@@ -20,6 +20,7 @@ public class IndexSharedServiceImpl implements IndexSharedService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public void reindexing(String entityName) throws InterruptedException, ClassNotFoundException {
 
         try {
@@ -28,7 +29,7 @@ public class IndexSharedServiceImpl implements IndexSharedService {
             SearchSession searchSession = Search.session(entityManager);
             MassIndexer indexer = searchSession.massIndexer(clazz)
                     .threadsToLoadObjects(7);
-            indexer.startAndWait();
+            indexer.start();
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
