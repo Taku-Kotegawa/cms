@@ -151,7 +151,7 @@
                 <div>
                   <form:checkbox path="year" value="${year.key}"></form:checkbox>
                   <label for="year${status.index + 1}" class="form-check-label">${f:h(year.key)} <span
-                      class="badge badge-pill badge-secondary">${year.value}</span></label>
+                      class="badge badge-pill badge-secondary"><fmt:formatNumber value="${year.value}"/></span></label>
                 </div>
               </c:forEach>
             </div>
@@ -163,7 +163,7 @@
                 <div>
                   <form:checkbox path="period" value="${period.key}"></form:checkbox>
                   <label for="period${status.index + 1}" class="form-check-label">${f:h(period.key)} <span
-                      class="badge badge-pill badge-secondary">${period.value}</span></label>
+                      class="badge badge-pill badge-secondary"><fmt:formatNumber value="${period.value}" /></span></label>
                 </div>
               </c:forEach>
             </div>

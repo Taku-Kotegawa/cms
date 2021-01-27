@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.terasoluna.gfw.common.codelist.CodeList;
 
 import javax.inject.Named;
+import java.text.NumberFormat;
 import java.util.*;
 
 @Slf4j
@@ -77,6 +78,7 @@ public class UserPageIdxController {
             return JSP_SEARCH;
         }
 
+        NumberFormat comFormat = NumberFormat.getNumberInstance();
 
         SearchResult<PageIdx> result = pageIdxService.search(beanMapper.map(form, PageIdxCriteria.class), pageable);
 
@@ -87,7 +89,7 @@ public class UserPageIdxController {
         Map<String, Long> countsByShop = result.aggregation(AggregationKey.of("countsByShop"));
         Map<String, String> shopList = new LinkedHashMap<>();
         for(Map.Entry<String, Long> entry : countsByShop.entrySet()) {
-            shopList.put(entry.getKey(), shopCodeList.asMap().get(entry.getKey()) + "<span class=\"badge badge-pill badge-secondary\">" + entry.getValue() + "</span>");
+            shopList.put(entry.getKey(), shopCodeList.asMap().get(entry.getKey()) + "<span class=\"badge badge-pill badge-secondary\">" + comFormat.format(entry.getValue()) + "</span>");
         }
 
 
