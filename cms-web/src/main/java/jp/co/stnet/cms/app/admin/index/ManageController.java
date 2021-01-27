@@ -1,7 +1,9 @@
 package jp.co.stnet.cms.app.admin.index;
 
+import jp.co.stnet.cms.domain.model.report.PageIdx;
 import jp.co.stnet.cms.domain.service.common.IndexSharedService;
 import jp.co.stnet.cms.domain.service.example.PersonService;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,9 @@ public class ManageController {
     @Autowired
     PersonService personService;
 
+    @Autowired
+    JobOperator jobOperator;
+
     @GetMapping("manage")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String manage(Model model) {
@@ -31,8 +36,6 @@ public class ManageController {
     @GetMapping("view")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String view(Model model, @RequestParam String term) {
-
-        personService.test(term);
 
 
         return "admin/index/manage";

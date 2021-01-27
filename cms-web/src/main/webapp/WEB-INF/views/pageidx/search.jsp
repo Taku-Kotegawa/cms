@@ -118,22 +118,22 @@
 
           <div class="mx-auto text-center">
             <t:pagination page="${page}" outerElementClass="pagination" activeClass="active" disabledClass="disabled"
-              queryTmpl="page={page}&size={size}&q=${f:h(q)}" />
-          </div>
-
+              queryTmpl="page={page}&size={size}${f:h(query)}" />
+            </div>
 
         </div>
         <div class="col-8 px-4">
           <div class="h-100 border-left px-4">
 
-            <form:label path="CustomerNumber">お客様番号</form:label>
+            <form:label path="customerNumber">お客様番号</form:label>
             <div class="input-group">
-              <form:input class="form-control" path="CustomerNumber" />
+              <form:input cssClass="form-control" cssErrorClass="form-control is-invalid" path="customerNumber" />
               <div class="input-group-append">
                 <button class="btn btn-button py-0">検索</button>
-                <a href="${f:h(pageContext.request.contextPath)}/pageidx/search" class="btn btn-button">クリア</a>
+                <a href="${f:h(pageContext.request.contextPath)}/pageidx/search" class="btn btn-button py-0" style="display: flex; align-items: center;">クリア</a>
               </div>
             </div>
+            <form:errors path="customerNumber" cssClass="invalid-feedback" />
             <br>
 
             <h6 class="border-bottom">店所</h6>

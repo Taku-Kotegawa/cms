@@ -38,7 +38,7 @@
     </logger>
 
     <logger name="jp.co.stnet.cms.domain.repository">
-        <level value="trace" />
+        <level value="debug" />
     </logger>
 
     <!-- TERASOLUNA -->
@@ -77,7 +77,7 @@
         <level value="debug" />
     </logger>
     <logger name="org.hibernate.type">
-        <level value="trace" />
+        <level value="debug" />
     </logger>
     <logger name="org.hibernate.engine.transaction">
         <level value="debug" />

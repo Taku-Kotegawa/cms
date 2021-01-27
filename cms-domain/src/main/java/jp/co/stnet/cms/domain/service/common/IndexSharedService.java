@@ -4,4 +4,6 @@ public interface IndexSharedService {
 
     void reindexing(String entityName) throws InterruptedException, ClassNotFoundException;
 
+    boolean reindexingSync(String entityName) throws InterruptedException, ClassNotFoundException;
+
 }

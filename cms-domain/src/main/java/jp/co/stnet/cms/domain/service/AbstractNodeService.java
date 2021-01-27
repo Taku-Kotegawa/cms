@@ -362,23 +362,25 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         }
 
         // Order BY
-        List<String> orderClauses = new ArrayList<>();
-        for (Order order : input.getOrder()) {
-            String originalFiledName = input.getColumns().get(order.getColumn()).getData();
-            String convertColumnName = convertColumnName(originalFiledName);
+        if (!count) {
+            List<String> orderClauses = new ArrayList<>();
+            for (Order order : input.getOrder()) {
+                String originalFiledName = input.getColumns().get(order.getColumn()).getData();
+                String convertColumnName = convertColumnName(originalFiledName);
 
-            String orderClause;
-            if (isCollection(convertColumnName)) {
-                orderClause = convertColumnName + " " + order.getDir();
-            } else if (isRelation(originalFiledName)) {
-                orderClause = "c." + originalFiledName + " " + order.getDir();
-            } else {
-                orderClause = "c." + convertColumnName + " " + order.getDir();
+                String orderClause;
+                if (isCollection(convertColumnName)) {
+                    orderClause = convertColumnName + " " + order.getDir();
+                } else if (isRelation(originalFiledName)) {
+                    orderClause = "c." + originalFiledName + " " + order.getDir();
+                } else {
+                    orderClause = "c." + convertColumnName + " " + order.getDir();
+                }
+                orderClauses.add(orderClause);
             }
-            orderClauses.add(orderClause);
+            sql.append(" ORDER BY ");
+            sql.append(StringUtils.join(orderClauses, ','));
         }
-        sql.append(" ORDER BY ");
-        sql.append(StringUtils.join(orderClauses, ','));
 
         System.out.println(sql);
 

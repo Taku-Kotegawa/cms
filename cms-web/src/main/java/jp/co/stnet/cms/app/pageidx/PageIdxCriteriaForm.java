@@ -2,14 +2,17 @@ package jp.co.stnet.cms.app.pageidx;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Collection;
 
 @Data
 public class PageIdxCriteriaForm {
 
-    private String CustomerNumber;
-    private String CustomerName;
+    @NotNull
+    private String customerNumber;
+
+    private String customerName;
     private Collection<String> shopCodes;
     private Collection<Integer> year;
     private Collection<Integer> period;

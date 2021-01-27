@@ -2,6 +2,7 @@ package jp.co.stnet.cms.app.pageidx;
 
 import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.app.person.PersonSearchRow;
+import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.report.PageIdx;
 import jp.co.stnet.cms.domain.model.report.PageIdxCriteria;
@@ -21,6 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,8 +69,13 @@ public class UserPageIdxController {
      * 一覧画面の表示
      */
     @GetMapping(value = "search")
-    public String search(Model model, PageIdxCriteriaForm form, BindingResult bindingResult,
+    public String search(Model model, @Validated PageIdxCriteriaForm form, BindingResult bindingResult,
                          @PageableDefault(size = 5) Pageable pageable, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+
+        if (bindingResult.hasErrors()) {
+            return JSP_SEARCH;
+        }
 
 
         SearchResult<PageIdx> result = pageIdxService.search(beanMapper.map(form, PageIdxCriteria.class), pageable);
@@ -83,6 +90,27 @@ public class UserPageIdxController {
             shopList.put(entry.getKey(), shopCodeList.asMap().get(entry.getKey()) + "<span class=\"badge badge-pill badge-secondary\">" + entry.getValue() + "</span>");
         }
 
+
+        String query = "";
+        if (form.getShopCodes() != null) {
+            for (String shopCode : form.getShopCodes()) {
+                query += "&shopCodes=" + shopCode;
+            }
+        }
+
+        if (form.getYear() != null) {
+            for (Integer year : form.getYear()) {
+                query += "&year=" + year.toString();
+            }
+        }
+
+        if (form.getPeriod() != null) {
+            for (Integer period : form.getPeriod()) {
+                query += "&period=" + period.toString();
+            }
+        }
+
+        model.addAttribute("query", query);
         model.addAttribute("shopList", shopList);
         model.addAttribute("countsByYear", result.aggregation(AggregationKey.of("countsByYear")));
         model.addAttribute("countsByPeriod", result.aggregation(AggregationKey.of("countsByPeriod")));
