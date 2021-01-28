@@ -9,7 +9,6 @@ import java.util.Collection;
 @Data
 public class PageIdxCriteriaForm {
 
-    @NotNull
     private String customerNumber;
 
     private String customerName;
