@@ -78,13 +78,15 @@ public class UserPageIdxController {
             return JSP_SEARCH;
         }
 
+
+
         NumberFormat comFormat = NumberFormat.getNumberInstance();
+
 
         SearchResult<PageIdx> result = pageIdxService.search(beanMapper.map(form, PageIdxCriteria.class), pageable);
 
         Page<PageIdx> page = new PageImpl<>(result.hits(), pageable, result.total().hitCount());
 
-        model.addAttribute("page", page);
 
         Map<String, Long> countsByShop = result.aggregation(AggregationKey.of("countsByShop"));
         Map<String, String> shopList = new LinkedHashMap<>();
@@ -112,6 +114,8 @@ public class UserPageIdxController {
             }
         }
 
+
+        model.addAttribute("page", page);
         model.addAttribute("query", query);
         model.addAttribute("shopList", shopList);
         model.addAttribute("countsByYear", result.aggregation(AggregationKey.of("countsByYear")));

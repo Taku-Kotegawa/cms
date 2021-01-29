@@ -36,6 +36,6 @@ public class PageIdxCriteriaForm {
     private LocalDate keydate8;
     private LocalDate keydate9;
     private LocalDate keydate10;
-
+    private Integer size = 5;
 
 }

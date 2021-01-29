@@ -168,6 +168,16 @@
               </c:forEach>
             </div>
 
+            <br>
+            <div class="col-10">
+              <form:select path="size" cssClass="form-control" cssErrorClass="form-control is-invalid">
+                <form:option value="5" label="5" />
+                <form:option value="10" label="10" />
+                <form:option value="20" label="20" />
+                <form:option value="50" label="50" />
+              </form:select>  
+            </div>
+
           </div>
         </div>
       </div>
