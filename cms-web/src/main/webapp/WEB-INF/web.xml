@@ -19,6 +19,9 @@
     <listener>
         <listener-class>org.terasoluna.gfw.web.logging.HttpSessionEventLoggingListener</listener-class>
     </listener>
+    <listener>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+    </listener>
 
     <filter>
         <filter-name>MDCClearFilter</filter-name>
