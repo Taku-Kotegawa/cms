@@ -16,6 +16,7 @@ import jp.co.stnet.cms.domain.repository.common.VariableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,9 @@ public class HelloController {
 
     @Autowired
     VariableRepository variableRepository;
+
+    @Autowired
+    private ApplicationContext context;
 
     @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
     public String home(Locale locale, Model model) {
@@ -50,6 +54,16 @@ public class HelloController {
         }
 
         model.addAttribute("shortMessage", shortMessage);
+
+
+        String[] allBeanNames = context.getBeanDefinitionNames();
+        for(String beanName : allBeanNames) {
+            System.out.println(beanName);
+        }
+
+        for(String beanName : context.getParent().getBeanDefinitionNames()) {
+            System.out.println(beanName);
+        }
 
         return "welcome/home";
     }

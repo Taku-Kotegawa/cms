@@ -114,6 +114,9 @@
 
 <!-- Page script -->
 <script>
+
+var pagechange = false;
+
   $(document)
     .ready(
       function () {
@@ -282,10 +285,17 @@
 
         // ページネーション後に画面トップに戻る
         table.on('page.dt', function () {
-            $('html, body').animate({
-            scrollTop: 0
-          }, 300);
+          pagechange = true;
         });
+
+        table.on( 'draw.dt', function (e, s) {
+          if (pagechange) {
+            pagechange = false;
+            $('html, body').animate({
+              scrollTop: 0
+            }, 0);
+          }
+        } );
 
         // 下書きチェックボックス押下時の操作
         $('#draft').change().on('change', function (e, s) {

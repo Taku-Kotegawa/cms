@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+             http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+             http://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch.xsd
+
+             http://www.springframework.org/schema/data/jpa https://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <import resource="classpath:META-INF/spring/job-base-jpa-context.xml"/>
+
+    <context:component-scan base-package="jp.co.stnet.cms.batch.job04" />
+    <context:component-scan base-package="jp.co.stnet.cms.domain.common.auditing" />
+    <context:component-scan base-package="jp.co.stnet.cms.domain.service.common" />
+    <context:component-scan base-package="jp.co.stnet.cms.domain.service.report" />
+
+
+<!--    <jpa:repositories base-package="jp.co.stnet.cms.domain.repository" />-->
+
+    <batch:job id="job04" job-repository="jobRepository">
+        <batch:step id="job04.step01">
+            <batch:tasklet transaction-manager="transactionManager" ref="job04Tasklet"/> <!-- MyBatsi/JPAでトランザクションマネージャの変更が必要 -->
+        </batch:step>
+    </batch:job>
+
+</beans>

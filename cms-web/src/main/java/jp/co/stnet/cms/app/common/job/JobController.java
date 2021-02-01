@@ -4,12 +4,14 @@ import jp.co.stnet.cms.app.common.uploadfile.UploadFileForm;
 import jp.co.stnet.cms.domain.common.exception.IllegalStateBusinessException;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
+import jp.co.stnet.cms.domain.model.authentication.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,6 +70,8 @@ public class JobController {
                          @RequestParam(value = "targetjob", required = false) String targetjob,
                          @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
+        boolean isAdmin = loggedInUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_" + Role.ADMIN.name()));
+
         List<String> jobList = jobExplorer.getJobNames();
         model.addAttribute("jobList", jobList);
 
@@ -80,6 +84,11 @@ public class JobController {
         for (JobInstance i : instances) {
             executions.addAll(jobExplorer.getJobExecutions(i));
         }
+
+        if (!isAdmin) {
+            // TODO 一般ユーザは自分のジョブのみ参照可能
+        }
+
 
         model.addAttribute("selectedJob", targetjob);
         model.addAttribute("jobResults", executions);

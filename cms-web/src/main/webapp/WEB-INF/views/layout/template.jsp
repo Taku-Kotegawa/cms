@@ -26,9 +26,9 @@
     <div class="content-wrapper">
       <tiles:insertAttribute name="body" />
 
-      <%--
+
       <%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
-      --%>
+
 
     </div>
   </div>

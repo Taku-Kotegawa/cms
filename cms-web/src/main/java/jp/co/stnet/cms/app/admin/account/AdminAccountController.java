@@ -21,6 +21,7 @@ import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +69,9 @@ public final class AdminAccountController {
     @Autowired
     Mapper beanMapper;
 
+    @Autowired
+    private SessionRegistry sessionRegistry;
+
     @ModelAttribute
     private AccountForm setUp() {
         return new AccountForm();
@@ -80,6 +84,21 @@ public final class AdminAccountController {
      */
     @GetMapping(value = "list")
     public String list(Model model) {
+
+        List<Object> principals = sessionRegistry.getAllPrincipals();
+
+        List<String> usersNamesList = new ArrayList<String>();
+
+        for (Object principal: principals) {
+            if (principal instanceof LoggedInUser) {
+                usersNamesList.add(((LoggedInUser) principal).getUsername());
+            }
+        }
+
+        System.out.println(usersNamesList);
+
+
+
         return JSP_LIST;
     }
 
@@ -269,7 +288,7 @@ public final class AdminAccountController {
         }
 
         try {
-             Account saved = accountService.save(account);
+            Account saved = accountService.save(account);
         } catch (BusinessException e) {
             model.addAttribute(e.getResultMessages());
             return updateForm(form, model, loggedInUser, username);

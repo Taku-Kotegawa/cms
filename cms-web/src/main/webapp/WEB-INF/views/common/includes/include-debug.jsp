@@ -53,3 +53,25 @@
     %>
             </table>
         </details>
+
+
+        <details>
+            <summary>Application</summary>
+            <table>
+                <%
+    Enumeration enum_application = application.getAttributeNames();
+    while(enum_application.hasMoreElements()) {
+      String key = (String)enum_application.nextElement();
+
+      out.println("<tr>");
+          out.println("<td>");
+          out.println(key);
+          out.println("</td>");
+          out.println("<td>");
+          out.println(application.getAttribute(key));
+          out.println("</td>");
+      out.println("</tr>");
+    }
+    %>
+            </table>
+        </details>

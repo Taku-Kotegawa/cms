@@ -2,6 +2,7 @@ package jp.co.stnet.cms.app.simpleentity;
 
 import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.app.admin.upload.UploadForm;
+import jp.co.stnet.cms.app.common.job.JobStarter;
 import jp.co.stnet.cms.app.simpleentity.SimpleEntityForm.Create;
 import jp.co.stnet.cms.app.simpleentity.SimpleEntityForm.Update;
 import jp.co.stnet.cms.domain.common.Constants;
@@ -75,6 +76,9 @@ public class SimpleEntityController {
 
     @Autowired
     JobOperator jobOperator;
+
+    @Autowired
+    JobStarter jobStarter;
 
     @Autowired
     @Named("CL_STATUS")
@@ -967,7 +971,11 @@ public class SimpleEntityController {
 
 
         try {
-            jobExecutionId = jobOperator.start(jobName, jobParams);
+
+
+//            jobExecutionId = jobOperator.start(jobName, jobParams);
+
+            jobExecutionId = jobStarter.start(jobName, jobParams);
 
         } catch (NoSuchJobException | JobInstanceAlreadyExistsException | JobParametersInvalidException e) {
             e.printStackTrace();

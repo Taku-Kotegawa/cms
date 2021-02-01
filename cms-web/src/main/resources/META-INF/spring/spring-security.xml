@@ -19,7 +19,12 @@
         <sec:custom-filter ref="userIdMDCPutFilter" after="ANONYMOUS_FILTER"/>
         <sec:custom-filter position="FORM_LOGIN_FILTER" ref="customUsernamePasswordAuthenticationFilter" />
         <sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
-        <sec:session-management />
+<!--        <sec:session-management>-->
+<!--            <sec:concurrency-control-->
+<!--                    max-sessions="1"-->
+<!--                    error-if-maximum-exceeded="true"-->
+<!--                    session-registry-ref="sessionRegistry" />-->
+<!--        </sec:session-management>-->
         <sec:intercept-url pattern="/login/**" access="permitAll"/>
         <sec:intercept-url pattern="/account/create" access="permitAll"/>
         <sec:intercept-url pattern="/reissue/**" access="permitAll"/>
@@ -31,13 +36,11 @@
         <sec:intercept-url pattern="/**" access="isAuthenticated()"/>
 
         <!-- ロールの階層化 -->
-        <sec:expression-handler ref="webExpressionHandler"/>
+<!--        <sec:expression-handler ref="webExpressionHandler"/>-->
 
     </sec:http>
 
 <!-- 認証機能(ログイン画面)の拡張 -->
-
-
 
     <bean id="loginUrlAuthenticationEntryPoint"
           class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
@@ -79,6 +82,7 @@
         <property name="passwordEncoder" ref="passwordEncoder" />
     </bean>
 
+    <!-- https://spring.pleiades.io/spring-security/site/docs/5.0.19.BUILD-SNAPSHOT/reference/html/session-mgmt.html -->
     <bean id="sessionAuthenticationStrategy"
           class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
         <constructor-arg>
@@ -87,14 +91,22 @@
                     <constructor-arg ref="csrfTokenRepository" />
                 </bean>
                 <bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy" />
+                <bean class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+                    <constructor-arg ref="sessionRegistry"/>
+                    <property name="maximumSessions" value="1" />
+                    <property name="exceptionIfMaximumExceeded" value="true" />
+                </bean>
+                <bean class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
+                    <constructor-arg ref="sessionRegistry"/>
+                </bean>
             </util:list>
         </constructor-arg>
     </bean>
 
+    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+
     <bean id="csrfTokenRepository"
           class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository" />
-
-
 
     <!-- CSRF Protection -->
     <bean id="accessDeniedHandler"
@@ -140,29 +152,29 @@
 
 
     <!-- ロール階層化 -->
-    <bean id="roleHierarchy"
-          class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl"> <!-- (1) -->
-        <property name="hierarchy"> <!-- (2) -->
-            <value>
-                ROLE_ADMIN > ROLE_STAFF
-                ROLE_STAFF > ROLE_USER
-            </value>
-        </property>
-    </bean>
+<!--    <bean id="roleHierarchy"-->
+<!--          class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl"> &lt;!&ndash; (1) &ndash;&gt;-->
+<!--        <property name="hierarchy"> &lt;!&ndash; (2) &ndash;&gt;-->
+<!--            <value>-->
+<!--                ROLE_ADMIN > ROLE_STAFF-->
+<!--                ROLE_STAFF > ROLE_USER-->
+<!--            </value>-->
+<!--        </property>-->
+<!--    </bean>-->
 
-    <bean id="webExpressionHandler"
-          class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler">
-        <property name="roleHierarchy" ref="roleHierarchy"/>
-    </bean>
+<!--    <bean id="webExpressionHandler"-->
+<!--          class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler">-->
+<!--        <property name="roleHierarchy" ref="roleHierarchy"/>-->
+<!--    </bean>-->
 
-    <bean id="methodExpressionHandler"
-          class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler"> <!-- (1) -->
-        <property name="roleHierarchy" ref="roleHierarchy"/>
-    </bean>
+<!--    <bean id="methodExpressionHandler"-->
+<!--          class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler"> &lt;!&ndash; (1) &ndash;&gt;-->
+<!--        <property name="roleHierarchy" ref="roleHierarchy"/>-->
+<!--    </bean>-->
 
-    <sec:global-method-security pre-post-annotations="enabled">
-        <sec:expression-handler ref="methodExpressionHandler"/>
-    </sec:global-method-security>
+<!--    <sec:global-method-security pre-post-annotations="enabled">-->
+<!--        <sec:expression-handler ref="methodExpressionHandler"/>-->
+<!--    </sec:global-method-security>-->
 
 
     <bean id="csrfMatcher" class="org.springframework.security.web.util.matcher.OrRequestMatcher">
