@@ -47,6 +47,7 @@ public final class AdminAccountController {
     private final String JSP_LIST = "admin/account/list";
     private final String JSP_FORM = "admin/account/form";
     private final String JSP_VIEW = "admin/account/view";
+    private final String JSP_ACTIVE_LIST = "admin/account/activeList";
 
     @Autowired
     AccountService accountService;
@@ -84,22 +85,28 @@ public final class AdminAccountController {
      */
     @GetMapping(value = "list")
     public String list(Model model) {
+        return JSP_LIST;
+    }
+
+    /**
+     * アクティブユーザ一覧画面の表示
+     */
+    @GetMapping(value = "active-list")
+    public String activeList(Model model) {
 
         List<Object> principals = sessionRegistry.getAllPrincipals();
 
-        List<String> usersNamesList = new ArrayList<String>();
+        List<Account> activeUserList = new ArrayList<>();
 
         for (Object principal: principals) {
             if (principal instanceof LoggedInUser) {
-                usersNamesList.add(((LoggedInUser) principal).getUsername());
+                activeUserList.add(accountService.findById(((LoggedInUser) principal).getUsername()));
             }
         }
 
-        System.out.println(usersNamesList);
+        model.addAttribute("activeUserList", activeUserList);
 
-
-
-        return JSP_LIST;
+        return JSP_ACTIVE_LIST;
     }
 
     /**

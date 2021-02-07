@@ -273,7 +273,6 @@ $.fn.dataTable.ext.buttons.createnew = {
     }
 };
 
-
 /**
  * CSVダウンロード(サーバサイド処理)
  */

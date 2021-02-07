@@ -3,7 +3,7 @@
     <div class="row mb-2">
       <div class="col-18">
         <!-- ページタイトルを記入 -->
-        <h3>Job Results</h3>
+        <h4>Job Results</h4>
       </div>
       <div class="col-18 text-right">
         <!-- ページタイトル右の余白 -->

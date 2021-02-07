@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h3>パスワード変更</h3>
+        <h4>パスワード変更</h4>
       </div>
       <div class="col-sm-6">
       </div>
@@ -56,7 +56,7 @@
       </div>
       <br>
       <div class="row">
-        <input id="submit" type="submit" value="パスワード変更"" class="btn-button" />
+        <input id="submit" type="submit" value="パスワード変更" class="btn-button" />
       </div>
     </form:form>
   </div>

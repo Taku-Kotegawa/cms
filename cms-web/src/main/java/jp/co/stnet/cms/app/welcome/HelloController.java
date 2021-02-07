@@ -29,10 +29,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HelloController {
 
     @Autowired
-    VariableRepository variableRepository;
+    VariableRepository variableRepository; // TODO サービス化
 
-    @Autowired
-    private ApplicationContext context;
 
     @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
     public String home(Locale locale, Model model) {
@@ -54,16 +52,6 @@ public class HelloController {
         }
 
         model.addAttribute("shortMessage", shortMessage);
-
-
-        String[] allBeanNames = context.getBeanDefinitionNames();
-        for(String beanName : allBeanNames) {
-            System.out.println(beanName);
-        }
-
-        for(String beanName : context.getParent().getBeanDefinitionNames()) {
-            System.out.println(beanName);
-        }
 
         return "welcome/home";
     }

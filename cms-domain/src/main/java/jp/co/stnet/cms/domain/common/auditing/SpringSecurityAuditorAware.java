@@ -17,7 +17,7 @@ public class SpringSecurityAuditorAware implements AuditorAware<String> {
             LoggedInUser loggedInUser = (LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return Optional.of(loggedInUser.getUsername());
 
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             return Optional.of("unknown");
 
         }

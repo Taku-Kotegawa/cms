@@ -9,7 +9,8 @@ import org.terasoluna.gfw.common.codelist.EnumCodeList;
 public enum VariableType implements EnumCodeList.CodeListItem {
 
     SAMPLE_CODELIST("サンプルコードリスト","ラベル","v2","v3","v4","v5","v6","v7","v8","v9","v10","d1","d2","d3","d4","d5","i1", "i2", "i3","i4","i5","ta","f1"),
-    SHORT_MESSAGE("ショートメッセージ","","","","","","","","","","","公開開始日","公開終了日","","","","", "", "","","","メッセージ","");
+    SHORT_MESSAGE("ショートメッセージ","","","","","","","","","","","公開開始日","公開終了日","","","","", "", "","","","メッセージ",""),
+    MESSAGE_TEMPLETE("メッセージテンプレート","タイトル","","","","","","","","","","","","","","","", "", "","","","本文","");
 
     private final String label;
 

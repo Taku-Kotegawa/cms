@@ -27,9 +27,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.terasoluna.gfw.common.exception.BusinessException;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 @Controller
 @RequestMapping("/reissue")
+@Transactional
 public class PasswordReissueController {
 
     @Inject

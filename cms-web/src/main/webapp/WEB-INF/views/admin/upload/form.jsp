@@ -3,7 +3,7 @@
     <div class="row mb-2">
       <div class="col-18">
         <!-- ページタイトルを記入 -->
-        <h3>${pageTitle}</h3>
+        <h4>${pageTitle}</h4>
       </div>
       <div class="col-18">
         <!-- ページタイトル右の余白 -->

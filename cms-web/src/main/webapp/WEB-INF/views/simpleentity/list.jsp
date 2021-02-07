@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/views/common/includes/include-datatables.jsp" %>
 <%-- <%@ include file="/WEB-INF/views/common/includes/include-multipleselect.jsp" %> --%>
 
-<section class="content-header px-5">
-  <div class="container-fluid">
+<section class="content-header">
+  <div class="container-fluid mx-5">
     <div class="row mb-2">
       <div class="col-18">
         <h4>Simple Entity List</h4>

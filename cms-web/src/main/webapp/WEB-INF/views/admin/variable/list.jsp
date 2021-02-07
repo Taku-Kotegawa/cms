@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/views/common/includes/include-datatables.jsp" %>
 
-<section class="content-header  px-5">
-  <div class="container-fluid">
+<section class="content-header">
+  <div class="container-fluid px-5">
     <div class="row mb-2">
       <div class="col-18">
         <h4>変数一覧</h4>
@@ -12,8 +12,8 @@
   </div>
 </section>
 
-<section class="content px-5">
-  <div class="container-fluid">
+<section class="content">
+  <div class="container-fluid px-5">
 
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />
     <!-- ここより下にメインコンテンツを記入 -->
@@ -113,6 +113,20 @@
   let stateSaveClear = '${stateSaveClear}';
 
   ${columnVisible}
+
+
+  /**
+   * 新規作成ボタン(Variable用に上書き)
+   */
+  $.fn.dataTable.ext.buttons.createnew = {
+      text: '<i class="far fa-file"></i>',
+      titleAttr: '新規作成',
+      action: function (e, dt, node, config) {
+          let selectedType = document.getElementById("type_filter");
+          window.location.href = "create?form&variable_type=" + selectedType.value;
+      }
+  };
+
 
   $(document)
     .ready(

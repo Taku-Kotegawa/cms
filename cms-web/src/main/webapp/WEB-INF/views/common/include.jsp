@@ -10,5 +10,4 @@
 <%@ taglib uri="http://terasoluna.org/functions" prefix="f"%>
 
 
-<%@ page import="java.util.Enumeration"%>
 <%@ page import="java.time.format.DateTimeFormatter" %>

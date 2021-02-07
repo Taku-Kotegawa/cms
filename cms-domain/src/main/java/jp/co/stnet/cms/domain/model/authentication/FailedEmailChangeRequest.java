@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import java.time.LocalDateTime;
-
 
 @Entity
 @Data
@@ -18,20 +18,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class FailedAuthentication implements Serializable {
+@IdClass(FailedEmailChangeRequestPK.class)
+public class FailedEmailChangeRequest {
 
+    /**
+     * トークン
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String token;
 
     /**
-     *   ユーザID
+     * 試行日時
      */
-    private String username;
+    @Id
+    private LocalDateTime attemptDate;
 
-    /**
-     *   失敗日時
-     */
-    @CreatedDate
-    private LocalDateTime authenticationTimestamp;
 }

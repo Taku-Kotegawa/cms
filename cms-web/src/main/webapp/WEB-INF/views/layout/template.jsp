@@ -22,15 +22,54 @@
 
 <body class="layout-top-nav layout-navbar-fixed layout-footer-fixed">
   <div class="wrapper">
+
     <tiles:insertAttribute name="header" />
     <div class="content-wrapper">
       <tiles:insertAttribute name="body" />
 
-
+      <%--
       <%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
-
+      --%>
 
     </div>
   </div>
+
+<style>
+.content-header {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.content-header:after {
+    position: relative;
+    z-index: 10;
+    /* right: 0; */
+    bottom: -8px;
+    /* left: 0; */
+    display: block;
+    height: 1px;
+    content: "";
+    background-color: #a6a6a6;
+}
+
+.nav-tabs-wrapper {
+  bottom: -9px;
+  z-index: 15;
+}
+
+.nav-tabs {
+  border: 0;
+}
+
+.nav-tabs .nav-link.active {
+  border: solid 1px #a6a6a6;
+  border-bottom: 0;
+
+}
+
+</style>
+
+
+
 </body>
 </html>

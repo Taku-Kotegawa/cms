@@ -22,7 +22,7 @@
     <div class="row mb-2">
       <div class="col-18">
         <!-- ページタイトルを記入 -->
-        <h3>アカウント情報</h3>
+        <h4>アカウント情報</h4>
       </div>
       <div class="col-18">
         <!-- ページタイトル右の余白 -->
@@ -104,7 +104,9 @@
     $(document).on('shown.bs.modal', function (event) {
       console.log("shown");
       console.log(event);
-      aaa();
+      setTimeout(function(){
+        aaa();
+      }, 300);
   	});
 
 

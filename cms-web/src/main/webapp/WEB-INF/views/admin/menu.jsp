@@ -3,7 +3,7 @@
     <div class="row mb-2">
       <div class="col-18">
         <!-- ページタイトルを記入 -->
-        <h3>管理者メニュー</h3>
+        <h4>管理者メニュー</h4>
       </div>
       <div class="col-18">
         <!-- ページタイトル右の余白 -->
@@ -32,6 +32,12 @@
                 アカウント一覧
               </a>
             </li>
+            <li class="mb-2">
+              <i class="fas fa-angle-right"></i>
+              <a href="${f:h(pageContext.request.contextPath)}/admin/account/active-list">
+                ログイン中ユーザ一覧
+              </a>
+            </li>            
             <sec:authorize url="/unlock">
               <li class="mb-2">
                 <i class="fas fa-angle-right"></i>

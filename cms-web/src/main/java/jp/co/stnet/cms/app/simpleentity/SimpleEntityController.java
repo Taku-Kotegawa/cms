@@ -527,7 +527,7 @@ public class SimpleEntityController {
 
     @PostMapping(value = "create", params = "addlineitem")
     @TransactionTokenCheck
-    public String createAddLineItem(@Validated({Create.class, Default.class}) SimpleEntityForm form,
+    public String createAddLineItem(SimpleEntityForm form,
                                     BindingResult bindingResult,
                                     Model model,
                                     RedirectAttributes redirect,

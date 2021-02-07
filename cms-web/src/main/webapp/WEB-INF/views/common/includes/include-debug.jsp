@@ -1,4 +1,7 @@
-        <br>
+<%@ page import="java.util.Enumeration"%>
+<%@ page import="org.springframework.context.ApplicationContext"%>
+
+<br>
         <br>
         <!------------------------------------------------------------------------->
         <hr>
@@ -75,3 +78,61 @@
     %>
             </table>
         </details>
+
+
+        <details>
+            <summary>Defined Bean(ROOT)</summary>
+            <table>
+    <%
+
+    ApplicationContext context = (ApplicationContext) application.getAttribute("org.springframework.web.context.WebApplicationContext.ROOT");
+
+    for(String beanName : context.getBeanDefinitionNames()) {
+
+        out.println("<tr>");
+            out.println("<td>");
+            out.println(beanName);
+            out.println("</td>");
+        out.println("</tr>");
+    }
+    %>
+            </table>
+        </details>
+
+        <details>
+            <summary>Defined Bean(appServlet)</summary>
+            <table>
+    <%
+
+    context = (ApplicationContext) application.getAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.appServlet");
+
+    for(String beanName : context.getBeanDefinitionNames()) {
+
+        out.println("<tr>");
+            out.println("<td>");
+            out.println(beanName);
+            out.println("</td>");
+        out.println("</tr>");
+    }
+    %>
+            </table>
+        </details>
+
+        <details>
+            <summary>Defined Bean(restApiServlet)</summary>
+            <table>
+    <%
+
+    context = (ApplicationContext) application.getAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.restApiServlet");
+
+    for(String beanName : context.getBeanDefinitionNames()) {
+
+        out.println("<tr>");
+            out.println("<td>");
+            out.println(beanName);
+            out.println("</td>");
+        out.println("</tr>");
+    }
+    %>
+            </table>
+        </details>       

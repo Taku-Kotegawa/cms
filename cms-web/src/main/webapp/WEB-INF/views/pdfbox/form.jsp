@@ -4,7 +4,7 @@
     <div class="row mb-2">
       <div class="col-18">
         <!-- ページタイトルを記入 -->
-        <h3>Page Title</h3>
+        <h4>Page Title</h4>
       </div>
       <div class="col-18">
         <!-- ページタイトル右の余白 -->
