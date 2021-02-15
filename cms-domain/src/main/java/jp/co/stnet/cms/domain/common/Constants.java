@@ -24,6 +24,11 @@ public final class Constants {
         public static final String BULK_DELETE = "bulkDelete";
         public static final String BULK_INVALID = "bulkInvalid";
         public static final String BULK_VALID = "bulkValid";
+        public static final String SET_APIKEY = "setApiKey";
+        public static final String UNSET_APIKEY = "unsetApiKey";
+        public static final String GENERATE_APIKEY = "generateApiKey";
+        public static final String DELETE_APIKEY = "deleteApiKey";
+        public static final String SAVE_APIKEY = "saveApiKey";
     }
 
     public static final class BUTTON {
@@ -47,6 +52,11 @@ public final class Constants {
         public static final String BULK_DELETE = "bulkDelete";
         public static final String BULK_INVALID = "bulkInvalid";
         public static final String BULK_VALID = "bulkValid";
+        public static final String SET_APIKEY = "setApiKey";
+        public static final String UNSET_APIKEY = "unsetApiKey";
+        public static final String GENERATE_APIKEY = "generateApiKey";
+        public static final String DELETE_APIKEY = "deleteApiKey";
+        public static final String SAVE_APIKEY = "saveApiKey";
     }
 
     public static final class CSV {

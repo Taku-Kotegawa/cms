@@ -17,10 +17,10 @@ package jp.co.stnet.cms.domain.service.authentication;
 
 import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.domain.model.authentication.*;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
-import jp.co.stnet.cms.domain.model.common.TempFile;
-import jp.co.stnet.cms.domain.repository.authentication.AccountImageRepository;
 import jp.co.stnet.cms.domain.repository.authentication.AccountRepository;
+import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import jp.co.stnet.cms.domain.service.common.FileUploadSharedService;
 import lombok.extern.slf4j.Slf4j;
 import org.passay.CharacterRule;
@@ -32,7 +32,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.terasoluna.gfw.common.exception.BusinessException;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 import org.terasoluna.gfw.common.message.ResultMessages;
@@ -56,13 +55,13 @@ public class AccountSharedServiceImpl implements AccountSharedService {
     AccountRepository accountRepository;
 
     @Autowired
-    AccountImageRepository accountImageRepository;
-
-    @Autowired
     FileUploadSharedService fileUploadSharedService;
 
     @Autowired
-    jp.co.stnet.cms.domain.service.authentication.AuthenticationEventSharedService authenticationEventSharedService;
+    FileManagedSharedService fileManagedSharedService;
+
+    @Autowired
+    AuthenticationEventSharedService authenticationEventSharedService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -71,7 +70,7 @@ public class AccountSharedServiceImpl implements AccountSharedService {
     PasswordGenerator passwordGenerator;
 
     @Autowired
-    jp.co.stnet.cms.domain.service.authentication.PasswordHistorySharedService passwordHistorySharedService;
+    PasswordHistorySharedService passwordHistorySharedService;
 
     @Resource(name = "passwordGenerationRules")
     List<CharacterRule> passwordGenerationRules;
@@ -124,14 +123,14 @@ public class AccountSharedServiceImpl implements AccountSharedService {
         account.setStatus(Status.INVALID.getCodeValue());
         accountRepository.save(account);
 
-        if (imageId != null) {
-            TempFile tempFile = fileUploadSharedService.findTempFile(imageId);
-            AccountImage image = AccountImage.builder()
-                    .username(account.getUsername())
-                    .extension(StringUtils.getFilenameExtension(tempFile.getOriginalName()))
-                    .body(tempFile.getBody()).build();
-            accountImageRepository.save(image);
-        }
+//        if (imageId != null) {
+//            TempFile tempFile = fileUploadSharedService.findTempFile(imageId);
+//            AccountImage image = AccountImage.builder()
+//                    .username(account.getUsername())
+//                    .extension(StringUtils.getFilenameExtension(tempFile.getOriginalName()))
+//                    .body(tempFile.getBody()).build();
+//            accountImageRepository.save(image);
+//        }
 
         return rawPassword;
     }
@@ -160,7 +159,19 @@ public class AccountSharedServiceImpl implements AccountSharedService {
     public boolean isInitialPassword(String username) {
         List<PasswordHistory> passwordHistories = passwordHistorySharedService
                 .findLatest(username, 1);
-        return passwordHistories.isEmpty();
+
+        if (passwordHistories.isEmpty()) {
+            return true;
+        }
+
+        // システム管理者がパスワードを変更した場合、初期パスワードと判定する
+        String lastUpdatedBy = passwordHistories.get(0).getCreatedBy();
+        if (username.equals(lastUpdatedBy) || "unknown".equals(lastUpdatedBy)) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
     @Override
@@ -194,7 +205,17 @@ public class AccountSharedServiceImpl implements AccountSharedService {
                 .password(password)
                 .useFrom(LocalDateTime.now()).build());
 
-        return (account != null);
+        return true;
+    }
+
+    @Override
+    public boolean updateEmail(String username, String email) {
+
+        Account account = findOne(username);
+        account.setEmail(email);
+        account = accountRepository.save(account);
+
+        return true;
     }
 
     @Override
@@ -203,8 +224,14 @@ public class AccountSharedServiceImpl implements AccountSharedService {
     }
 
     @Override
-    public AccountImage getImage(String username) {
-        return accountImageRepository.findById(username).orElse(null);
+    public FileManaged getImage(String username) {
+
+        Account account = accountRepository.findById(username)
+                .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(E_SL_FW_5001, username)));
+
+        FileManaged fileManaged = fileManagedSharedService.findByUuid(account.getImageUuid());
+
+        return fileManaged;
     }
 
 }

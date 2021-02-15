@@ -35,7 +35,9 @@
       </div>
       <br>
       <div class="row">
-        <input id="submit" type="submit" value="暗証番号の送信" class="btn btn-button" />
+        <div class="col-36">
+          <input id="submit" type="submit" value="新しいメールアドレスに暗証番号を送信" class="btn btn-button" />
+        </div>
       </div>
 
     </form:form>

@@ -1,6 +1,7 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
 import jp.co.stnet.cms.domain.model.authentication.EmailChangeRequest;
+import jp.co.stnet.cms.domain.model.authentication.FailedEmailChangeRequest;
 
 import java.time.LocalDateTime;
 
@@ -27,9 +28,10 @@ public interface EmailChangeService {
      * ユーザアカウントのメールアドレスを変更する。(トークンチェックあり)
      *
      * @param token
+     * @param secret
      * @Exception トークンが存在しない、トークンの有効期限が超過
      */
-    void changeEmail(String token);
+    void changeEmail(String token, String secret);
 
     /**
      * 有効期限を超えるメール変更要求を削除する。(スケジュール機能で定期的に実行される想定)
@@ -37,5 +39,13 @@ public interface EmailChangeService {
      * @param date 現在の日付
      */
     void removeExpired(LocalDateTime date);
+
+
+    /**
+     * メール変更要求に対する暗証番号の認証に失敗した記録を保損する。
+     * @param token
+     * @return
+     */
+    FailedEmailChangeRequest fail(String token);
 
 }

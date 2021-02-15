@@ -40,20 +40,18 @@ public class AccountForm {
     @NotContainControlChars
     private String password;
 
-    @NotNull
     @NotContainControlChars
     private String url;
 
     // ダミー
     private String image;
 
-    @NotNull
     private String imageUuid;
 
-    @NotNull
     @NotContainControlCharsExceptNewlines
     private String profile;
 
+    private String apiKey;
 
     private List<String> roles;
 

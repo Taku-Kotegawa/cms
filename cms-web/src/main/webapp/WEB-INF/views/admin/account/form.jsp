@@ -122,7 +122,7 @@
         <div class="col-8">
           <!-- ラベル -->
           <c:if test="${fieldState.url__input || fieldState.url__view}">
-            <form:label path="url">URL*</form:label>
+            <form:label path="url">URL</form:label>
           </c:if>
           <!-- 入力 -->
           <c:if test="${fieldState.url__input}">
@@ -171,7 +171,7 @@
         <div class="col-12">
           <!-- ラベル -->
           <c:if test="${fieldState.profile__input || fieldState.profile__view}">
-            <form:label path="profile">プロフィール*</form:label>
+            <form:label path="profile">プロフィール</form:label>
           </c:if>
           <!-- 入力 -->
           <c:if test="${fieldState.profile__input}">
@@ -196,7 +196,7 @@
         <div class="col-12">
           <!-- ラベル -->
           <c:if test="${fieldState.image__input || fieldState.image__view}">
-            <form:label path="image">画像*</form:label>
+            <form:label path="image">画像</form:label>
           </c:if>
           <!-- 入力 -->
           <c:if test="${fieldState.image__input}">
@@ -255,7 +255,50 @@
             </div>
           </c:if>
         </div>
-      </div>      
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-12">
+          <!-- ラベル -->
+          <c:if test="${fieldState.apiKey__input || fieldState.apiKey__view}">
+            <form:label path="apiKey">API KEY</form:label>
+          </c:if>
+          <!-- 入力 -->
+          <c:if test="${fieldState.apiKey__input}">
+            <div class="input-group">
+              <form:input path="apiKey" cssClass="form-control" cssErrorClass="form-control is-invalid"
+                disabled="${fieldState.apiKey__disabled}" readonly="${fieldState.apiKey__readonly}" />
+              <form:errors path="apiKey" cssClass="invalid-feedback" />
+              <div class="input-group-append">
+                <!-- API KEY 設定 -->
+                <c:if test="${buttonState.setApiKey__view}">
+                  <button id="setApiKey" name="setApiKey" type="submit" class="btn btn-button mr-2" 
+                  <c:if test="${buttonState.setApiKey__disabled}">disabled</c:if>>設定</button>
+                </c:if>
+                <!-- API KEY 設定解除 -->
+                <c:if test="${buttonState.unsetApiKey__view}">
+                  <button id="unsetApiKey" name="unsetApiKey" type="submit" class="btn btn-button mr-2" 
+                  <c:if test="${buttonState.unsetApiKey__disabled}">disabled</c:if>>解除</button>
+                </c:if>
+              </div>
+            </div>
+
+          </c:if>
+          <!-- 隠しフィールド-->
+          <c:if test="${fieldState.apiKey__hidden}">
+            <form:hidden path="apiKey" />
+          </c:if>
+          <!-- 参照用-->
+          <c:if test="${fieldState.apiKey__view}">
+            <div class="form-control form-control__view">
+              ${f:h(account.apiKey)}
+            </div>
+          </c:if>
+        </div>
+        <div class="col-26 align-self-end">
+        </div>
+      </div>
+
 
       <div class="row mb-3">
         <div class="col-12">
@@ -322,6 +365,9 @@
           <a id="unlock" href="${f:h(pageContext.request.contextPath)}/admin/account/${account.username}/unlock"
             class="btn btn-button mr-2" <c:if test="${buttonState.unlock__disabled}">disabled</c:if> >ロック解除</a>
         </c:if>
+
+
+
       </div>
 
     </form:form>

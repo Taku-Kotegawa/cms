@@ -6,13 +6,16 @@ import jp.co.stnet.cms.app.authentication.account.AccountCreateForm.Confirm;
 import jp.co.stnet.cms.app.authentication.account.AccountCreateForm.CreateAccount;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.authentication.Account;
-import jp.co.stnet.cms.domain.model.authentication.AccountImage;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.TempFile;
-import jp.co.stnet.cms.domain.repository.authentication.AccountImageRepository;
 import jp.co.stnet.cms.domain.service.authentication.AccountSharedService;
+import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import jp.co.stnet.cms.domain.service.common.FileUploadSharedService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,8 +29,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.terasoluna.gfw.common.message.ResultMessages;
 
+
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.groups.Default;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 @Controller
@@ -35,16 +41,19 @@ import java.util.Arrays;
 public final class AccountController {
 
     @Autowired
-    private FileUploadSharedService fileUploadSharedService;
+    FileUploadSharedService fileUploadSharedService;
 
     @Autowired
-    private AccountSharedService accountSharedService;
+    AccountSharedService accountSharedService;
 
     @Autowired
-    AccountImageRepository accountRepository;
+    FileManagedSharedService fileManagedSharedService;
+
+    @Value(value = "classpath:images/nobody.png")
+    Resource nobodyImage;
 
     @Autowired
-    private Mapper beanMapper;
+    Mapper beanMapper;
 
     @ModelAttribute
     public AccountCreateForm setUpAccountCreateForm() {
@@ -62,20 +71,30 @@ public final class AccountController {
     @GetMapping("/image")
     @ResponseBody
     public ResponseEntity<byte[]> showImage(
-            @AuthenticationPrincipal LoggedInUser userDetails)
+            @AuthenticationPrincipal LoggedInUser loggedInUser, final HttpServletResponse response)
             throws IOException {
-        AccountImage userImage = accountSharedService.getImage(userDetails
-                .getUsername());
+
+        response.addHeader("Cache-Control", "max-age=60, must-revalidate, no-transform");
+
+        FileManaged fileManaged= accountSharedService.getImage(loggedInUser.getUsername());
+
         HttpHeaders headers = new HttpHeaders();
-        if (userImage.getExtension().equalsIgnoreCase("png")) {
+
+        if (fileManaged != null) {
+            headers.setContentType(fileManaged.getMediaType());
+            return new ResponseEntity<byte[]>(
+                    fileManagedSharedService.getFile(fileManaged.getFid()),
+                    headers,
+                    HttpStatus.OK);
+        } else {
+          InputStream ins = nobodyImage.getInputStream();
             headers.setContentType(MediaType.IMAGE_PNG);
-        } else if (userImage.getExtension().equalsIgnoreCase("gif")) {
-            headers.setContentType(MediaType.IMAGE_GIF);
-        } else if (userImage.getExtension().equalsIgnoreCase("jpg")) {
-            headers.setContentType(MediaType.IMAGE_JPEG);
+            return new ResponseEntity<byte[]>(
+                    IOUtils.toByteArray(ins),
+                    headers,
+                    HttpStatus.OK);
         }
-        return new ResponseEntity<byte[]>(userImage.getBody(), headers,
-                HttpStatus.OK);
+
     }
 
     @GetMapping(value = "/create", params = "form")

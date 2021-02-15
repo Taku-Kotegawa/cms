@@ -82,12 +82,10 @@
         <property name="exceptionLogger" ref="exceptionLogger" />
     </bean>
 
-
     <bean id="inputValidationFilter" class="jp.co.stnet.cms.app.common.filter.InputValidationFilter">
         <constructor-arg index="0" value="${app.security.prohibitedChars}"/>
         <constructor-arg index="1" value="${app.security.prohibitedCharsForFileName}"/>
     </bean>
-
 
     <bean id="lengthRule" class="org.passay.LengthRule">
         <property name="minimumLength" value="${security.passwordMinimumLength}"/>

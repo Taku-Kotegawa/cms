@@ -20,21 +20,25 @@
     新しいメールアドレスに届いた暗証番号を入力してください。<br>
     </p>
 
-    <form:form action="${f:h(pageContext.request.contextPath)}/emailchange?token" method="POST"
+    <form:form action="${f:h(pageContext.request.contextPath)}/emailchange?change" method="POST"
       modelAttribute="emailChangeTokenForm" autocomplete="off">
+
+      <form:hidden path="token" />
 
       <div class="row">
           <div class="col-6">
-            <form:label path="token" cssClass="form-label">
+            <form:label path="secret" cssClass="form-label">
               暗証番号
             </form:label>
-            <form:input path="token" cssClass="form-control" cssErrorClass="form-control is-invalid" />
-            <form:errors path="token" cssClass="invalid-feedback" />
+            <form:input path="secret" cssClass="form-control" cssErrorClass="form-control is-invalid" />
+            <form:errors path="secret" cssClass="invalid-feedback" />
           </div>
       </div>
       <br>
       <div class="row">
-        <input id="submit" type="submit" value="保存(メールアドレスの変更)" class="btn btn-button" />
+        <div class="col-36">
+          <input id="submit" type="submit" value="保存(メールアドレスの変更)" class="btn btn-button" />
+        </div>
       </div>
 
     </form:form>

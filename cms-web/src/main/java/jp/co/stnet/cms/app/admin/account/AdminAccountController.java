@@ -34,6 +34,8 @@ import org.terasoluna.gfw.common.message.ResultMessages;
 import org.terasoluna.gfw.web.token.transaction.TransactionTokenCheck;
 import org.terasoluna.gfw.web.token.transaction.TransactionTokenType;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +74,9 @@ public final class AdminAccountController {
 
     @Autowired
     private SessionRegistry sessionRegistry;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @ModelAttribute
     private AccountForm setUp() {
@@ -187,7 +192,7 @@ public final class AdminAccountController {
         }
 
         // ボタンの状態を設定
-        StateMap buttonState = getButtonStateMap(Constants.OPERATION.CREATE, null);
+        StateMap buttonState = getButtonStateMap(Constants.OPERATION.CREATE, null, form);
         model.addAttribute("buttonState", buttonState.asMap());
 
         // フィールドの状態を設定
@@ -246,10 +251,14 @@ public final class AdminAccountController {
         // 実行権限が無い場合、AccessDeniedExceptionをスローし、キャッチしないと権限エラー画面に遷移
         accountService.hasAuthority(Constants.OPERATION.SAVE, loggedInUser);
 
-        // DBからデータ取得し、modelとformにセット
         Account account = accountService.findById(username);
-        beanMapper.map(account, form);
-        form.setPassword(null);
+
+        // DBからデータ取得し、modelとformにセット
+        if (form.getFirstName() == null) {
+            beanMapper.map(account, form);
+            form.setPassword(null);
+        }
+
         model.addAttribute("account", account);
 
         // 添付フィアルの情報をセット
@@ -257,7 +266,7 @@ public final class AdminAccountController {
         model.addAttribute("imageFileManaged", fileManaged);
 
         // ボタンの状態を設定
-        StateMap buttonState = getButtonStateMap(Constants.OPERATION.SAVE, account);
+        StateMap buttonState = getButtonStateMap(Constants.OPERATION.SAVE, account, form);
         model.addAttribute("buttonState", buttonState.asMap());
 
         // フィールドの状態を設定
@@ -287,7 +296,11 @@ public final class AdminAccountController {
         }
 
         Account account = accountService.findById(username);
+        entityManager.detach(account);
+        String password = account.getPassword();
         beanMapper.map(form, account);
+        account.setPassword(password);
+        account.setRoles(form.getRoles());
 
         // パスワード欄が入力された場合にパスワード設定
         if (!StringUtils.isEmpty(form.getPassword())) {
@@ -307,6 +320,35 @@ public final class AdminAccountController {
         OperationsUtil op = new OperationsUtil(BASE_PATH);
         return "redirect:" + op.getEditUrl(account.getUsername());
     }
+
+    @PostMapping(value = "{username}/update", params = "setApiKey")
+    @TransactionTokenCheck
+    public String setApiKey(AccountForm form,
+                         BindingResult bindingResult,
+                         Model model,
+                         RedirectAttributes redirect,
+                         @AuthenticationPrincipal LoggedInUser loggedInUser,
+                         @PathVariable("username") String username) {
+
+        form.setApiKey(accountService.generateApiKey(username));
+
+        return updateForm(form, model, loggedInUser, username);
+    }
+
+    @PostMapping(value = "{username}/update", params = "unsetApiKey")
+    @TransactionTokenCheck
+    public String unsetApiKey(AccountForm form,
+                            BindingResult bindingResult,
+                            Model model,
+                            RedirectAttributes redirect,
+                            @AuthenticationPrincipal LoggedInUser loggedInUser,
+                            @PathVariable("username") String username) {
+
+        form.setApiKey(null);
+
+        return updateForm(form, model, loggedInUser, username);
+    }
+
 
     // ---------------- 削除 ---------------------------------------------------------
 
@@ -380,7 +422,7 @@ public final class AdminAccountController {
         model.addAttribute("imageFileManaged", fileManaged);
 
         // ボタンの状態を設定
-        StateMap buttonState = getButtonStateMap(Constants.OPERATION.VIEW, account);
+        StateMap buttonState = getButtonStateMap(Constants.OPERATION.VIEW, account, null);
         model.addAttribute("buttonState", buttonState.asMap());
 
         // フィールドの状態を設定
@@ -430,14 +472,41 @@ public final class AdminAccountController {
         return "fileManagedDownloadView";
     }
 
+    // ---------------- API KEY 生成 / 削除 -----------------------------------------------
+    @GetMapping("{username}/generateapikey")
+    public String generateApiKey(Model model, @PathVariable("username") String username,
+                                 RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        accountService.saveApiKey(username);
+
+        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_SL_AC_0001);
+        redirect.addFlashAttribute(messages);
+
+        return "redirect:/admin/account/" + username;
+    }
+
+    @GetMapping("{username}/deleteapikey")
+    public String deleteApiKey(Model model, @PathVariable("username") String username,
+                                 RedirectAttributes redirect, @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        accountService.deleteApiKey(username);
+
+        ResultMessages messages = ResultMessages.info().add(MessageKeys.I_SL_AC_0001);
+        redirect.addFlashAttribute(messages);
+
+        return "redirect:/admin/account/" + username;
+    }
+
+
     // ---------------- 共通(private) -----------------------------------------------
 
     /**
      * @param operation
      * @param record
+     * @param form
      * @return
      */
-    private StateMap getButtonStateMap(String operation, Account record) {
+    private StateMap getButtonStateMap(String operation, Account record, AccountForm form) {
 
         if (record == null) {
             record = new Account();
@@ -451,6 +520,8 @@ public final class AdminAccountController {
         includeKeys.add(Constants.BUTTON.INVALID);
         includeKeys.add(Constants.BUTTON.DELETE);
         includeKeys.add(Constants.BUTTON.UNLOCK);
+        includeKeys.add(Constants.BUTTON.SET_APIKEY);
+        includeKeys.add(Constants.BUTTON.UNSET_APIKEY);
 
         StateMap buttonState = new StateMap(Default.class, includeKeys, new ArrayList<>());
 
@@ -473,6 +544,12 @@ public final class AdminAccountController {
             if (Status.INVALID.getCodeValue().equals(record.getStatus())) {
                 buttonState.setViewTrue(Constants.BUTTON.VIEW);
                 buttonState.setViewTrue(Constants.BUTTON.DELETE);
+            }
+
+            if (StringUtils.isEmpty(form.getApiKey())) {
+                buttonState.setViewTrue(Constants.BUTTON.SET_APIKEY);
+            } else {
+                buttonState.setViewTrue(Constants.BUTTON.UNSET_APIKEY);
             }
 
         }
@@ -506,18 +583,19 @@ public final class AdminAccountController {
         List<String> excludeKeys = new ArrayList<>();
 
         // 常設の隠しフィールドは状態管理しない
-
         StateMap fieldState = new StateMap(AccountForm.class, new ArrayList<>(), excludeKeys);
 
         // 新規作成
         if (Constants.OPERATION.CREATE.equals(operation)) {
             fieldState.setInputTrueAll();
+            fieldState.setReadOnlyTrue("apiKey");
         }
 
         // 編集
         if (Constants.OPERATION.SAVE.equals(operation)) {
             fieldState.setInputTrueAll();
             fieldState.setReadOnlyTrue("username");
+            fieldState.setReadOnlyTrue("apiKey");
 
             // スタータスが無効
             if (Status.INVALID.toString().equals(record.getStatus())) {

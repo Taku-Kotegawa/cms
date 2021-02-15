@@ -70,7 +70,7 @@
 
       <div class="form-group row">
         <form:label path="image" cssClass="col-4 col-form-label">
-          画像ファイル *
+          画像ファイル
         </form:label>
         <form:input type="file" path="image" cssClass="form-control-file col-10"
           cssErrorClass="form-control-file col-10 is-invalid" placeholder="" />

@@ -2,25 +2,33 @@ package jp.co.stnet.cms.domain.service.authentication;
 
 import javassist.NotFoundException;
 import jp.co.stnet.cms.domain.model.authentication.EmailChangeRequest;
+import jp.co.stnet.cms.domain.model.authentication.FailedEmailChangeRequest;
 import jp.co.stnet.cms.domain.repository.authentication.EmailChangeRequestRepository;
+import jp.co.stnet.cms.domain.repository.authentication.FailedEmailChangeRequestRepository;
 import org.passay.CharacterRule;
 import org.passay.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
+import org.terasoluna.gfw.common.exception.BusinessException;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 import org.terasoluna.gfw.common.message.ResultMessages;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-import static jp.co.stnet.cms.domain.common.message.MessageKeys.E_SL_PR_5002;
+import static jp.co.stnet.cms.domain.common.message.MessageKeys.*;
 
 @Service
 @Transactional
@@ -38,8 +46,14 @@ public class EmailChangeServiceImpl implements  EmailChangeService {
     @Value("${mail.from}")
     String mailFrom;
 
+    @Value("${security.tokenValidityThreshold}")
+    int tokenValidityThreshold;
+
     @Autowired
     EmailChangeRequestRepository emailChangeRequestRepository;
+
+    @Autowired
+    FailedEmailChangeRequestRepository failedEmailChangeRequestRepository;
 
     @Autowired
     JavaMailSender mailSender;
@@ -81,37 +95,77 @@ public class EmailChangeServiceImpl implements  EmailChangeService {
 
     private void sendMail(String to, String secret) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        mailSender.send(new MimeMessagePreparator() {
 
-        message.setSubject("メールアドレス変更の確認");
-        message.setText("暗証番号: " + secret);
-        message.setFrom(mailFrom);
-        message.setTo(to);
-        mailSender.send(message);
+            @Override
+            public void prepare(MimeMessage mimeMessage) throws Exception {
+                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,
+                        StandardCharsets.UTF_8.name()); // (3)
+                helper.setFrom(mailFrom); // (4)
+                helper.setTo(to); // (5)
+                helper.setSubject("メールアドレス変更の確認"); // (6)
+                String text = "暗証番号: {secret}";
+                text = text.replace("{secret}", secret);
+                helper.setText(text, false); // (7)
+            }
+        });
+
     }
 
     @Override
     public EmailChangeRequest findOne(String token) {
-        return emailChangeRequestRepository.findById(token).orElse(null);
+
+        // トークンの存在チェック
+        EmailChangeRequest emailChangeRequest = emailChangeRequestRepository.findById(token)
+                .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(E_SL_MC_5002, token)));
+
+        // 有効期限チェック
+        if (LocalDateTime.now().isAfter(emailChangeRequest.getExpiryDate())) {
+            throw new BusinessException(ResultMessages.error().add(E_SL_MC_5004, token));
+        }
+
+        // 失敗回数チェック
+        long count = failedEmailChangeRequestRepository.countByToken(token);
+        if (count >= tokenValidityThreshold) {
+            throw new BusinessException(ResultMessages.error().add(E_SL_PR_5004));
+        }
+
+        return emailChangeRequest;
+
     }
 
     @Override
-    public void changeEmail(String token) {
+    public void changeEmail(String token, String secret) {
 
-        // トークンで記録を検索
         EmailChangeRequest emailChangeRequest = findOne(token);
 
-        // 記録が存在しない
-
-        // 有効期限が存在している
-
-        // 規定回数以上、暗証番号の確認に失敗している
-
-
+        if (!Objects.equals(emailChangeRequest.getSecret(), secret)) {
+            fail(token);
+            throw new BusinessException(ResultMessages.error().add(E_SL_MC_5003));
+        }
+        failedEmailChangeRequestRepository.deleteByToken(token);
+        emailChangeRequestRepository.deleteById(token);
+        accountSharedService.updateEmail(emailChangeRequest.getUsername(), emailChangeRequest.getNewMail());
     }
 
     @Override
     public void removeExpired(LocalDateTime date) {
 
+        // DELETE FROM failedPasswordReissue WHERE expiry_date < #{date}
+        failedEmailChangeRequestRepository.deleteByAttemptDateLessThan(date);
+
+        // DELETE FROM passwordReissueInfo WHERE expiry_date < #{date}
+        emailChangeRequestRepository.deleteByExpiryDateLessThan(date);
+
+    }
+
+    @Override
+    public FailedEmailChangeRequest fail(String token) {
+        return failedEmailChangeRequestRepository.save(
+                FailedEmailChangeRequest.builder()
+                        .token(token)
+                        .attemptDate(LocalDateTime.now())
+                        .build()
+        );
     }
 }

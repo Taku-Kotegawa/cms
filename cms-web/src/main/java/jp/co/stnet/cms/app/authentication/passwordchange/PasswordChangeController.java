@@ -44,6 +44,7 @@ public class PasswordChangeController {
         Account account = userDetails.getAccount();
         if (bindingResult.hasErrors() || !account.getUsername().equals(form.getUsername())) {
             model.addAttribute("account", account);
+
             return "passwordchange/changeForm";
         }
 

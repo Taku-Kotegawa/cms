@@ -16,7 +16,7 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
 import jp.co.stnet.cms.domain.model.authentication.Account;
-import jp.co.stnet.cms.domain.model.authentication.AccountImage;
+import jp.co.stnet.cms.domain.model.common.FileManaged;
 
 import java.time.LocalDateTime;
 
@@ -78,9 +78,22 @@ public interface AccountSharedService {
     boolean updatePassword(String username, String rawPassword);
 
     /**
+     *
+     * @param username
+     * @param email
+     * @return
+     */
+    boolean updateEmail(String username, String email);
+
+    /**
      * @param username
      */
     void clearPasswordValidationCache(String username);
 
-    AccountImage getImage(String username);
+    /**
+     *
+     * @param username
+     * @return
+     */
+    FileManaged getImage(String username);
 }

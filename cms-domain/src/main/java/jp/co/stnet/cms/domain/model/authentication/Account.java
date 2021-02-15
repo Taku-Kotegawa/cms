@@ -72,6 +72,13 @@ public class Account extends AbstractEntity<String> implements Serializable, Sta
      */
     private String imageUuid;
 
+    /**
+     * API KEY
+     */
+    @Column(unique = true)
+    private String apiKey;
+
+
     @Override
     public String getId() {
         return username;

@@ -54,6 +54,13 @@ public class FileRestController {
 
     }
 
+    @GetMapping("test")
+    public String test(@AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        return "test";
+    }
+
+
 //    @GetMapping("{uuid}/delete")
 //    @ResponseStatus(HttpStatus.OK)
 //    public UploadFileResult delete(@PathVariable("uuid") String uuid) {

@@ -11,6 +11,11 @@
 
     <sec:http pattern="/resources/**" security="none"/>
 
+    <sec:http pattern="/api/**" use-expressions="true" entry-point-ref="http403EntryPoint">
+        <sec:intercept-url pattern="/api/**" access="isAuthenticated()"/>
+        <sec:custom-filter position="PRE_AUTH_FILTER" ref="preAuthenticatedProcessingFilter" />
+    </sec:http>
+
     <sec:http entry-point-ref="loginUrlAuthenticationEntryPoint">
         <sec:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler"
                     delete-cookies="JSESSIONID"/>
@@ -74,6 +79,7 @@
 
     <sec:authentication-manager alias="authenticationManager">
         <sec:authentication-provider ref="customUsernamePasswordAuthenticationProvider" />
+        <sec:authentication-provider ref="preauthAuthProvider" />
     </sec:authentication-manager>
 
     <bean id="customUsernamePasswordAuthenticationProvider"
@@ -205,5 +211,28 @@
         <property name="exitUserUrl" value="/logout/impersonate" />
         <property name="targetUrl" value="/" />
     </bean>
+
+    <!-- API KEY 認証 -->
+    <!-- https://howtodoinjava.com/spring-security/spring-3-security-siteminder-pre-authentication-example/ -->
+    <!-- https://stackoverflow.com/questions/12478589/springsecurity-custom-automatic-authentication -->
+    <bean id="authenticationUserDetailsService" class="jp.co.stnet.cms.app.common.authentication.CustomAuthenticationUserDetailService" />
+    <bean id="accountStatusUserDetailsChecker" class="org.springframework.security.authentication.AccountStatusUserDetailsChecker" />
+    <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"></bean>
+
+<!--    <sec:authentication-manager alias="authenticationManager2">-->
+<!--        <sec:authentication-provider ref="preauthAuthProvider" />-->
+<!--    </sec:authentication-manager>-->
+
+    <bean id="preAuthenticatedProcessingFilter"
+          class="jp.co.stnet.cms.app.common.authentication.CustomPreAuthenticatedProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
+    <bean id="preauthAuthProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService" ref="authenticationUserDetailsService" />
+        <property name="UserDetailsChecker" ref="accountStatusUserDetailsChecker" />
+    </bean>
+
+
 
 </beans>

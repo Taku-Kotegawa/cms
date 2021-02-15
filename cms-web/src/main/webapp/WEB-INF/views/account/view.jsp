@@ -65,20 +65,26 @@
             <th>Profile</th>
             <td>${f:br(f:h(account.profile))}</td>
           </tr>
+          <tr>
+            <th>API KEY</th>
+            <td>${f:br(f:h(account.apiKey))}</td>
+          </tr>          
         </table>
       </div>
     </div>
 
     <br>
     <div class="row form-group">
-      <a href="${f:h(pageContext.request.contextPath)}/" class="btn-button">ホーム</a>
+      <a href="${f:h(pageContext.request.contextPath)}/" class="btn btn-button">ホーム</a>
 
       <a id="changePassword" href="${f:h(pageContext.request.contextPath)}/password?form"
-        class="btn-button ml-2">パスワード変更</a>
+        class="btn btn-button ml-2">パスワード変更</a>
 
+        <a id="changeEmail" href="${f:h(pageContext.request.contextPath)}/emailchange?form"
+        class="btn btn-button ml-2">メールアドレス変更</a>
+        
       <button id="openDialog" onclick="openDialog('/cms-web/common/dialog/test')"
       class="btn-button ml-2">ダイアログ</a>
-
 
     </div>
 

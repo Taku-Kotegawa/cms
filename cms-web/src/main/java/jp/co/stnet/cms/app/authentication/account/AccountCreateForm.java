@@ -42,7 +42,6 @@ public class AccountCreateForm implements Serializable {
     @NotContainControlChars
     private String confirmEmail;
 
-    @NotNull
     @NotContainControlChars
     @DomainRestrictedURL(allowedDomains = {"jp"})
     private String url;
@@ -54,11 +53,9 @@ public class AccountCreateForm implements Serializable {
     @FileNamePattern(pattern = "[a-zA-Z0-9_-]+\\.[a-zA-Z]{3}")
     private MultipartFile image;
 
-    @NotNull(groups = CreateAccount.class)
     @Size(max = 40)
     private String imageId;
 
-    @NotNull
     @NotContainControlCharsExceptNewlines
     private String profile;
 

@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -18,6 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class PasswordHistory implements Serializable {
 
     @Id
@@ -39,5 +39,9 @@ public class PasswordHistory implements Serializable {
      * パスワード
      */
     private String password;
+
+    @CreatedBy
+    @Column(nullable = false, updatable = false)
+    private String createdBy;
 
 }
