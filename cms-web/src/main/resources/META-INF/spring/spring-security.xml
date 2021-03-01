@@ -234,5 +234,12 @@
     </bean>
 
 
+    <!-- https://stackoverflow.com/questions/3467918/how-to-set-up-spring-security-securitycontextholder-strategy -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"
+                  value="org.springframework.security.core.context.SecurityContextHolder" />
+        <property name="targetMethod" value="setStrategyName" />
+        <property name="arguments" value="MODE_INHERITABLETHREADLOCAL" />
+    </bean>
 
 </beans>

@@ -299,6 +299,29 @@
         </div>
       </div>
 
+      <div class="col-12">
+        <!-- ラベル -->
+        <c:if test="${fieldState.allowedIp__input || fieldState.allowedIp__view}">
+          <form:label path="allowedIp">ログイン許可IPアドレス</form:label>
+        </c:if>
+        <!-- 入力 -->
+        <c:if test="${fieldState.allowedIp__input}">
+          <form:textarea path="allowedIp" cssClass="form-control" cssErrorClass="form-control is-invalid"
+            disabled="${fieldState.allowedIp__disabled}" readonly="${fieldState.allowedIp__readonly}"
+            placeholder="ex: 192.168.100.0/24, 10.200.10.0/32 (カンマで複数指定)" />
+          <form:errors path="allowedIp" cssClass="invalid-feedback" />
+        </c:if>
+        <!-- 隠しフィールド-->
+        <c:if test="${fieldState.allowedIp__hidden}">
+          <form:hidden path="allowedIp" />
+        </c:if>
+        <!-- 参照用-->
+        <c:if test="${fieldState.allowedIp__view}">
+          <div class="form-control form-control__view">
+            ${f:h(account.allowedIp)}
+          </div>
+        </c:if>
+      </div>      
 
       <div class="row mb-3">
         <div class="col-12">

@@ -116,6 +116,13 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
     }
 
     @Override
+    protected boolean compareEntity(Person entity, Person currentCopy) {
+        currentCopy.setAttachedFile01Managed(null);
+        currentCopy.setContent(null);
+        return Objects.equals(entity, currentCopy);
+    }
+
+    @Override
     @PostAuthorize("returnObject == true")
     public Boolean hasAuthority(String Operation, LoggedInUser loggedInUser) {
         return true;

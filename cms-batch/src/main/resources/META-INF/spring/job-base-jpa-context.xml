@@ -83,6 +83,6 @@
         </property>
     </bean>
 
-    <jpa:auditing auditor-aware-ref="springSecurityAuditorAware" />
+<!--    <jpa:auditing auditor-aware-ref="springSecurityAuditorAware" />-->
 
 </beans>

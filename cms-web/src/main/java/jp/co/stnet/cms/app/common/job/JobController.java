@@ -10,6 +10,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -41,9 +42,31 @@ public class JobController {
     @Autowired
     JobExplorer jobExplorer;
 
+    private static final String FIND_EXECUTIONS =
+            "SELECT p.JOB_EXECUTION_ID FROM BATCH_JOB_EXECUTION_PARAMS p\n" +
+                    "INNER JOIN BATCH_JOB_EXECUTION bje on bje.JOB_EXECUTION_ID = p.JOB_EXECUTION_ID and KEY_NAME = 'executedBy' AND STRING_VAL = ?\n" +
+                    "INNER JOIN BATCH_JOB_INSTANCE bji on bji.JOB_INSTANCE_ID  = bje.JOB_INSTANCE_ID and bji.JOB_NAME = ?\n" +
+                    "ORDER BY p.JOB_EXECUTION_ID DESC\n" +
+                    "LIMIT 20";
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+
     @ModelAttribute
     UploadFileForm setup() {
         return new UploadFileForm();
+    }
+
+
+    /**
+     * ユーザが管理者を持っている。
+     *
+     * @param loggedInUser
+     * @return true: 管理者権限あり, false:権限なし
+     */
+    private boolean isAdmin(LoggedInUser loggedInUser) {
+        return loggedInUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_" + Role.ADMIN.name()));
     }
 
     @GetMapping("summary")
@@ -51,13 +74,32 @@ public class JobController {
         List<Map<String, Object>> jobSummary = new ArrayList<>();
         List<String> jobNames = jobExplorer.getJobNames();
 
-        for (String jobName : jobNames) {
-            Map map = new LinkedHashMap();
-            JobInstance jobInstance = jobExplorer.getLastJobInstance(jobName);
-            map.put("jobName", jobName);
-            map.put("jobInstance", jobInstance);
-            map.put("jobExecution", jobExplorer.getLastJobExecution(jobInstance));
-            jobSummary.add(map);
+        if (isAdmin(loggedInUser)) {
+
+            // 管理者はすべてのジョブの結果を確認できる。
+            for (String jobName : jobNames) {
+                Map map = new LinkedHashMap();
+                JobInstance jobInstance = jobExplorer.getLastJobInstance(jobName);
+                map.put("jobName", jobName);
+                map.put("jobInstance", jobInstance);
+                map.put("jobExecution", jobExplorer.getLastJobExecution(jobInstance));
+                jobSummary.add(map);
+            }
+
+        } else {
+            // 通常は自分が実行したジョブの結果を確認できる。
+            for (String jobName : jobNames) {
+                List<Long> jobExecutionIds = jdbcTemplate.queryForList(FIND_EXECUTIONS, Long.class, loggedInUser.getUsername(), jobName);
+                if (!jobExecutionIds.isEmpty()) {
+                    JobExecution jobExecution = jobExplorer.getJobExecution(jobExecutionIds.get(0));
+                    Map map = new LinkedHashMap();
+                    map.put("jobName", jobName);
+                    map.put("jobInstance", jobExecution.getJobInstance());
+                    map.put("jobExecution", jobExecution);
+                    jobSummary.add(map);
+                }
+            }
+
         }
 
         model.addAttribute("jobSummary", jobSummary);
@@ -70,26 +112,34 @@ public class JobController {
                          @RequestParam(value = "targetjob", required = false) String targetjob,
                          @AuthenticationPrincipal LoggedInUser loggedInUser) {
 
-        boolean isAdmin = loggedInUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_" + Role.ADMIN.name()));
 
         List<String> jobList = jobExplorer.getJobNames();
-        model.addAttribute("jobList", jobList);
 
         if (targetjob == null) {
             targetjob = jobList.get(0);
         }
 
-        List<JobInstance> instances = jobExplorer.getJobInstances(targetjob, 0, 10);
+        List<JobInstance> instances = new ArrayList<>();
         List<JobExecution> executions = new ArrayList<>();
-        for (JobInstance i : instances) {
-            executions.addAll(jobExplorer.getJobExecutions(i));
+
+        if (isAdmin(loggedInUser)) {
+            // 管理者は全ジョブを参照可能
+            instances = jobExplorer.getJobInstances(targetjob, 0, 20);
+            for (JobInstance i : instances) {
+                executions.addAll(jobExplorer.getJobExecutions(i));
+            }
+
+        } else {
+            // 通常は自分が実行したジョブを参照可能
+            List<Long> jobExecutionIds = jdbcTemplate.queryForList(FIND_EXECUTIONS, Long.class, loggedInUser.getUsername(), targetjob);
+            for (Long jobExecutionId : jobExecutionIds) {
+                JobExecution jobExecution = jobExplorer.getJobExecution(jobExecutionId);
+                instances.add(jobExecution.getJobInstance());
+                executions.add(jobExecution);
+            }
         }
 
-        if (!isAdmin) {
-            // TODO 一般ユーザは自分のジョブのみ参照可能
-        }
-
-
+        model.addAttribute("jobList", jobList);
         model.addAttribute("selectedJob", targetjob);
         model.addAttribute("jobResults", executions);
         return JSP_RESULT;
@@ -98,6 +148,21 @@ public class JobController {
     @GetMapping("joblog")
     public String jobLog(Model model, @RequestParam(value = "jobexecutionid") Long jobExecutionId,
                          @AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+        if (!isAdmin(loggedInUser)) {
+            List<String> jobNames = jobExplorer.getJobNames();
+            List<Long> jobExecutionIds = new ArrayList<>();
+
+            for (String jobName : jobNames) {
+                jobExecutionIds.addAll(jdbcTemplate.queryForList(FIND_EXECUTIONS, Long.class, loggedInUser.getUsername(), jobName));
+            }
+
+            if (! jobExecutionIds.contains(jobExecutionId)) {
+                // 権限なし
+                throw new IllegalStateBusinessException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001));
+            }
+
+        }
 
         JobExecution jobExecution = jobExplorer.getJobExecution(jobExecutionId);
         if (jobExecution == null) {

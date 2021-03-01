@@ -55,6 +55,7 @@ public class AccountForm {
 
     private List<String> roles;
 
+    private String allowedIp;
 
     public interface Create {
     }

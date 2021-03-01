@@ -1,5 +1,6 @@
 package jp.co.stnet.cms.app.common.authentication;
 
+import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.authentication.PermissionRole;
@@ -15,11 +16,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class CustomUsernamePasswordAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -29,6 +29,13 @@ public class CustomUsernamePasswordAuthenticationProvider extends DaoAuthenticat
     @Autowired
     PermissionRoleSharedService permissionRoleSharedService;
 
+    private boolean matches(String ip, String subnet) {
+        if ("0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip)) {
+            return true;
+        }
+        IpAddressMatcher ipAddressMatcher = new IpAddressMatcher(subnet);
+        return ipAddressMatcher.matches(ip);
+    }
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
@@ -36,6 +43,28 @@ public class CustomUsernamePasswordAuthenticationProvider extends DaoAuthenticat
 
         LoggedInUser loggedInUser = (LoggedInUser) userDetails;
         Account account = loggedInUser.getAccount();
+
+        if (StringUtils.isNotBlank(account.getAllowedIp())) {
+
+            WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+            String userIp = details.getRemoteAddress();
+
+            List<String> allowedIps = Arrays.asList(account.getAllowedIp().split(","));
+            boolean userIpIsAllowed = false;
+
+            for (String allowedIp : allowedIps) {
+                if (matches(userIp, allowedIp)) {
+                    userIpIsAllowed = true;
+                }
+            }
+
+            if (!userIpIsAllowed) {
+                throw new BadCredentialsException(messages.getMessage(
+                        "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                        "Bad User IP Address"));
+            }
+        }
+
 
         CustomUsernamePasswordAuthenticationToken customUsernamePasswordAuthentication =
                 (CustomUsernamePasswordAuthenticationToken) authentication;

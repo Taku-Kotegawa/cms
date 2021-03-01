@@ -7,6 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,7 +21,7 @@ import org.terasoluna.gfw.common.exception.ExceptionCodeResolver;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 import org.terasoluna.gfw.common.exception.ResultMessagesNotificationException;
 
-@ControllerAdvice
+@ControllerAdvice(basePackages = {"jp.co.stnet.cms.api"})
 public class ApiGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
@@ -78,6 +80,14 @@ public class ApiGlobalExceptionHandler extends ResponseEntityExceptionHandler {
             return handleExceptionInternal(ex, null, headers, status, request);
         }
     }
+
+    @ExceptionHandler({ AccessDeniedException.class })
+    public ResponseEntity<Object> handleAccessDeniedException(
+            Exception ex, WebRequest request) {
+        return new ResponseEntity<Object>(
+                "Access denied message here", new HttpHeaders(), HttpStatus.FORBIDDEN);
+    }
+
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFoundException(

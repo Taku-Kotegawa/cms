@@ -153,6 +153,11 @@
     </jsp-config>
 
     <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/common/error/accessDenied.json</location>
+    </error-page>
+
+    <error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/views/common/error/systemError.jsp</location>
     </error-page>
@@ -160,15 +165,6 @@
     <error-page>
         <error-code>404</error-code>
         <location>/WEB-INF/views/common/error/resourceNotFoundError.jsp</location>
-    </error-page>
-
-    <error-page>
-        <exception-type>java.lang.Exception</exception-type>
-        <location>/WEB-INF/views/common/error/unhandledSystemError.html</location>
-    </error-page>
-
-    <error-page>
-        <location>/WEB-INF/views/common/error/unhandledSystemError.html</location>
     </error-page>
 
     <error-page>
@@ -181,6 +177,15 @@
         <location>/WEB-INF/views/common/error/fileUploadError.jsp</location>
     </error-page>
 
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/WEB-INF/views/common/error/unhandledSystemError.html</location>
+    </error-page>
+
+    <error-page>
+        <location>/WEB-INF/views/common/error/unhandledSystemError.html</location>
+    </error-page>
+
     <session-config>
         <!-- 30min -->
         <session-timeout>5000</session-timeout>
@@ -190,5 +195,10 @@
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
+
+    <mime-mapping>
+        <extension>json</extension>
+        <mime-type>application/json;charset=UTF-8</mime-type>
+    </mime-mapping>
 
 </web-app>

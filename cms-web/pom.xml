@@ -25,7 +25,7 @@
         * Generate for local development environment
              mvn clean package
 
-        * Generate for test or production environment (exclude the projectName-env.jar)
+*.jps        * Generate for test or production environment (exclude the projectName-env.jar)
              mvn -P warpack clean package
 
         * Generate for test or production environment (include the projectName-env.jar)

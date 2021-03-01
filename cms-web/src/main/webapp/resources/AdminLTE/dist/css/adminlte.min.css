@@ -32889,16 +32889,15 @@ thead th {
   color: #333;
   border: solid #bfbfba;
   border-width: 1px 0;
+}
+
+thead {
   background: #f5f5f2;
 }
 
 tr {
   padding: 0.1em 0.6em;
   border-bottom: 1px solid #e6e4df;
-}
-
-thead > tr {
-  border-bottom: 1px solid #000;
 }
 
 tbody tr:hover,
@@ -33277,6 +33276,10 @@ table.dataTable tbody > tr:nth-of-type(even).selected, table.dataTable tbody > t
 
 table.dataTable tbody tr.selected a, table.dataTable tbody th.selected a, table.dataTable tbody td.selected a {
   color: inherit;
+}
+
+table.DTFC_Cloned tr {
+  background-color: unset;
 }
 
 :focus {

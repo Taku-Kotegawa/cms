@@ -63,8 +63,12 @@
                     <!-- <span class="dropdown-item dropdown-header"></span> -->
 
                     <a href="${f:h(pageContext.request.contextPath)}/account/" class="dropdown-item">
-                        <i class="fas fa-database mr-2"></i>マイアカウント情報
+                        <i class="far fa-address-card mr-2"></i>マイアカウント情報
                     </a>
+
+                    <a href="${f:h(pageContext.request.contextPath)}/job/summary" class="dropdown-item">
+                        <i class="fas fa-history mr-2"></i>ジョブ実行結果
+                    </a>                    
 
                     <div class="dropdown-divider"></div>
                     <form:form action="${f:h(pageContext.request.contextPath)}/logout" autocomplete="off">

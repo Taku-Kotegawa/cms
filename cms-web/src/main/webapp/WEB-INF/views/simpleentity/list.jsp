@@ -2,8 +2,8 @@
 <%-- <%@ include file="/WEB-INF/views/common/includes/include-multipleselect.jsp" %> --%>
 
 <section class="content-header">
-  <div class="container-fluid mx-5">
-    <div class="row mb-2">
+  <div class="container-fluid">
+    <div class="row pl-5 mb-2">
       <div class="col-18">
         <h4>Simple Entity List</h4>
       </div>
@@ -13,7 +13,7 @@
   </div>
 </section>
 
-<section class="content px-5">
+<section class="content px-3">
   <div class="container-fluid">
 
     <t:messagesPanel panelClassName="callout" panelTypeClassPrefix="callout-" disableHtmlEscape="true" />

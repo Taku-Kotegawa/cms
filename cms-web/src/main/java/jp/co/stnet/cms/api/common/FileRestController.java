@@ -6,10 +6,12 @@ import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.terasoluna.gfw.common.exception.BusinessException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -56,6 +58,11 @@ public class FileRestController {
 
     @GetMapping("test")
     public String test(@AuthenticationPrincipal LoggedInUser loggedInUser) {
+
+
+        if (true) {
+            throw new OptimisticLockingFailureException("testtest");
+        }
 
         return "test";
     }

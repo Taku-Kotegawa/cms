@@ -37,7 +37,6 @@ public class SimpleEntityCsv {
     /**
      * テキストフィールド(複数の値)
      */
-    @ElementCollection
     private String text05;
     /**
      * ラジオボタン(真偽値)
@@ -54,7 +53,6 @@ public class SimpleEntityCsv {
     /**
      * チェックボックス(複数の値)
      */
-    @ElementCollection
     private String checkbox02;
     /**
      * テキストエリア
@@ -75,7 +73,6 @@ public class SimpleEntityCsv {
     /**
      * セレクト(複数の値)
      */
-    @ElementCollection
     private String select02;
     /**
      * セレクト(単一の値, select2)
@@ -84,7 +81,6 @@ public class SimpleEntityCsv {
     /**
      * セレクト(複数の値, select2)
      */
-    @ElementCollection
     private String select04;
     /**
      * コンボボックス(単一の値, Bootstrap)

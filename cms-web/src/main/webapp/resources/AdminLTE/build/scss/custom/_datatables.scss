@@ -40,7 +40,6 @@ table.dataTable > tbody > tr > td {
   min-width: min-content;
 } 
 
-
 .DTFC_LeftBodyLiner,
 .DTFC_RightBodyLiner {
   overflow-y: auto !important;
@@ -70,4 +69,8 @@ table.dataTable tbody>tr:nth-of-type(even).selected, table.dataTable tbody>tr:nt
 
 table.dataTable tbody tr.selected a, table.dataTable tbody th.selected a, table.dataTable tbody td.selected a {
   color: inherit;
+}
+
+table.DTFC_Cloned tr {
+  background-color: unset;
 }

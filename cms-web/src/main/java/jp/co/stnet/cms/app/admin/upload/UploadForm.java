@@ -26,9 +26,10 @@ public class UploadForm {
     @NotNull
     private String uploadFileUuid;
 
-    /**
-     * アップロードファイル(Managed)
-     */
     private FileManaged uploadFileManaged;
+
+    private String encoding;
+
+    private String fileType;
 
 }

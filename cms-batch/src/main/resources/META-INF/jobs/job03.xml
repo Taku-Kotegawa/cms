@@ -30,7 +30,7 @@
     <bean id="csvReader"
           class="org.springframework.batch.item.file.FlatFileItemReader" scope="step"
           p:resource="file:#{jobParameters['inputFile']}"
-          p:encoding="UTF-8"
+          p:encoding="#{jobParameters['encoding']}"
           p:linesToSkip="1"
           p:strict="true">
         <property name="lineMapper">
@@ -40,6 +40,28 @@
                           p:names="id,status,text01,text02,text03,text04,text05,radio01,radio02,checkbox01,checkbox02,textarea01,date01,datetime01,select01,select02,select03,select04,combobox01,combobox02,combobox03,attachedFile01"
                           p:delimiter=","
                           p:quoteCharacter='"'/>
+                </property>
+                <property name="fieldSetMapper">
+                    <bean class="jp.co.stnet.cms.batch.common.mapper.NullBindBeanWrapperFieldSetMapper"
+                          p:targetType="jp.co.stnet.cms.batch.job03.SimpleEntityCsv"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- TSVファイルリーダー -->
+    <bean id="tsvReader"
+          class="org.springframework.batch.item.file.FlatFileItemReader" scope="step"
+          p:resource="file:#{jobParameters['inputFile']}"
+          p:encoding="#{jobParameters['encoding']}"
+          p:linesToSkip="1"
+          p:strict="true">
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <property name="lineTokenizer">
+                    <bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer"
+                          p:names="id,status,text01,text02,text03,text04,text05,radio01,radio02,checkbox01,checkbox02,textarea01,date01,datetime01,select01,select02,select03,select04,combobox01,combobox02,combobox03,attachedFile01"
+                          p:delimiter="&#09;" />
                 </property>
                 <property name="fieldSetMapper">
                     <bean class="jp.co.stnet.cms.batch.common.mapper.NullBindBeanWrapperFieldSetMapper"

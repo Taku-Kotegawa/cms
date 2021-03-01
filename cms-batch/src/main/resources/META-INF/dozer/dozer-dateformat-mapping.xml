@@ -6,7 +6,7 @@
     <mapping date-format="yyyy/MM/dd">
         <class-a>jp.co.stnet.cms.batch.job02.VariableCsv</class-a>
         <class-b>jp.co.stnet.cms.batch.job02.Variable</class-b>
-        <!-- Any custom field mapping xml would go here -->
+
     </mapping>
 
 </mappings>

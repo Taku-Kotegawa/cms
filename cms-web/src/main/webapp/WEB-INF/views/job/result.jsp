@@ -46,7 +46,10 @@
     <c:forEach items="${jobResults}" var="result">
       <tr>
         <td>${result.id}</td>
-        <td>${result.startTime}<br>${result.endTime}</td>
+        <td style="white-space: nowrap;">
+          <fmt:formatDate value="${result.startTime}" pattern="yyyy/MM/dd HH:mm:ss" /><br>
+          <fmt:formatDate value="${result.endTime}" pattern="yyyy/MM/dd HH:mm:ss" />
+        </td>
         <td>${result.status}</td>
         <td>${result.jobParameters}</td>
         <td class="text-center"><a href="${pageContext.request.contextPath}/job/joblog?jobexecutionid=${result.id}">参照</a></td>

@@ -78,6 +78,11 @@ public class Account extends AbstractEntity<String> implements Serializable, Sta
     @Column(unique = true)
     private String apiKey;
 
+    /**
+     * ログイン許可IPアドレス
+     */
+    private String allowedIp;
+
 
     @Override
     public String getId() {

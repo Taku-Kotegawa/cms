@@ -59,7 +59,7 @@ public class SimpleEntityController {
     private final String JSP_LIST = BASE_PATH + "/list";
     private final String JSP_FORM = BASE_PATH + "/form";
     private final String JSP_VIEW = BASE_PATH + "/view";
-    private final String JSP_UPLOAD_FORM = "upload/form";
+    private final String JSP_UPLOAD_FORM = BASE_PATH + "/uploadform";
     private final String JSP_UPLOAD_COMPLETE = "upload/complete";
 
     // CSV/Excelのファイル名(拡張子除く)
@@ -941,6 +941,7 @@ public class SimpleEntityController {
 
         model.addAttribute("pageTitle", "Import SimpleEntity");
         model.addAttribute("referer", "list");
+        model.addAttribute("inputFileColumns", "ファイルパスを指定する予定");
 
         return JSP_UPLOAD_FORM;
     }
@@ -963,18 +964,14 @@ public class SimpleEntityController {
         FileManaged uploadFile = fileManagedSharedService.findByUuid(form.getUploadFileUuid());
         String uploadFileAbsolutePath = fileManagedSharedService.getFileStoreBaseDir() + uploadFile.getUri();
         String jobParams = "inputFile=" + uploadFileAbsolutePath;
-
+        jobParams += ", encoding=" + form.getEncoding();
+        jobParams += ", filetype=" + form.getFileType();
 
         if (!jobName.equals(form.getJobName())) {
             return uploadForm(form, model, loggedInUser);
         }
 
-
         try {
-
-
-//            jobExecutionId = jobOperator.start(jobName, jobParams);
-
             jobExecutionId = jobStarter.start(jobName, jobParams);
 
         } catch (NoSuchJobException | JobInstanceAlreadyExistsException | JobParametersInvalidException e) {

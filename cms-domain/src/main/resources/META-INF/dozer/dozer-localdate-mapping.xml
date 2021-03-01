@@ -36,6 +36,16 @@
                 <class-b>java.util.Date</class-b>
             </converter>
             <converter
+                    type="jp.co.stnet.cms.domain.common.converter.StringToLocalDateConverter">
+                <class-a>java.lang.String</class-a>
+                <class-b>java.time.LocalDate</class-b>
+            </converter>
+            <converter
+                    type="jp.co.stnet.cms.domain.common.converter.StringToLocalDateTimeConverter">
+                <class-a>java.lang.String</class-a>
+                <class-b>java.time.LocalDateTime</class-b>
+            </converter>
+            <converter
                     type="jp.co.stnet.cms.domain.common.converter.ListToStringConverter">
                 <class-a>java.util.List</class-a>
                 <class-b>java.lang.String</class-b>

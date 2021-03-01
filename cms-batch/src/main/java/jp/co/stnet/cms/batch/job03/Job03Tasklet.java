@@ -22,6 +22,8 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 
+import java.time.LocalDateTime;
+
 import static jp.co.stnet.cms.domain.common.Constants.MSG;
 
 /**
@@ -34,6 +36,9 @@ public class Job03Tasklet implements Tasklet {
 
     @Autowired
     ItemStreamReader<SimpleEntityCsv> csvReader;
+
+    @Autowired
+    ItemStreamReader<SimpleEntityCsv> tsvReader;
 
     @Autowired
     SmartValidator smartValidator;
@@ -57,6 +62,8 @@ public class Job03Tasklet implements Tasklet {
 
         Long jobInstanceId = chunkContext.getStepContext().getJobInstanceId();
         String jobName = chunkContext.getStepContext().getJobName();
+        String fileType = stepContribution.getStepExecution().getJobParameters().getString("filetype");
+        String executedBy = stepContribution.getStepExecution().getJobParameters().getString("executedBy");
         Long jobExecutionId = chunkContext.getStepContext().getStepExecution().getJobExecutionId();
 
         MDC.put("jobInstanceId", jobInstanceId.toString());
@@ -64,11 +71,12 @@ public class Job03Tasklet implements Tasklet {
         MDC.put("jobExecutionId", jobExecutionId.toString());
         MDC.put("jobName_jobExecutionId", jobName + "_" + jobExecutionId.toString());
 
-        int count_read   = 0;
-        int count_insert = 0;
-        int count_update = 0;
-        int count_delete = 0;
-        int count_skip   = 0;
+        int count_read = 0; // 読み込み件数　読み込み件数 = 新規登録 + 更新 + 削除 + スキップ
+        int count_insert = 0; // 新規登録件数
+        int count_update = 0; // 更新件数
+        int count_delete = 0; // 削除件数
+        int count_skip = 0; // スキップ件数
+        int count_error = 0;
 
         // DB操作時の例外発生の有無を記録する
         boolean hasDBAccessException = false;
@@ -81,32 +89,45 @@ public class Job03Tasklet implements Tasklet {
 
         log.info("Start");
 
+        // フィアルフォーマットの選択
+        ItemStreamReader<SimpleEntityCsv> fileReader = null;
+        if ("CSV".equals(fileType)) {
+            fileReader = csvReader;
+        } else {
+            fileReader = tsvReader;
+        }
+
         try {
             /*
              * 入力チェック(全件チェック)
              */
-            csvReader.open(chunkContext.getStepContext().getStepExecution().getExecutionContext());
-            while ((csvLine = csvReader.read()) != null) {
+            fileReader.open(chunkContext.getStepContext().getStepExecution().getExecutionContext());
+            while ((csvLine = fileReader.read()) != null) {
                 smartValidator.validate(csvLine, result);
             }
             if (result.hasErrors()) {
                 result.getAllErrors().forEach(r -> log.error(r.toString()));
-                csvReader.close();
+                fileReader.close();
                 log.error(MSG.VALIDATION_ERROR_STOP);
                 throw new ValidationException(MSG.VALIDATION_ERROR_STOP);
             }
-            csvReader.close();
+            fileReader.close();
 
             /*
              * テーブル更新(一括コミット)
              */
-            csvReader.open(chunkContext.getStepContext().getStepExecution().getExecutionContext());
-            while ((csvLine = csvReader.read()) != null) {
+            fileReader.open(chunkContext.getStepContext().getStepExecution().getExecutionContext());
+            while ((csvLine = fileReader.read()) != null) {
                 count_read++;
                 try {
 
                     SimpleEntity v = map(csvLine);
+
                     if (csvLine.getId() == null) {
+                        v.setCreatedBy(executedBy);
+                        v.setCreatedDate(LocalDateTime.now());
+                        v.setLastModifiedBy(executedBy);
+                        v.setLastModifiedDate(LocalDateTime.now());
                         // 新規登録
                         simpleEntityService.save(v);
                         count_insert++;
@@ -115,12 +136,14 @@ public class Job03Tasklet implements Tasklet {
                         SimpleEntity current = simpleEntityRepository.findById(Long.parseLong(csvLine.getId())).orElse(null);
                         if (current != null) {
                             if ("99".equals(csvLine.getStatus())) {
-                                    simpleEntityService.delete(current.getId());
-                                    count_delete++;
+                                simpleEntityService.delete(current.getId());
+                                count_delete++;
                             } else {
                                 try {
                                     v.setVersion(current.getVersion());
                                     simpleEntityService.save(v);
+                                    v.setLastModifiedBy(executedBy);
+                                    v.setLastModifiedDate(LocalDateTime.now());
                                     count_update++;
                                 } catch (NoChangeBusinessException e) {
                                     count_skip++;
@@ -133,22 +156,24 @@ public class Job03Tasklet implements Tasklet {
                     }
 
                 } catch (Exception e) {
-                    log.error("Exception: " + e.getLocalizedMessage());
+                    count_error++;
+                    log.error(count_read + " 行目: Exception: " + e.getMessage());
                     hasDBAccessException = true;
                 }
             }
 
             if (hasDBAccessException) {
+                log.error(count_error + " 件のエラーが発生しました。");
                 log.error(MSG.DB_ACCESS_ERROR_STOP);
                 throw new Exception(MSG.DB_ACCESS_ERROR_STOP);
             }
 
         } catch (Exception e) {
-            log.error("Exception: " + e.getLocalizedMessage());
+            log.error("Exception: " + e.getMessage());
             throw e;
 
         } finally {
-            csvReader.close();
+            fileReader.close();
         }
 
         log.info("読込件数:    " + count_read);
