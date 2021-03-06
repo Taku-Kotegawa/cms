@@ -27,6 +27,10 @@
     <div class="content-wrapper">
       <tiles:insertAttribute name="body" />
 
+      <div class="ml-3">
+        このページの閲覧回数 : ${accessCount}
+      </div>
+
       <%--
       <%@ include file="/WEB-INF/views/common/includes/include-debug.jsp" %>
       --%>

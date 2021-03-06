@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @Transactional
-public class VariableServiceImpl extends AbstractNodeService<Variable,  Long> implements VariableService {
+public class VariableServiceImpl extends AbstractNodeService<Variable, Long> implements VariableService {
 
     @Autowired
     VariableRepository variableRepository;

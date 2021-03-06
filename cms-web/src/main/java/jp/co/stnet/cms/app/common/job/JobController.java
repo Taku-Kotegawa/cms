@@ -62,7 +62,7 @@ public class JobController {
     /**
      * ユーザが管理者を持っている。
      *
-     * @param loggedInUser
+     * @param loggedInUser loggedInUser
      * @return true: 管理者権限あり, false:権限なし
      */
     private boolean isAdmin(LoggedInUser loggedInUser) {
@@ -157,7 +157,7 @@ public class JobController {
                 jobExecutionIds.addAll(jdbcTemplate.queryForList(FIND_EXECUTIONS, Long.class, loggedInUser.getUsername(), jobName));
             }
 
-            if (! jobExecutionIds.contains(jobExecutionId)) {
+            if (!jobExecutionIds.contains(jobExecutionId)) {
                 // 権限なし
                 throw new IllegalStateBusinessException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001));
             }

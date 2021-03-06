@@ -34,12 +34,9 @@
 
     <!-- Application Loggers -->
     <logger name="jp.co.stnet.cms">
-        <level value="warn" />
+        <level value="info" />
     </logger>
 
-    <logger name="jp.co.stnet.cms.domain.repository">
-        <level value="warn" />
-    </logger>
 
     <!-- TERASOLUNA -->
     <logger name="org.terasoluna.gfw">
@@ -74,13 +71,13 @@
     </logger>
 
     <logger name="org.hibernate.SQL" additivity="true">
-        <level value="warn" />
+        <level value="debug" />
     </logger>
     <logger name="org.hibernate.type">
-        <level value="warn" />
+        <level value="debug" />
     </logger>
     <logger name="org.hibernate.engine.transaction">
-        <level value="warn" />
+        <level value="debug" />
     </logger>
     <!--  REMOVE THIS LINE IF YOU USE MyBatis3
     <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -88,7 +85,7 @@
     </logger>
           REMOVE THIS LINE IF YOU USE MyBatis3  -->
 
-    <root level="warn">
+    <root level="debug">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="APPLICATION_LOG_FILE" />
     </root>

@@ -59,8 +59,14 @@
               <a id="role" href="${f:h(pageContext.request.contextPath)}/admin/role/list">
                 ロール
               </a>
-            </li>            
+            </li>
 
+            <li class="mb-2">
+              <i class="fas fa-angle-right"></i>
+              <a id="role" href="${f:h(pageContext.request.contextPath)}/accesscounter/list">
+                アクセスカウンタ
+              </a>
+            </li>    
           </ul>
         </div>
 

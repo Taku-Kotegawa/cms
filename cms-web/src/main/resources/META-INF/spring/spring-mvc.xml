@@ -86,6 +86,9 @@
                     class="jp.co.stnet.cms.app.common.interceptor.BlockHandlerInterceptor"/>
         </mvc:interceptor>
 
+
+
+
     </mvc:interceptors>
 
     <!-- Settings View Resolver. -->

@@ -15,21 +15,19 @@
  */
 package jp.co.stnet.cms.app.common.interceptor;
 
-import jp.co.stnet.cms.domain.common.Constants;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.authentication.Role;
 import jp.co.stnet.cms.domain.service.authentication.AccountSharedService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class PasswordExpirationCheckInterceptor extends
-        HandlerInterceptorAdapter {
+public class PasswordExpirationCheckInterceptor implements HandlerInterceptor {
 
     @Inject
     AccountSharedService accountSharedService;
