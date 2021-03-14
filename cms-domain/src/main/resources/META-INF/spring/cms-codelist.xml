@@ -54,6 +54,11 @@
         <constructor-arg value="jp.co.stnet.cms.domain.model.authentication.Permission" />
     </bean>
 
+    <bean id="CL_FILETYPE"
+          class="org.terasoluna.gfw.common.codelist.EnumCodeList">
+        <constructor-arg value="jp.co.stnet.cms.domain.model.common.FileType" />
+    </bean>
+
     <!-- 帳票管理 -->
 
     <bean id="CL_REPORT"

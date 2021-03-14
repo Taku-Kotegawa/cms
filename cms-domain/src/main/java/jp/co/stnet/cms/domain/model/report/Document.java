@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
+@Table(indexes = {@Index(columnList = "TITLE")})
 public class Document extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
     /**

@@ -38,8 +38,10 @@ public class BlockHandlerInterceptor implements HandlerInterceptor {
         // (実装は省略)
 
         try {
-            AccessCounter accessCounter = accessCounterService.findByUrl(request.getRequestURI());
-            modelAndView.addObject("accessCount", accessCounter.getCount());
+            if (modelAndView.hasView()) {
+                AccessCounter accessCounter = accessCounterService.findByUrl(request.getRequestURI());
+                modelAndView.addObject("accessCount", accessCounter.getCount());
+            }
         } catch (ResourceNotFoundException e) {
         }
 

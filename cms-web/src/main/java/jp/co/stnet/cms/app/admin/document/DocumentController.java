@@ -63,7 +63,7 @@ public class DocumentController {
     private final String DOWNLOAD_FILENAME = "document";
 
     // アップロード用のインポートジョブID
-    private final String UPLOAD_JOB_ID = "job03";
+    private final String UPLOAD_JOB_ID = "RYREI001";
 
     @Autowired
     DocumentService documentService;

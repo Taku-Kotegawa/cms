@@ -43,6 +43,7 @@ import org.terasoluna.gfw.web.token.transaction.TransactionTokenType;
 
 import javax.inject.Named;
 import javax.validation.groups.Default;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -483,6 +484,17 @@ public class SimpleEntityController {
             SimpleEntity source = simpleEntityService.findById(copy);
             beanMapper.map(source, form);
             form.setId(null);
+
+            if (source.getAttachedFile01Uuid() != null) {
+                try {
+                    FileManaged file = fileManagedSharedService.copyFile(source.getAttachedFile01Uuid());
+                    form.setAttachedFile01Uuid(file.getUuid());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    model.addAttribute(ResultMessages.error().add(MessageKeys.E_SL_FW_6001));
+                    return JSP_FORM;
+                }
+            }
         }
 
         setFileManagedToForm(form);

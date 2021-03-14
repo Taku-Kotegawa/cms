@@ -34,11 +34,11 @@
 
     <!-- Application Loggers -->
     <logger name="jp.co.stnet.cms">
-        <level value="debug" />
+        <level value="info" />
     </logger>
 
     <logger name="jp.co.stnet.cms.domain.repository">
-        <level value="trace" />
+        <level value="info" />
     </logger>
 
     <!-- TERASOLUNA -->
@@ -46,7 +46,7 @@
         <level value="info" />
     </logger>
     <logger name="org.terasoluna.gfw.web.logging.TraceLoggingInterceptor">
-        <level value="trace" />
+        <level value="info" />
     </logger>
     <logger name="org.terasoluna.gfw.common.exception.ExceptionLogger">
         <level value="info" />
@@ -66,25 +66,25 @@
     </logger>
 
     <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-        <level value="trace" />
+        <level value="info" />
     </logger>
 
     <logger name="org.springframework.jdbc.core.JdbcTemplate">
-        <level value="trace" />
+        <level value="info" />
     </logger>
 
     <logger name="org.hibernate.SQL" additivity="true">
-        <level value="debug" />
+        <level value="info" />
     </logger>
     <logger name="org.hibernate.type">
-        <level value="trace" />
+        <level value="info" />
     </logger>
     <logger name="org.hibernate.engine.transaction">
-        <level value="debug" />
+        <level value="info" />
     </logger>
     <!--  REMOVE THIS LINE IF YOU USE MyBatis3
     <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <level value="debug" />
+        <level value="info" />
     </logger>
           REMOVE THIS LINE IF YOU USE MyBatis3  -->
 

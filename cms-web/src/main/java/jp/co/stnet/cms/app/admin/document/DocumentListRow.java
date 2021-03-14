@@ -140,7 +140,7 @@ public class DocumentListRow implements Serializable {
     /**
      * 帳票出力日時
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd hh:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm")
     private LocalDateTime outputDate;
 
     /**

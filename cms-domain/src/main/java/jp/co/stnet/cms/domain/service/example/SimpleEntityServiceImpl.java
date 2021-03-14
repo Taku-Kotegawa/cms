@@ -8,6 +8,7 @@ import jp.co.stnet.cms.domain.repository.NodeRevRepository;
 import jp.co.stnet.cms.domain.repository.example.SimpleEntityRepository;
 import jp.co.stnet.cms.domain.repository.example.SimpleEntityRevisionRepository;
 import jp.co.stnet.cms.domain.service.AbstractNodeRevService;
+import jp.co.stnet.cms.domain.service.common.FileManagedSharedService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,6 +28,9 @@ public class SimpleEntityServiceImpl extends AbstractNodeRevService<SimpleEntity
     @Autowired
     SimpleEntityRevisionRepository simpleEntityRevisionRepository;
 
+    @Autowired
+    FileManagedSharedService fileManagedSharedService;
+
     protected SimpleEntityServiceImpl() {
         super(SimpleEntity.class, SimpleEntityRevision.class, SimpleEntityMaxRev.class);
     }
@@ -39,6 +43,26 @@ public class SimpleEntityServiceImpl extends AbstractNodeRevService<SimpleEntity
     @Override
     protected NodeRevRepository<SimpleEntityRevision, Long> getRevisionRepository() {
         return this.simpleEntityRevisionRepository;
+    }
+
+    @Override
+    public SimpleEntity save(SimpleEntity entity) {
+        SimpleEntity simpleEntity = super.save(entity);
+
+        // 添付ファイル確定
+        fileManagedSharedService.permanent(entity.getAttachedFile01Uuid());
+
+        return simpleEntity;
+    }
+
+    @Override
+    public SimpleEntity saveDraft(SimpleEntity entity) {
+        SimpleEntity simpleEntity =  super.saveDraft(entity);
+
+        // 添付ファイル確定
+        fileManagedSharedService.permanent(entity.getAttachedFile01Uuid());
+
+        return simpleEntity;
     }
 
     @Override

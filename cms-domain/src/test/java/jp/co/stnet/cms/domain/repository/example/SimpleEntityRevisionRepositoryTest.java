@@ -29,13 +29,14 @@ class SimpleEntityRevisionRepositoryTest {
         SimpleEntity actual = target.save(
                 SimpleEntity.builder()
                         .text05(text05)
+                        .status("1")
                         .build()
         );
 
         System.out.println(actual.toString());
 
 
-        SimpleEntity actual2 = target.findById(1l).orElse(null);
+        SimpleEntity actual2 = target.findById(actual.getId()).orElse(null);
         System.out.println(actual2.toString());
 
 

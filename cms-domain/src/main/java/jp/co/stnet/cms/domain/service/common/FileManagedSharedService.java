@@ -4,6 +4,7 @@ import jp.co.stnet.cms.domain.model.common.FileManaged;
 import org.apache.tika.exception.TikaException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -20,6 +21,8 @@ public interface FileManagedSharedService {
 
     FileManaged store(MultipartFile file, String fileType, Boolean status) throws IOException;
 
+    FileManaged store(File file, String fileType) throws Exception;
+
     void delete(Long id);
 
     void delete(String uuid);
@@ -29,5 +32,11 @@ public interface FileManagedSharedService {
     String getFileStoreBaseDir();
 
     String getContent(String uuid) throws IOException, TikaException;
+
+    void permanent(String uuid);
+
+    FileManaged copyFile(String uuid) throws IOException;
+
+    void deleteFile(String uri);
 
 }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * dozer用コンバーター(yyyy/MM/dd)
+ * dozer用 java.lang.String <=> java.time.LocalDateTime の変換
  */
 public class StringToLocalDateConverter extends DozerConverter<String, LocalDate> {
 

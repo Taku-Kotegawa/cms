@@ -201,7 +201,7 @@
           <!-- 入力 -->
           <c:if test="${fieldState.image__input}">
             <input id="image" type="file" class="form-control form-control-file file-managed"
-              　data-file-type="fileupload" data-extention-pattern="png jpg gif"
+              　data-file-type="fileupload"
                 <c:if test="${accountForm.imageUuid != null}">style="display: none;"</c:if> />
             <form:errors path="imageUuid" cssClass="invalid-feedback" />
           </c:if>

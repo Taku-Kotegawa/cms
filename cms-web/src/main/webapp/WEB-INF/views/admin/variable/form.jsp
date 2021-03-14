@@ -688,7 +688,7 @@
               <!-- 入力 -->
               <c:if test="${fieldState.file1Uuid__input}">
                 <input id="file1" type="file" class="form-control form-control-file file-managed"
-                  data-file-type="variable" data-extention-pattern="png jpg gif" <c:if
+                  data-file-type="variable" <c:if
                   test="${variableForm.file1Uuid != null}">style="display: none;"</c:if> />
               <form:errors path="file1Uuid" cssClass="invalid-feedback" />
               <c:if test="${variableForm.file1Managed != null}">

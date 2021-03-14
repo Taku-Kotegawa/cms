@@ -38,6 +38,7 @@ import org.terasoluna.gfw.web.token.transaction.TransactionTokenType;
 
 import javax.inject.Named;
 import javax.validation.groups.Default;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
@@ -252,6 +253,18 @@ public class PersonController {
     }
 
     /**
+     * UUIDからFileManagedオブジェクトを取得し、formにセットする。
+     *
+     * @param form フォーム
+     */
+    private void setFileManagedToForm(PersonForm form) {
+        // TODO ファイルフィールドごとに調整
+        if (form.getAttachedFile01Uuid() != null) {
+            form.setAttachedFile01Managed(fileManagedSharedService.findByUuid(form.getAttachedFile01Uuid()));
+        }
+    }
+
+    /**
      * 新規作成画面を開く
      */
     @GetMapping(value = "create", params = "form")
@@ -267,8 +280,20 @@ public class PersonController {
             Person source = personService.findById(copy);
             beanMapper.map(source, form);
             form.setId(null);
+
+            if (source.getAttachedFile01Uuid() != null) {
+                try {
+                    FileManaged file = fileManagedSharedService.copyFile(source.getAttachedFile01Uuid());
+                    form.setAttachedFile01Uuid(file.getUuid());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    model.addAttribute(ResultMessages.error().add(MessageKeys.E_SL_FW_6001));
+                    return createForm(form, model, loggedInUser, null);
+                }
+            }
         }
 
+        setFileManagedToForm(form);
 
         model.addAttribute("buttonState", getButtonStateMap(Constants.OPERATION.CREATE, null).asMap());
         model.addAttribute("fieldState", getFiledStateMap(Constants.OPERATION.CREATE, null).asMap());

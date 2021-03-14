@@ -3,9 +3,6 @@ package jp.co.stnet.cms.domain.service.common;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
-import org.hibernate.search.mapper.orm.massindexing.MassIndexingMonitor;
-import org.hibernate.search.mapper.orm.massindexing.impl.LoggingMassIndexingMonitor;
-import org.hibernate.search.mapper.orm.massindexing.impl.MassIndexerImpl;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +24,11 @@ public class IndexSharedServiceImpl implements IndexSharedService {
     public void reindexing(String entityName) throws InterruptedException, ClassNotFoundException {
 
         try {
-
             Class<?> clazz = Class.forName(entityName);
             SearchSession searchSession = Search.session(entityManager);
             MassIndexer indexer = searchSession.massIndexer(clazz)
+                    .idFetchSize(Integer.MIN_VALUE)
+                    .batchSizeToLoadObjects(25)
                     .threadsToLoadObjects(7);
             indexer.start();
 
@@ -49,6 +47,8 @@ public class IndexSharedServiceImpl implements IndexSharedService {
             Class<?> clazz = Class.forName(entityName);
             SearchSession searchSession = Search.session(entityManager);
             MassIndexer indexer = searchSession.massIndexer(clazz)
+                    .idFetchSize(Integer.MIN_VALUE)
+                    .batchSizeToLoadObjects(25)
                     .threadsToLoadObjects(7);
             indexer.startAndWait();
 

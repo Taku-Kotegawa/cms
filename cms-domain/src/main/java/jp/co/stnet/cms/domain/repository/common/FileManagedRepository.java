@@ -13,8 +13,8 @@ public interface FileManagedRepository extends JpaRepository<FileManaged, Long>{
 
     Optional<FileManaged> findByUuid(String uuid);
 
-    Optional<FileManaged> findByUuidAndStatus(String uuid, Boolean status);
+    Optional<FileManaged> findByUuidAndStatus(String uuid, String status);
 
-    List<FileManaged> findAllByCreatedDateLessThanAndStatus(LocalDateTime deleteTo, Boolean status);
+    List<FileManaged> findAllByCreatedDateLessThanAndStatus(LocalDateTime deleteTo, String status);
 
 }

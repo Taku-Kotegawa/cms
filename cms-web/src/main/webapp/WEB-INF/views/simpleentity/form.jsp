@@ -670,7 +670,7 @@
               <!-- 入力 -->
               <c:if test="${fieldState.attachedFile01Uuid__input}">
                 <input id="attachedFile01" type="file" class="form-control form-control-file file-managed"
-                  data-file-type="simpleentity" data-extention-pattern="png jpg gif" <c:if
+                  data-file-type="simpleentity" <c:if
                   test="${simpleEntityForm.attachedFile01Uuid != null}">style="display: none;"</c:if> />
               <form:errors path="attachedFile01Uuid" cssClass="invalid-feedback" />
               <c:if test="${simpleEntityForm.attachedFile01Managed != null}">

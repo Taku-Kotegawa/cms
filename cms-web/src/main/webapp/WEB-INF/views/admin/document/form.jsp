@@ -394,7 +394,7 @@
               <!-- 入力 -->
               <c:if test="${fieldState.attachedFileUuid__input}">
                 <input id="attachedFile" type="file" class="form-control form-control-file file-managed"
-                  data-file-type="document" data-extention-pattern="png jpg gif" <c:if
+                  data-file-type="document" <c:if
                   test="${documentForm.attachedFileUuid != null}">style="display: none;"</c:if> />
                 <form:errors path="attachedFileUuid" cssClass="invalid-feedback" />
                 <c:if test="${documentForm.attachedFileManaged != null}">

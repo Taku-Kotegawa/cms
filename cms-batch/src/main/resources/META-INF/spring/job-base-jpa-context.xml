@@ -14,10 +14,9 @@
     <import resource="classpath:META-INF/spring/launch-context.xml"/>
 
     <!-- launch-context.xml に定義すると重複起動になるので、コマンド実行時のみ有効にする -->
+
     <bean id="beanValidator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-
-    <!-- JPA　テスト   -->
 
     <tx:annotation-driven />
 
@@ -45,7 +44,7 @@
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
-    <jpa:repositories base-package="jp.co.stnet.cms.domain.repository" />
+<!--    <jpa:repositories base-package="jp.co.stnet.cms.domain.repository" />-->
 
     <bean id="jpaVendorAdapter"
           class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -83,6 +82,7 @@
         </property>
     </bean>
 
-<!--    <jpa:auditing auditor-aware-ref="springSecurityAuditorAware" />-->
+    <!-- コマンド起動時は、@Created_By, @LastModified_By に任意の値をセットしたいため、無効化する-->
+    <!--    <jpa:auditing auditor-aware-ref="springSecurityAuditorAware" />-->
 
 </beans>

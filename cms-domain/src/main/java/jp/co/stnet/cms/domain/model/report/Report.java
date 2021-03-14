@@ -11,7 +11,8 @@ import org.terasoluna.gfw.common.codelist.EnumCodeList;
 public enum Report implements EnumCodeList.CodeListItem {
 
     SAMPLE1("サンプル", "IF0001"),
-    EG01("お客さまシート(低圧)", "IF0002");
+    EG01("お客さまシート(低圧)", "IF0002"),
+    R00001("契約開始通知", "IFTEST01");
 
     @KeywordField(aggregable = Aggregable.YES)
     private String title;

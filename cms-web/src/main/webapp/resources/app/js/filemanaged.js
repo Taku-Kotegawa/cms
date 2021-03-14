@@ -59,6 +59,11 @@ console.log(element.dataset);
 
     }).done(function (data) { // Ajax通信が成功した時の処理
 
+      if (data.fid == null) {
+        alert(data.message);
+        return;
+      }
+
       $upload_file.style.display = "none";
       // document.getElementById("upload_file_input-block").style.display = "none";
 

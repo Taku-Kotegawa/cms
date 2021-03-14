@@ -14,6 +14,7 @@
     <sec:http pattern="/api/**" use-expressions="true" entry-point-ref="http403EntryPoint">
         <sec:intercept-url pattern="/api/**" access="isAuthenticated()"/>
         <sec:custom-filter position="PRE_AUTH_FILTER" ref="preAuthenticatedProcessingFilter" />
+        <sec:csrf disabled="true"/>
     </sec:http>
 
     <sec:http entry-point-ref="loginUrlAuthenticationEntryPoint">

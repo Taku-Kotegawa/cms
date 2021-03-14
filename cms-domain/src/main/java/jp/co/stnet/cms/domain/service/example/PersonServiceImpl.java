@@ -116,10 +116,40 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
     }
 
     @Override
-    protected boolean compareEntity(Person entity, Person currentCopy) {
-        currentCopy.setAttachedFile01Managed(null);
-        currentCopy.setContent(null);
-        return Objects.equals(entity, currentCopy);
+    public Person save(Person entity) {
+
+        // 保存前データ取得
+        String currentUuid = null;
+        if (entity.getId() != null) {
+            currentUuid = findById(entity.getId()).getAttachedFile01Uuid();
+        }
+
+        Person person = super.save(entity);
+
+        if (currentUuid != null && !currentUuid.equals(entity.getAttachedFile01Uuid())) {
+            // 添付ファイル削除
+            fileManagedSharedService.delete(currentUuid);
+        }
+
+        // 添付ファイル確定
+        fileManagedSharedService.permanent(entity.getAttachedFile01Uuid());
+
+        return person;
+    }
+
+    @Override
+    public void delete(Long id) {
+
+        // 添付ファイルURI取得
+        String uri = null;
+        if (findById(id).getAttachedFile01Uuid() != null) {
+            uri = fileManagedSharedService.findByUuid(findById(id).getAttachedFile01Uuid()).getUri();
+        }
+
+        super.delete(id);
+
+        // 添付ファイル削除
+        fileManagedSharedService.deleteFile(uri);
     }
 
     @Override

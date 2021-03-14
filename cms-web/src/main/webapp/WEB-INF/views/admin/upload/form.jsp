@@ -30,7 +30,7 @@
             <form:label path="uploadFileUuid">インポートファイル*</form:label>
             <!-- 入力 -->
             <input id="uploadFile" type="file" class="form-control form-control-file file-managed"
-              data-file-type="simpleentity" data-extention-pattern="png jpg gif" <c:if
+              data-file-type="simpleentity" <c:if
               test="${uploadForm.uploadFileUuid != null}">style="display: none;"</c:if>/>
             <form:errors path="uploadFileUuid" cssClass="invalid-feedback" />
             <c:if test="${uploadForm.uploadFileManaged != null}">

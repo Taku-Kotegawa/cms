@@ -6,6 +6,9 @@ import com.github.dozermapper.core.DozerConverter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * dozer用 java.lang.String <=> java.time.LocalDateTime の変換
+ */
 public class StringToLocalDateTimeConverter extends DozerConverter<String, LocalDateTime> {
 
     static final private String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";

@@ -33,6 +33,7 @@
     </mvc:annotation-driven>
 
     <context:component-scan base-package="jp.co.stnet.cms.api"/>
+    <context:component-scan base-package="jp.co.stnet.cms.app.common.job"/>
 
     <mvc:interceptors>
         <mvc:interceptor>
@@ -52,5 +53,25 @@
         <aop:advisor advice-ref="handlerExceptionResolverLoggingInterceptor"
                      pointcut="execution(* org.springframework.web.servlet.HandlerExceptionResolver.resolveException(..))"/>
     </aop:config>
+
+    <!-- バッチジョブ実行用の設定 -->
+    <import resource="classpath:META-INF/spring/launch-context.xml"/>
+
+    <bean class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
+        <property name="applicationContextFactories">
+            <bean class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean">
+                <property name="resources">
+                    <list>
+                        <value>classpath:/META-INF/jobs/**/*.xml</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="jobLoader">
+            <bean class="org.springframework.batch.core.configuration.support.DefaultJobLoader">
+                <property name="jobRegistry" ref="jobRegistry"/>
+            </bean>
+        </property>
+    </bean>
 
 </beans>

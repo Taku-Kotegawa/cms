@@ -13,10 +13,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.batch.operations.JobOperator;
-import javax.batch.runtime.BatchRuntime;
 import java.util.Map;
-import java.util.Properties;
 
 @Component
 public class Job04Tasklet implements Tasklet {
@@ -33,7 +30,6 @@ public class Job04Tasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-
 
         Long jobInstanceId = chunkContext.getStepContext().getJobInstanceId();
         String jobName = chunkContext.getStepContext().getJobName();

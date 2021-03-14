@@ -45,9 +45,8 @@ public class FileManaged extends AbstractEntity<Long> implements Serializable {
     /**
      * false: temporary(0), true: permanent(1)
      */
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "varchar(255) default '0'")
     private String status;
-
 
     /**
      * @return
