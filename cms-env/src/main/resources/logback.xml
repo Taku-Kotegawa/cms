@@ -43,7 +43,7 @@
         <level value="info" />
     </logger>
     <logger name="org.terasoluna.gfw.web.logging.TraceLoggingInterceptor">
-        <level value="trace" />
+        <level value="info" />
     </logger>
     <logger name="org.terasoluna.gfw.common.exception.ExceptionLogger">
         <level value="info" />
@@ -71,21 +71,21 @@
     </logger>
 
     <logger name="org.hibernate.SQL" additivity="true">
-        <level value="debug" />
+        <level value="info" />
     </logger>
     <logger name="org.hibernate.type">
-        <level value="debug" />
+        <level value="info" />
     </logger>
     <logger name="org.hibernate.engine.transaction">
-        <level value="debug" />
+        <level value="info" />
     </logger>
     <!--  REMOVE THIS LINE IF YOU USE MyBatis3
     <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <level value="debug" />
+        <level value="info" />
     </logger>
           REMOVE THIS LINE IF YOU USE MyBatis3  -->
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="APPLICATION_LOG_FILE" />
     </root>

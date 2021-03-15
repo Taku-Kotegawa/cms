@@ -87,3 +87,6 @@ fabric.properties
 /cms-web/files/
 /cms-domain/lucene/
 /.idea/
+/cms-batch/${file.store.basedir}/
+/cms-batch/log/
+/cms-web/src/main/webapp/.vscode/

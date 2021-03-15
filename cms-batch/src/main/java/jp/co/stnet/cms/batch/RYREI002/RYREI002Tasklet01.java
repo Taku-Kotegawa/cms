@@ -84,6 +84,8 @@ public class RYREI002Tasklet01 implements Tasklet {
 //        String inputFile01 = chunkContext.getStepContext().getJobParameters().get("inputFile").toString();
         //File file = chunkContext.getStepContext().
 
+        String filePath = chunkContext.getStepContext().getJobParameters().get("filePath").toString();
+
         Long jobInstanceId = chunkContext.getStepContext().getJobInstanceId();
         String jobName = chunkContext.getStepContext().getJobName();
         Long jobExecutionId = chunkContext.getStepContext().getStepExecution().getJobExecutionId();
@@ -137,7 +139,7 @@ public class RYREI002Tasklet01 implements Tasklet {
                     // 新規登録
                     Document v = map(csvLine);
                     //ファイルアップロード
-                    File storeFile = new File("files/input/" + csvLine.getAttachedFile());
+                    File storeFile = new File(filePath + "/" + csvLine.getAttachedFile());
                     String mimeType = "";
                     mimeType = MimeTypes.getMimeType(FilenameUtils.getExtension(storeFile.getName()));
                     FileManaged fileManaged = fileManagedSharedService.store(storeFile,mimeType);
@@ -147,7 +149,9 @@ public class RYREI002Tasklet01 implements Tasklet {
 
                     if ( i % 100 == 0 ) {
                         entityManager.flush();
-                        System.out.println(i + ": flush");
+                        entityManager.clear();
+                        log.info(i + ": saved");
+                        System.out.println(i + ": saved");
                     }
 
                     count_insert++;

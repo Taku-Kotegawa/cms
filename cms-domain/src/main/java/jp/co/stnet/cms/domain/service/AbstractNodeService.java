@@ -382,8 +382,6 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
             sql.append(StringUtils.join(orderClauses, ','));
         }
 
-        System.out.println(sql);
-
         // Limit
         TypedQuery typedQuery;
         if (!count) {

@@ -38,7 +38,7 @@ public class BlockHandlerInterceptor implements HandlerInterceptor {
         // (実装は省略)
 
         try {
-            if (modelAndView.hasView()) {
+            if (modelAndView != null && modelAndView.hasView()) {
                 AccessCounter accessCounter = accessCounterService.findByUrl(request.getRequestURI());
                 modelAndView.addObject("accessCount", accessCounter.getCount());
             }

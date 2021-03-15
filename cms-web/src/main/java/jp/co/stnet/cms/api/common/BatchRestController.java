@@ -42,6 +42,7 @@ public class BatchRestController {
 //            Long jobExecutionId = jobOperator.start(jobName, requestResource.getJobParams());
             Long jobExecutionId = jobStarter.start(jobName, requestResource.getJobParams());
             responseResource.setJobExecutionId(jobExecutionId);
+            requestResource.setJobParams(requestResource.getJobParams());
             return ResponseEntity.ok().body(responseResource);
         } catch (NoSuchJobException | JobInstanceAlreadyExistsException | JobParametersInvalidException |
                 ValidationException e) {
