@@ -32,7 +32,7 @@ public class FileManagedDownloadView extends AbstractFileDownloadView {
     @Override
     protected void addResponseHeader(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) {
         FileManaged fileManaged = (FileManaged) model.get("fileManaged");
-        response.setContentType(fileManaged.getFilemime());
+        response.setContentType(fileManaged.getFileMime());
         response.setHeader("Content-Disposition", fileManaged.getAttachmentContentDisposition().toString());
     }
 }

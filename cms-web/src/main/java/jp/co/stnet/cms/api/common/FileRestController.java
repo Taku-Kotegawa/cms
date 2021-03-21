@@ -12,10 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.terasoluna.gfw.common.exception.BusinessException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 
 @Slf4j
 @RestController
@@ -69,14 +67,14 @@ public class FileRestController {
                 }
             }
 
-            FileManaged fileManaged = fileManagedSharedService.store(multipartFile, type, false);
+            FileManaged fileManaged = fileManagedSharedService.store(multipartFile, type);
 
             return UploadFileResult.builder()
-                    .fid(fileManaged.getFid())
+                    .fid(fileManaged.getId())
                     .uuid(fileManaged.getUuid())
                     .name(fileManaged.getOriginalFilename())
-                    .type(fileManaged.getFilemime())
-                    .size(fileManaged.getFilesize())
+                    .type(fileManaged.getFileMime())
+                    .size(fileManaged.getFileSize())
                     .message("Upload Success.")
                     .url(fileManaged.getUuid() + "/download")
 //                    .deleteUrl(request.getContextPath() + "/api/file/" + fileManaged.getUuid() + "/delete")

@@ -12,21 +12,30 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * 変数エンティティ.
+ */
 @Entity
-@Table(indexes = { @Index(name = "IDX_VARIABLE1", columnList = "type,code", unique = true) })
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = false) //falseに設定すること
+@EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
+@Table(indexes = {@Index(name = "IDX_VARIABLE1", columnList = "type,code", unique = true)})
 public class Variable extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
+    /**
+     * 内部ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * ステータス
+     */
     private String status;
 
     /**
@@ -157,6 +166,9 @@ public class Variable extends AbstractEntity<Long> implements Serializable, Stat
      */
     private String file1Uuid;
 
+    /**
+     * ファイルマネージド1
+     */
     @Transient
     private FileManaged file1Managed;
 

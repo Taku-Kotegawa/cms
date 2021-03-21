@@ -37,7 +37,7 @@ public class PageIdxForm implements Serializable {
 
 
     /**
-     * ID
+     * 内部ID
      */
     private Long id;
 

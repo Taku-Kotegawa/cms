@@ -35,7 +35,7 @@ public class DocumentCsvBean implements Serializable {
 
     // TODO 項目のカスタマイズ
 
-    /** ID */
+    /** 内部ID */
     @CsvColumn(name = "ID")
     private Long id;
     /** バージョン */

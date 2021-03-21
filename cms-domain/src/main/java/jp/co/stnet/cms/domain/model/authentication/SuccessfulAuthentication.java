@@ -12,6 +12,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * ログイン認証成功の記録
+ */
 @Entity
 @Data
 @Builder

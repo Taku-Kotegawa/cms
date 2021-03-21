@@ -3,6 +3,9 @@ package jp.co.stnet.cms.domain.model.authentication;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * メールアドレス変更の認証失敗の記録(主キー)
+ */
 public class FailedEmailChangeRequestPK implements Serializable {
 
     /**

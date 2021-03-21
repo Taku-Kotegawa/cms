@@ -4,12 +4,12 @@ import com.github.dozermapper.core.Mapper;
 import jp.co.stnet.cms.app.admin.variable.VariableForm.Create;
 import jp.co.stnet.cms.app.admin.variable.VariableForm.Update;
 import jp.co.stnet.cms.domain.common.Constants;
+import jp.co.stnet.cms.domain.common.CsvUtils;
 import jp.co.stnet.cms.domain.common.StateMap;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesInputDraft;
 import jp.co.stnet.cms.domain.common.datatables.DataTablesOutput;
 import jp.co.stnet.cms.domain.common.datatables.OperationsUtil;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
-import jp.co.stnet.cms.domain.common.scheduled.CsvUtils;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.Status;
 import jp.co.stnet.cms.domain.model.common.Variable;
@@ -674,10 +674,11 @@ public class VariableController {
         if (Constants.OPERATION.SAVE.equals(operation)) {
             fieldState.setInputTrueAll();
 
-            fieldState.setViewTrue("status");
-            fieldState.setDisabledTrue("type");
-            fieldState.setHiddenTrue("type");
-            fieldState.setReadOnlyTrue("code");
+            fieldState
+                    .setViewTrue("status")
+                    .setDisabledTrue("type")
+                    .setHiddenTrue("type")
+                    .setReadOnlyTrue("code");
 
             // スタータスが無効
             if (Status.INVALID.toString().equals(record.getStatus())) {
@@ -695,91 +696,69 @@ public class VariableController {
             if (variableType.getLabelValue1().isEmpty()) {
                 fieldState.setInputFalse("value1");
             }
-            ;
             if (variableType.getLabelValue2().isEmpty()) {
                 fieldState.setInputFalse("value2");
             }
-            ;
             if (variableType.getLabelValue3().isEmpty()) {
                 fieldState.setInputFalse("value3");
             }
-            ;
             if (variableType.getLabelValue4().isEmpty()) {
                 fieldState.setInputFalse("value4");
             }
-            ;
             if (variableType.getLabelValue5().isEmpty()) {
                 fieldState.setInputFalse("value5");
             }
-            ;
             if (variableType.getLabelValue6().isEmpty()) {
                 fieldState.setInputFalse("value6");
             }
-            ;
             if (variableType.getLabelValue7().isEmpty()) {
                 fieldState.setInputFalse("value7");
             }
-            ;
             if (variableType.getLabelValue8().isEmpty()) {
                 fieldState.setInputFalse("value8");
             }
-            ;
             if (variableType.getLabelValue9().isEmpty()) {
                 fieldState.setInputFalse("value9");
             }
-            ;
             if (variableType.getLabelValue10().isEmpty()) {
                 fieldState.setInputFalse("value10");
             }
-            ;
             if (variableType.getLabelValint1().isEmpty()) {
                 fieldState.setInputFalse("valint1");
             }
-            ;
             if (variableType.getLabelValint2().isEmpty()) {
                 fieldState.setInputFalse("valint2");
             }
-            ;
             if (variableType.getLabelValint3().isEmpty()) {
                 fieldState.setInputFalse("valint3");
             }
-            ;
             if (variableType.getLabelValint4().isEmpty()) {
                 fieldState.setInputFalse("valint4");
             }
-            ;
             if (variableType.getLabelValint5().isEmpty()) {
                 fieldState.setInputFalse("valint5");
             }
-            ;
             if (variableType.getLabelDate1().isEmpty()) {
                 fieldState.setInputFalse("date1");
             }
-            ;
             if (variableType.getLabelDate2().isEmpty()) {
                 fieldState.setInputFalse("date2");
             }
-            ;
             if (variableType.getLabelDate3().isEmpty()) {
                 fieldState.setInputFalse("date3");
             }
-            ;
             if (variableType.getLabelDate4().isEmpty()) {
                 fieldState.setInputFalse("date4");
             }
-            ;
             if (variableType.getLabelDate5().isEmpty()) {
                 fieldState.setInputFalse("date5");
             }
-            ;
             if (variableType.getLabelTextarea().isEmpty()) {
                 fieldState.setInputFalse("textarea");
             }
-            ;
             if (variableType.getLabelFile1().isEmpty()) {
                 fieldState.setInputFalse("file1Uuid");
             }
-            ;
         }
 
 //        if (record != null && record.getType() != null) {
@@ -803,91 +782,69 @@ public class VariableController {
                 if (variableType.getLabelValue1().isEmpty()) {
                     fieldState.setViewFalse("value1");
                 }
-                ;
                 if (variableType.getLabelValue2().isEmpty()) {
                     fieldState.setViewFalse("value2");
                 }
-                ;
                 if (variableType.getLabelValue3().isEmpty()) {
                     fieldState.setViewFalse("value3");
                 }
-                ;
                 if (variableType.getLabelValue4().isEmpty()) {
                     fieldState.setViewFalse("value4");
                 }
-                ;
                 if (variableType.getLabelValue5().isEmpty()) {
                     fieldState.setViewFalse("value5");
                 }
-                ;
                 if (variableType.getLabelValue6().isEmpty()) {
                     fieldState.setViewFalse("value6");
                 }
-                ;
                 if (variableType.getLabelValue7().isEmpty()) {
                     fieldState.setViewFalse("value7");
                 }
-                ;
                 if (variableType.getLabelValue8().isEmpty()) {
                     fieldState.setViewFalse("value8");
                 }
-                ;
                 if (variableType.getLabelValue9().isEmpty()) {
                     fieldState.setViewFalse("value9");
                 }
-                ;
                 if (variableType.getLabelValue10().isEmpty()) {
                     fieldState.setViewFalse("value10");
                 }
-                ;
                 if (variableType.getLabelValint1().isEmpty()) {
                     fieldState.setViewFalse("valint1");
                 }
-                ;
                 if (variableType.getLabelValint2().isEmpty()) {
                     fieldState.setViewFalse("valint2");
                 }
-                ;
                 if (variableType.getLabelValint3().isEmpty()) {
                     fieldState.setViewFalse("valint3");
                 }
-                ;
                 if (variableType.getLabelValint4().isEmpty()) {
                     fieldState.setViewFalse("valint4");
                 }
-                ;
                 if (variableType.getLabelValint5().isEmpty()) {
                     fieldState.setViewFalse("valint5");
                 }
-                ;
                 if (variableType.getLabelDate1().isEmpty()) {
                     fieldState.setViewFalse("date1");
                 }
-                ;
                 if (variableType.getLabelDate2().isEmpty()) {
                     fieldState.setViewFalse("date2");
                 }
-                ;
                 if (variableType.getLabelDate3().isEmpty()) {
                     fieldState.setViewFalse("date3");
                 }
-                ;
                 if (variableType.getLabelDate4().isEmpty()) {
                     fieldState.setViewFalse("date4");
                 }
-                ;
                 if (variableType.getLabelDate5().isEmpty()) {
                     fieldState.setViewFalse("date5");
                 }
-                ;
                 if (variableType.getLabelTextarea().isEmpty()) {
                     fieldState.setViewFalse("textarea");
                 }
-                ;
                 if (variableType.getLabelFile1().isEmpty()) {
                     fieldState.setViewFalse("file1Uuid");
                 }
-                ;
             }
 
         }

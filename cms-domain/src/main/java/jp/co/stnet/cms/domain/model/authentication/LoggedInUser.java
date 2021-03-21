@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.List;
 
 
+/**
+ * ログインユーザエンティティ
+ */
 @Getter
 public class LoggedInUser extends User {
 

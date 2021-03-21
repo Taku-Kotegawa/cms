@@ -3,10 +3,14 @@ package jp.co.stnet.cms.domain.common.datatables;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * DataTables一覧画面の操作ボタンをレンダリングするためのユーティリティ
+ */
 @Data
 public class OperationsUtil {
 
     private String baseUrl;
+
     private String BUTTON_CLASS = "btn btn-button";
 
     // 1
@@ -62,6 +66,14 @@ public class OperationsUtil {
     // 13
     private String URL_SWITCH_USER = "impersonate?username={id}";
 
+    // ------ コンストラクタ -----------------------------------------
+
+    /**
+     * 操作ボタンのリンク先の親パスをクラス変数に格納する。<br>
+     * 引数で渡された値の前後に"/"の有無を確認し、無い場合は"/"を付加する。
+     *
+     * @param baseUrl 操作ボタンのリンク先の親パス
+     */
     public OperationsUtil(String baseUrl) {
         if (baseUrl == null) {
             baseUrl = "";
@@ -78,185 +90,356 @@ public class OperationsUtil {
 
     // ------ URL -------------------------------------------------
 
-    // 1
+    /**
+     * 「新規作成」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getCreateUrl() {
         return baseUrl + URL_CREATE;
     }
 
-    // 2
-    public String getEditUrl(String id) {
-        return baseUrl + convId(URL_EDIT, id);
-    }
-
-    // 3
-    public String getDeleteUrl(String id) {
-        return baseUrl + convId(URL_DELETE, id);
-    }
-
-    // 4
+    /**
+     * 「参照」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getViewUrl(String id) {
         return baseUrl + convId(URL_VIEW, id);
     }
 
-    // 5
+    /**
+     * 「編集」ボタンのURLを返す。
+     *
+     * @return URL
+     */
+    public String getEditUrl(String id) {
+        return baseUrl + convId(URL_EDIT, id);
+    }
+
+    /**
+     * 「削除」ボタンのURLを返す。
+     *
+     * @return URL
+     */
+    public String getDeleteUrl(String id) {
+        return baseUrl + convId(URL_DELETE, id);
+    }
+
+    /**
+     * 「複製」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getCopyUrl(String id) {
         return baseUrl + convId(URL_COPY, id);
     }
 
-    // 6
+    /**
+     * 「一覧に戻る」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getListUrl() {
         return baseUrl + URL_LIST;
     }
 
-    // 7
+    /**
+     * 「ロック解除」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getUnlockUrl(String id) {
         return baseUrl + convId(URL_UNLOCK, id);
     }
 
-    // 9
+    // 下書き保存は不要なので作成しない
+
+    /**
+     * 「下書き取消」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getCancelDraftUrl(String id) {
         return baseUrl + convId(URL_CANCEL_DRAFT, id);
     }
 
-    // 10
+    /**
+     * 「無効化」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getInvalidUrl(String id) {
         return baseUrl + convId(URL_INVALID, id);
     }
 
-    // 11
+    /**
+     * 「無効解除」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getValidUrl(String id) {
         return baseUrl + convId(URL_VALID, id);
     }
 
-    // 12
+    /**
+     * 「ダウンロード」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getDownloadUrl(String uuid) {
         return baseUrl + convId(URL_DOWNLOAD, uuid);
     }
 
-    // 13
+    /**
+     * 「スイッチ」ボタンのURLを返す。
+     *
+     * @return URL
+     */
     public String getSwitchUserUrl(String uuid) {
         return baseUrl + convId(URL_SWITCH_USER, uuid);
     }
 
     // ------ Link<A> -----------------------------------------------
-    // 1
+
+    /**
+     * 「新規作成」ボタンのリンクのHTMLを返す。
+     *
+     * @return リンクのHTML
+     */
     public String getCreateLink() {
         return link(getCreateUrl(), LABEL_CREATE);
     }
 
-    // 2
-    public String getEditLink(String id) {
-        return link(getEditUrl(id), LABEL_EDIT);
-    }
-
-    // 3
-    public String getDeleteLink(String id) {
-        return link(getDeleteUrl(id), LABEL_DELETE);
-    }
-
-    // 4
+    /**
+     * 「参照」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
     public String getViewLink(String id) {
         return link(getViewUrl(id), LABEL_VIEW);
     }
 
-    // 5
+    /**
+     * 「編集」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
+    public String getEditLink(String id) {
+        return link(getEditUrl(id), LABEL_EDIT);
+    }
+
+    /**
+     * 「削除」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
+    public String getDeleteLink(String id) {
+        return link(getDeleteUrl(id), LABEL_DELETE);
+    }
+
+    /**
+     * 「複製」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
     public String getCopyLink(String id) {
         return link(getCopyUrl(id), LABEL_COPY);
     }
 
-    // 6
+    /**
+     * 「一覧に戻る」ボタンのリンクのHTMLを返す。
+     *
+     * @return リンクのHTML
+     */
     public String getListLink() {
         return link(getListUrl(), LABEL_LIST);
     }
 
-    // 7
+    /**
+     * 「ロック解除」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
     public String getUnlockLink(String id) {
         return link(getUnlockUrl(id), LABEL_UNLOCK);
     }
 
-    // 9
+    // 「下書き保存」は省略
+
+    /**
+     * 「下書き取消」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
     public String getCancelDraftLink(String id) {
         return link(getCancelDraftUrl(id), LABEL_CANCEL_DRAFT);
     }
 
-    // 10
+    /**
+     * 「無効化」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
     public String getInvalidLink(String id) {
         return link(getInvalidUrl(id), LABEL_INVALID);
     }
 
-    // 11
+    /**
+     * 「無効解除」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
     public String getValidLink(String id) {
         return link(getValidUrl(id), LABEL_VALID);
     }
 
-    // 12
+    /**
+     * 「ダウンロード」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
     public String getDownloadLink(String id) {
         return link(getDownloadUrl(id), LABEL_DOWNLOAD);
     }
 
-    // 13
+    /**
+     * 「スイッチ」ボタンのリンクのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return リンクのHTML
+     */
     public String getSwitchUserLink(String id) {
         return link(getSwitchUserUrl(id), LABEL_SWITCH_USER);
     }
 
-
     // ------ Button Link<A> -----------------------------------------
-    // 1
+
+    /**
+     * 「新規作成」ボタンのHTMLを返す。
+     *
+     * @return ボタンのHTML
+     */
     public String getCreateButton() {
         return link(getCreateUrl(), LABEL_CREATE, BUTTON_CLASS);
     }
 
-    // 2
-    public String getListButton() {
-        return link(getListUrl(), LABEL_LIST, BUTTON_CLASS);
-    }
-
-    // 3
-    public String getEditButton(String id) {
-        return link(getEditUrl(id), LABEL_EDIT, BUTTON_CLASS);
-    }
-
-    // 4
-    public String getDeleteButton(String id) {
-        return link(getDeleteUrl(id), LABEL_DELETE, BUTTON_CLASS);
-    }
-
-    // 5
+    /**
+     * 「参照」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
     public String getViewButton(String id) {
         return link(getViewUrl(id), LABEL_VIEW, BUTTON_CLASS);
     }
 
-    // 6
+    /**
+     * 「編集」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
+    public String getEditButton(String id) {
+        return link(getEditUrl(id), LABEL_EDIT, BUTTON_CLASS);
+    }
+
+    /**
+     * 「削除」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
+    public String getDeleteButton(String id) {
+        return link(getDeleteUrl(id), LABEL_DELETE, BUTTON_CLASS);
+    }
+
+    /**
+     * 「一覧に戻る」ボタンのHTMLを返す。
+     *
+     * @return ボタンのHTML
+     */
+    public String getListButton() {
+        return link(getListUrl(), LABEL_LIST, BUTTON_CLASS);
+    }
+
+    /**
+     * 「複製」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
     public String getCopyButton(String id) {
         return link(getCopyUrl(id), LABEL_COPY, BUTTON_CLASS);
     }
 
-    // 7
+    /**
+     * 「ロック解除」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
     public String getUnlockButton(String id) {
         return link(getUnlockUrl(id), LABEL_UNLOCK, BUTTON_CLASS);
     }
 
-    // 9
+    // 「下書き保存」は省略
+
+    /**
+     * 「下書き取消」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
     public String getCancelDraftButton(String id) {
         return link(getCancelDraftUrl(id), LABEL_CANCEL_DRAFT, BUTTON_CLASS);
     }
 
-    // 10
+    /**
+     * 「無効化」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
     public String getInvalidButton(String id) {
         return link(getInvalidUrl(id), LABEL_INVALID, BUTTON_CLASS);
     }
 
-    // 11
+    /**
+     * 「無効解除」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
     public String getValidButton(String id) {
         return link(getValidUrl(id), LABEL_VALID, BUTTON_CLASS);
     }
 
-    // 12
+    /**
+     * 「ダウンロード」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
     public String getDownloadButton(String id) {
         return link(getDownloadUrl(id), LABEL_DOWNLOAD, BUTTON_CLASS);
     }
 
-    // 13
+    /**
+     * 「スイッチ」ボタンのHTMLを返す。
+     *
+     * @param id データを一位に特定する内部ID番号
+     * @return ボタンのHTML
+     */
     public String getSwitchUserButton(String id) {
         return link(getSwitchUserUrl(id), LABEL_SWITCH_USER, BUTTON_CLASS);
     }

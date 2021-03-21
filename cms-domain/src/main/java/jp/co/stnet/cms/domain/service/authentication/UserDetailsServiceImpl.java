@@ -4,6 +4,7 @@ import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.authentication.PermissionRole;
 import jp.co.stnet.cms.domain.model.authentication.Role;
+import jp.co.stnet.cms.domain.model.common.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +21,7 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class LoggedInUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     AccountSharedService accountSharedService;
@@ -29,11 +30,12 @@ public class LoggedInUserDetailsService implements UserDetailsService {
     PermissionRoleSharedService permissionRoleSharedService;
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             Account account = accountSharedService.findOne(username);
 
-            if (account != null && account.getStatus().equals(false)) {
+            if (account == null || account.getStatus().equals(Status.INVALID.getValue())) {
                 throw new UsernameNotFoundException("user not found");
             }
 

@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+/**
+ * AccountServiceImpl
+ */
 @Slf4j
 @Service
 @Transactional
@@ -61,7 +64,9 @@ public class AccountServiceImpl extends AbstractNodeService<Account, String> imp
 
     @Override
     public Account deleteApiKey(String username) {
-        return null;
+        Account account = findById(username);
+        account.setApiKey(null);
+        return save(account);
     }
 
     @Override

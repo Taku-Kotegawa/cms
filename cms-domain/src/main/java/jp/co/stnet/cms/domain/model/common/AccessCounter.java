@@ -8,6 +8,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * アクセスカウンタエンティティ.
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Entity
 @Data
 @Builder
@@ -19,10 +23,16 @@ import java.io.Serializable;
 @Table(indexes = {@Index(columnList = "URL", unique = true)})
 public class AccessCounter extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
+    /**
+     * 内部ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * ステータス
+     */
     @Column(nullable = false)
     private String status;
 

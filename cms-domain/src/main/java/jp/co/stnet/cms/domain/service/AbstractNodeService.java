@@ -53,7 +53,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     protected AbstractNodeService(Class<T> clazz) {
         this.clazz = clazz;
-        this.fieldMap = BeanUtils.getFileds(this.clazz, null);
+        this.fieldMap = BeanUtils.getFields(this.clazz, null);
         this.elementCollectionFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, ElementCollection.class);
         this.relationFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, OneToOne.class);
         relationFieldsMap.putAll(BeanUtils.getFieldByAnnotation(clazz, null, ManyToOne.class));
@@ -61,7 +61,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
 
     protected AbstractNodeService() {
         this.clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        this.fieldMap = BeanUtils.getFileds(this.clazz, null);
+        this.fieldMap = BeanUtils.getFields(this.clazz, null);
         this.elementCollectionFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, ElementCollection.class);
         this.relationFieldsMap = BeanUtils.getFieldByAnnotation(clazz, null, OneToOne.class);
         relationFieldsMap.putAll(BeanUtils.getFieldByAnnotation(clazz, null, ManyToOne.class));

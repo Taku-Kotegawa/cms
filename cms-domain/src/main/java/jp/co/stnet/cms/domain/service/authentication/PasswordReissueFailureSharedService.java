@@ -15,6 +15,17 @@
  */
 package jp.co.stnet.cms.domain.service.authentication;
 
+/**
+ * PasswordReissueFailureSharedService
+ */
 public interface PasswordReissueFailureSharedService {
+
+    /**
+     * ? パスワード変更認証の失敗を記録する。
+     *
+     * @param username ユーザ名
+     * @param token    トークン
+     */
     void resetFailure(String username, String token);
+
 }

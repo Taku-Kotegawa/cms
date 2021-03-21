@@ -21,6 +21,9 @@ import jp.co.stnet.cms.domain.model.authentication.SuccessfulAuthentication;
 
 import java.util.List;
 
+/**
+ * AuthenticationEventSharedService
+ */
 public interface AuthenticationEventSharedService {
 
     /**
@@ -28,16 +31,14 @@ public interface AuthenticationEventSharedService {
      * @param count
      * @return
      */
-    List<SuccessfulAuthentication> findLatestSuccessEvents(
-            String username, int count);
+    List<SuccessfulAuthentication> findLatestSuccessEvents(String username, int count);
 
     /**
      * @param username
      * @param count
      * @return
      */
-    List<FailedAuthentication> findLatestFailureEvents(
-            String username, int count);
+    List<FailedAuthentication> findLatestFailureEvents(String username, int count);
 
     /**
      * @param username

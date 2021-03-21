@@ -83,7 +83,7 @@ public final class AccountController {
         if (fileManaged != null) {
             headers.setContentType(fileManaged.getMediaType());
             return new ResponseEntity<byte[]>(
-                    fileManagedSharedService.getFile(fileManaged.getFid()),
+                    fileManagedSharedService.getFile(fileManaged.getId()),
                     headers,
                     HttpStatus.OK);
         } else {

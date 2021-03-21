@@ -29,7 +29,7 @@ public class Workflow extends AbstractEntity<Long> implements Serializable {
     }
 
     /**
-     * ID
+     * 内部ID
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

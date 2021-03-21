@@ -12,6 +12,13 @@ import javax.persistence.Lob;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * 一時ファイルエンティティ.
+ * <p>
+ * Terasolunaガイドからの移植のため残していますが、使用は推奨しません。
+ * FileManagedを使ってください。
+ */
+@Deprecated
 @Entity
 @Data
 @Builder
@@ -19,6 +26,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class TempFile implements Serializable {
 
+    /**
+     * 内部ID
+     */
     @Id
     private String id;
 

@@ -85,7 +85,7 @@
 
     <bean id="customUsernamePasswordAuthenticationProvider"
           class="jp.co.stnet.cms.app.common.authentication.CustomUsernamePasswordAuthenticationProvider">
-        <property name="userDetailsService" ref="loggedInUserDetailsService" />
+        <property name="userDetailsService" ref="userDetailsServiceImpl" />
         <property name="passwordEncoder" ref="passwordEncoder" />
     </bean>
 
@@ -207,7 +207,7 @@
     <!-- GET /login/impersonate?username=loginIdOfTheNewUser -->
     <!-- GET /logout/impersonate -->
     <bean id="switchUserProcessingFilter" class="org.springframework.security.web.authentication.switchuser.SwitchUserFilter">
-        <property name="userDetailsService" ref="loggedInUserDetailsService" />
+        <property name="userDetailsService" ref="userDetailsServiceImpl" />
         <property name="switchUserUrl" value="/admin/account/impersonate" />
         <property name="exitUserUrl" value="/logout/impersonate" />
         <property name="targetUrl" value="/" />

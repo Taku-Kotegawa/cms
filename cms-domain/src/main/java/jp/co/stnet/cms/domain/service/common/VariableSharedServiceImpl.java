@@ -18,11 +18,13 @@ public class VariableSharedServiceImpl implements VariableSharedService {
     VariableRepository variableRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Variable> findAllByType(String type) {
         return variableRepository.findByType(type);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Variable> findAllByTypeAndCode(String type, String code) {
         return variableRepository.findAllByTypeAndCode(type, code);
     }

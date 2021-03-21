@@ -3,6 +3,9 @@ package jp.co.stnet.cms.domain.service.authentication;
 import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.service.NodeIService;
 
+/**
+ * Accountサービス.
+ */
 public interface AccountService extends NodeIService<Account, String> {
 
 //    /**
@@ -15,27 +18,34 @@ public interface AccountService extends NodeIService<Account, String> {
 
     /**
      * API KEY を発行、保存する。
-     * @param username
-     * @return
+     *
+     * @param username ユーザ名
+     * @return API KEY
      */
-    public String generateApiKey(String username);
+    String generateApiKey(String username);
 
     /**
      * API KEY を削除する。
-     * @param username
-     * @return
+     *
+     * @param username ユーザ名
+     * @return Account
      */
-    public Account deleteApiKey(String username);
-
+    Account deleteApiKey(String username);
 
     /**
      * API KEY を保存する。
-     * @param username
-     * @return
+     *
+     * @param username ユーザ名
+     * @return Account
      */
-    public Account saveApiKey(String username);
+    Account saveApiKey(String username);
 
-
-    public Account findByApiKey(String apiKey);
+    /**
+     * 　API KEY で検索する。
+     *
+     * @param apiKey API KEY
+     * @return Account
+     */
+    Account findByApiKey(String apiKey);
 
 }

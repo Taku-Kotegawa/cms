@@ -8,6 +8,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * 店所エンティティ
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Entity
 @Data
 @Builder
@@ -19,7 +23,7 @@ import java.io.Serializable;
 public class Shop extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
     /**
-     * ID
+     * 内部ID
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

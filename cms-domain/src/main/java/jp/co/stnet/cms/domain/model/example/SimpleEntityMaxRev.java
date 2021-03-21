@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import java.io.Serializable;
 
+/**
+ * サンプルエンティティ(MaxRev)
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Entity
 @Data
 @Builder

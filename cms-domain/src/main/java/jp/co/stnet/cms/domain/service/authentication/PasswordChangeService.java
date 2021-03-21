@@ -15,11 +15,18 @@
  */
 package jp.co.stnet.cms.domain.service.authentication;
 
+/**
+ * PasswordChangeService
+ */
 public interface PasswordChangeService {
+
     /**
-     * @param username
-     * @param rawPassword
-     * @return
+     * パスワード変更する。
+     *
+     * @param username    ユーザ名
+     * @param rawPassword 新しいパスワード(ハッシュなし)
+     * @return true:パスワード変更できた, false:できなかった
      */
     boolean updatePassword(String username, String rawPassword);
+
 }

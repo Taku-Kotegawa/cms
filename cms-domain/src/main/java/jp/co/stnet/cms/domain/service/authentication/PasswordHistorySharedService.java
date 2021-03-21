@@ -21,26 +21,34 @@ import jp.co.stnet.cms.domain.model.authentication.PasswordHistory;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * PasswordHistorySharedService
+ */
 public interface PasswordHistorySharedService {
 
-
     /**
-     * @param history
-     * @return
+     * 登録する。
+     *
+     * @param history エンティティ
+     * @return 登録した件数
      */
     int insert(PasswordHistory history);
 
     /**
-     * @param username
-     * @param useFrom
-     * @return
+     * 指定したユーザ名と一致し、利用開始日より新しいデータを検索する。
+     *
+     * @param username ユーザ名
+     * @param useFrom 利用開始日
+     * @return ヒットしたパスワード履歴のリスト
      */
     List<PasswordHistory> findHistoriesByUseFrom(String username, LocalDateTime useFrom);
 
     /**
-     * @param username
-     * @param limit
-     * @return
+     * 指定したユーザ名と一致して、登録した新しい方から指定した件数を検索する。
+     *
+     * @param username ユーザ名
+     * @param limit 取得件数
+     * @return ヒットしたデータのリスト
      */
     List<PasswordHistory> findLatest(String username, int limit);
 

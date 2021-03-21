@@ -3,7 +3,6 @@ package jp.co.stnet.cms.domain.common.converter;
 import com.github.dozermapper.core.DozerConverter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**

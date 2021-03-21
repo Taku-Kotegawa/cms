@@ -1,13 +1,10 @@
 package jp.co.stnet.cms.domain.model.authentication;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * パーミッション・ロール　エンティティ(主キー)
+ */
 public class PermissionRolePK implements Serializable {
 
     private Permission permission;

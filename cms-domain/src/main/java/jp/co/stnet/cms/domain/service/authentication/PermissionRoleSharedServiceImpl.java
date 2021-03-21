@@ -31,4 +31,5 @@ public class PermissionRoleSharedServiceImpl implements PermissionRoleSharedServ
 
         return permissionRoleRepository.findByRoleIn(roleList);
     }
+
 }

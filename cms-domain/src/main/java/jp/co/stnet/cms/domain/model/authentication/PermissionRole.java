@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * パーミッション・ロール　エンティティ
+ */
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@Table(indexes = {@Index(columnList = "PERMISSION, ROLE", unique = true)})
 @IdClass(PermissionRolePK.class)
 public class PermissionRole {
 

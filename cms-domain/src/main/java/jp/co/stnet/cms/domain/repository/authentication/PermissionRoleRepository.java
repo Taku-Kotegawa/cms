@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * PermissionRoleリポジトリ.
+ */
 @Repository
 public interface PermissionRoleRepository extends JpaRepository<PermissionRole, PermissionRolePK> {
 
@@ -17,6 +20,12 @@ public interface PermissionRoleRepository extends JpaRepository<PermissionRole, 
 
 //    List<PermissionRole> findAllByPermissionAndRole(Permission permission, Role role);
 
+    /**
+     * 指定したロールのコレクションに合致するデータを検索する。
+     *
+     * @param roles ロールのコレクション
+     * @return ヒットしたデータのリスト
+     */
     List<PermissionRole> findByRoleIn(Collection<Role> roles);
 
 }

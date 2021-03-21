@@ -14,6 +14,9 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * パスワード変更要求
+ */
 @Entity
 @Data
 @Builder

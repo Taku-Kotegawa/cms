@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
+import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
 @Slf4j
 @Service
@@ -43,8 +43,9 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
     private String DEFAULT_FILE_TYPE;
 
     @Override
-    public byte[] getFile(Long fid) {
-        String filePath = STORE_BASEDIR + findById(fid).getUri();
+    @Transactional(readOnly = true)
+    public byte[] getFile(Long id) {
+        String filePath = STORE_BASEDIR + findById(id).getUri();
         try {
             return Files.readAllBytes(Paths.get(filePath));
         } catch (IOException e) {
@@ -53,22 +54,25 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public byte[] getFile(String uuid) {
-        return getFile(findByUuid(uuid).getFid());
+        return getFile(findByUuid(uuid).getId());
     }
 
     @Override
-    public FileManaged findById(Long fid) {
-        return fileManagedRepository.findById(fid).orElse(null);
+    @Transactional(readOnly = true)
+    public FileManaged findById(Long id) {
+        return fileManagedRepository.findById(id).orElse(null);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FileManaged findByUuid(String uuid) {
         return fileManagedRepository.findByUuid(uuid).orElse(null);
     }
 
     @Override
-    public FileManaged store(MultipartFile file, String fileType, Boolean status) throws IOException {
+    public FileManaged store(MultipartFile file, String fileType) throws IOException {
 
         if (file == null) {
             throw new IllegalArgumentException("file must not be null");
@@ -82,7 +86,7 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
         String storeDir = STORE_BASEDIR
                 + File.separator + fileType
-                + File.separator + uuid.substring(0, 1);
+                + File.separator + uuid.charAt(0);
 
         String storeFilePath = storeDir + File.separator + uuid;
 
@@ -106,10 +110,10 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
         FileManaged fileManaged = FileManaged.builder()
                 .uuid(uuid)
-                .filetype(fileType)
+                .fileType(fileType)
                 .originalFilename(file.getOriginalFilename())
-                .filemime(mimeType)
-                .filesize(file.getSize())
+                .fileMime(mimeType)
+                .fileSize(file.getSize())
                 .status(FileStatus.TEMPORARY.getCodeValue())
                 .uri(storeFilePath.substring(STORE_BASEDIR.length()).replace('\\', '/'))
                 .build();
@@ -140,7 +144,7 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
         String storeDir = STORE_BASEDIR
                 + File.separator + fileType
-                + File.separator + uuid.substring(0, 1);
+                + File.separator + uuid.charAt(0);
 
         String storeFilePath = storeDir + File.separator + uuid;
 
@@ -166,10 +170,10 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
             FileManaged fileManaged = FileManaged.builder()
                     .uuid(uuid)
-                    .filetype(fileType)
+                    .fileType(fileType)
                     .originalFilename(file.getName())
-                    .filemime(mimeType)
-                    .filesize(file.length())
+                    .fileMime(mimeType)
+                    .fileSize(file.length())
                     .status(FileStatus.TEMPORARY.getCodeValue())
                     .uri(storeFilePath.substring(STORE_BASEDIR.length()).replace('\\', '/'))
                     .build();
@@ -191,20 +195,29 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
     }
 
     @Override
-    public void delete(Long fid) {
-        FileManaged fileManaged = fileManagedRepository.findById(fid).orElse(null);
+    public void permanent(String uuid) {
+        FileManaged file = fileManagedRepository.findByUuidAndStatus(uuid, FileStatus.TEMPORARY.getCodeValue()).orElse(null);
+        if (file != null) {
+            file.setStatus(FileStatus.PERMANENT.getCodeValue());
+            fileManagedRepository.save(file);
+        }
+    }
+
+    @Override
+    public void delete(Long id) {
+        FileManaged fileManaged = fileManagedRepository.findById(id).orElse(null);
         if (fileManaged != null) {
             // 物理ファイル削除
             deleteFile(fileManaged.getUri());
         }
-        fileManagedRepository.deleteById(fid);
+        fileManagedRepository.deleteById(id);
     }
 
     @Override
     public void delete(String uuid) {
         FileManaged file = fileManagedRepository.findByUuid(uuid).orElse(null);
         if (file != null) {
-            delete(file.getFid());
+            delete(file.getId());
         }
     }
 
@@ -212,7 +225,7 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
     public void cleanup(LocalDateTime deleteTo) {
         List<FileManaged> files = fileManagedRepository.findAllByCreatedDateLessThanAndStatus(deleteTo, FileStatus.TEMPORARY.getCodeValue());
         for (FileManaged file : files) {
-            delete(file.getFid());
+            delete(file.getId());
         }
 
         //TODO 空のフォルダを削除
@@ -220,23 +233,16 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getFileStoreBaseDir() {
         return STORE_BASEDIR + "/";
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getContent(String uuid) throws IOException, TikaException {
         Tika tika = new Tika();
         return tika.parseToString(new FileInputStream(new File(STORE_BASEDIR + findByUuid(uuid).getUri())));
-    }
-
-    @Override
-    public void permanent(String uuid) {
-        FileManaged file = fileManagedRepository.findByUuidAndStatus(uuid, FileStatus.TEMPORARY.getCodeValue()).orElse(null);
-        if (file != null) {
-            file.setStatus(FileStatus.PERMANENT.getCodeValue());
-            fileManagedRepository.save(file);
-        }
     }
 
     @Override
@@ -250,16 +256,16 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
         String uuid = UUID.randomUUID().toString();
 
         String storeDir = STORE_BASEDIR
-                + File.separator + fileManaged.getFiletype()
-                + File.separator + uuid.substring(0, 1);
+                + File.separator + fileManaged.getFileType()
+                + File.separator + uuid.charAt(0);
 
         String storeFilePath = storeDir + File.separator + uuid;
 
         mkdirs(storeDir);
 
         String sourceDir = STORE_BASEDIR
-                + File.separator + fileManaged.getFiletype()
-                + File.separator + sourceUuid.substring(0, 1);
+                + File.separator + fileManaged.getFileType()
+                + File.separator + sourceUuid.charAt(0);
 
         String sourceFilePath = sourceDir + File.separator + sourceUuid;
 
@@ -275,10 +281,10 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
         return fileManagedRepository.save(
                 FileManaged.builder()
                         .uuid(uuid)
-                        .filetype(fileManaged.getFiletype())
+                        .fileType(fileManaged.getFileType())
                         .originalFilename(fileManaged.getOriginalFilename())
-                        .filemime(fileManaged.getFilemime())
-                        .filesize(fileManaged.getFilesize())
+                        .fileMime(fileManaged.getFileMime())
+                        .fileSize(fileManaged.getFileSize())
                         .status(FileStatus.TEMPORARY.getCodeValue())
                         .uri(storeFilePath.substring(STORE_BASEDIR.length()).replace('\\', '/'))
                         .build());
@@ -287,7 +293,6 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
     @Override
     public void deleteFile(String uri) {
-
         if (uri != null) {
             File file = new File(STORE_BASEDIR + uri.replace('/', '\\'));
             file.delete();
@@ -303,7 +308,6 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
     }
 
     private String escapeContent(String rawContent) {
-
         rawContent = rawContent.replaceAll("[　]+", " ")
                 .replaceAll("[ ]+", " ")
                 .replaceAll("[\t]+", " ")

@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * DataTables(Server-Side)からのリクエストを格納するクラス(リクエスト全体)
+ */
 @Data
 public class DataTablesInput {
 

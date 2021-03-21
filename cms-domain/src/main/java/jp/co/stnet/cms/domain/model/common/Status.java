@@ -1,7 +1,14 @@
 package jp.co.stnet.cms.domain.model.common;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.terasoluna.gfw.common.codelist.EnumCodeList;
 
+/**
+ * ステータス.
+ */
+@AllArgsConstructor
+@Getter
 public enum Status implements EnumCodeList.CodeListItem {
 
     DRAFT("0", "下書き"),
@@ -10,11 +17,6 @@ public enum Status implements EnumCodeList.CodeListItem {
 
     private final String value;
     private final String label;
-
-    Status(String value, String label) {
-        this.value = value;
-        this.label = label;
-    }
 
     @Override
     public String getCodeLabel() {
@@ -26,7 +28,11 @@ public enum Status implements EnumCodeList.CodeListItem {
         return value;
     }
 
-
+    /**
+     * valueでEnumを取得
+     * @param value 検索したいvalue
+     * @return Enum, 指定したvalueが存在しない場合はnull.
+     */
     public static Status getByValue(String value) {
         for (Status status : Status.values()) {
             if (status.getCodeValue().equals(value)) {

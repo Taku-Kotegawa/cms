@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import java.io.Serializable;
 
+/**
+ * SelectMexRevエンティティ.(複数の値をフィールドをStringに格納するサンプル)
+ */
 @Entity
 @Data
 @Builder

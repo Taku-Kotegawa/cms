@@ -15,38 +15,48 @@
  */
 package jp.co.stnet.cms.domain.service.authentication;
 
-
 import jp.co.stnet.cms.domain.model.authentication.PasswordReissueInfo;
 
 import java.time.LocalDateTime;
 
+/**
+ * PasswordReissueService
+ */
 public interface PasswordReissueService {
 
     /**
-     * @param username
+     * 新しいパスワード再発行メールを送信する。
+     *
+     * @param username ユーザ名
      * @return
      */
     String createAndSendReissueInfo(String username);
 
     /**
-     * @param token
+     * トークンで検索する。
+     *
+     * @param token 　トークン
      * @return
      */
     PasswordReissueInfo findOne(String token);
 
     /**
-     * @param username
-     * @param token
-     * @param secret
-     * @param rawPassword
-     * @return
+     * パスワードを変更する。
+     *
+     * @param username    ユーザ名
+     * @param token       トークン
+     * @param secret      シークレット
+     * @param rawPassword 新しいパスワード(ハッシュなし)
+     * @return true:成功, false:失敗
      */
     boolean resetPassword(String username, String token, String secret,
                           String rawPassword);
 
     /**
-     * @param date
-     * @return
+     * 指定した日付より古いパスワード再発行要求(passwordReissueInfo)と認証失敗の記録(failedPasswordReissue)を削除する。
+     *
+     * @param date 削除する日付(これ以前)
+     * @return true:成功, false:失敗
      */
     boolean removeExpired(LocalDateTime date);
 }

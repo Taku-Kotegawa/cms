@@ -1,12 +1,13 @@
 package jp.co.stnet.cms.domain.common;
 
+/**
+ * 共通定数
+ */
 public final class Constants {
 
-//    public static final class ROLE {
-//        public static final String ADMIN = "ADMIN";
-//        public static final String USER = "USER";
-//    }
-
+    /**
+     * 操作
+     */
     public static final class OPERATION {
         public static final String CREATE = "create";
         public static final String SAVE = "save";
@@ -31,6 +32,9 @@ public final class Constants {
         public static final String SAVE_APIKEY = "saveApiKey";
     }
 
+    /**
+     * ボタン
+     */
     public static final class BUTTON {
         public static final String GOTOLIST = "gotoList";
         public static final String GOTOUPDATE = "gotoUpdate";
@@ -59,13 +63,23 @@ public final class Constants {
         public static final String SAVE_APIKEY = "saveApiKey";
     }
 
+    /**
+     * CSV関連
+     */
     public static final class CSV {
         public static final Integer MAX_LENGTH = 99999;
     }
 
+    /**
+     * Excel関連
+     */
     public static final class EXCEL {
         public static final Integer MAX_LENGTH = 9999;
     }
+
+    /**
+     * メッセージ(プロパティファイルに記載できないもの)
+     */
     public static final class MSG {
         public static final String VALIDATION_ERROR_STOP = "入力チェックでエラーを検出したため、処理を中断しました。";
         public static final String DB_ACCESS_ERROR_STOP = "データベース更新時にエラーが発生したため、処理を中断しました。";

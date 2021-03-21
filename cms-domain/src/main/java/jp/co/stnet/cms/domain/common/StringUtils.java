@@ -5,6 +5,9 @@ import com.google.common.base.CaseFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 文字列操作のユーティリティ
+ */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     /**

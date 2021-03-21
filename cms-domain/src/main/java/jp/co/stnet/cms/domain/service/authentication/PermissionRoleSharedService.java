@@ -1,12 +1,21 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
 import jp.co.stnet.cms.domain.model.authentication.PermissionRole;
-import jp.co.stnet.cms.domain.model.authentication.Role;
 
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * PermissionRoleSharedService
+ */
 public interface PermissionRoleSharedService {
 
+    /**
+     * ロールのコレクションで検索する。
+     *
+     * @param roleIds ロールのコレクション
+     * @return ヒットしたデータのリスト
+     */
     List<PermissionRole> findAllByRole(Collection<String> roleIds);
+
 }

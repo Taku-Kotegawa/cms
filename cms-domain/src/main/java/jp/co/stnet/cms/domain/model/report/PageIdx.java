@@ -16,6 +16,10 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * ページ索引エンティティ.
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Indexed
 @Entity
 @Data
@@ -28,7 +32,7 @@ import java.time.LocalDate;
 public class PageIdx extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
     /**
-     * ID
+     * 内部ID
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

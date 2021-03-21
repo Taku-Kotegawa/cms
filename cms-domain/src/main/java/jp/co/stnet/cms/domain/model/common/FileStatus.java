@@ -1,7 +1,14 @@
 package jp.co.stnet.cms.domain.model.common;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.terasoluna.gfw.common.codelist.EnumCodeList;
 
+/**
+ * ファイルステータス
+ */
+@AllArgsConstructor
+@Getter
 public enum FileStatus implements EnumCodeList.CodeListItem {
 
     TEMPORARY("0", "一時"),
@@ -10,9 +17,9 @@ public enum FileStatus implements EnumCodeList.CodeListItem {
     private final String value;
     private final String label;
 
-    FileStatus(String value, String label) {
-        this.value = value;
-        this.label = label;
+    @Override
+    public String getCodeValue() {
+        return value;
     }
 
     @Override
@@ -20,8 +27,4 @@ public enum FileStatus implements EnumCodeList.CodeListItem {
         return label;
     }
 
-    @Override
-    public String getCodeValue() {
-        return value;
-    }
 }

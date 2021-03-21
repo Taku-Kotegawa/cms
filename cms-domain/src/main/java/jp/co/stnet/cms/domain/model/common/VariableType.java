@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.terasoluna.gfw.common.codelist.EnumCodeList;
 
+/**
+ * 変数タイプ.
+ * <p>
+ * 変数のタイプと利用するフィールドのラベルを設定する。使わないフィールドのラベルは設定しない(空白文字)
+ */
 @AllArgsConstructor
 @Getter
 public enum VariableType implements EnumCodeList.CodeListItem {
@@ -13,7 +18,6 @@ public enum VariableType implements EnumCodeList.CodeListItem {
     MESSAGE_TEMPLETE("メッセージテンプレート","タイトル","","","","","","","","","","","","","","","", "", "","","","本文","");
 
     private final String label;
-
     private final String labelValue1;
     private final String labelValue2;
     private final String labelValue3;
@@ -36,15 +40,6 @@ public enum VariableType implements EnumCodeList.CodeListItem {
     private final String labelValint5;
     private final String labelTextarea;
     private final String labelFile1;
-
-//    public static VariableType getByValue(String value) {
-//        for (VariableType type : VariableType.values()) {
-//            if (type.getCodeValue().equals(value)) {
-//                return type;
-//            }
-//        }
-//        return null;
-//    }
 
     @Override
     public String getCodeLabel() {

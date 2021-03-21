@@ -9,8 +9,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * Selectエンティティ.(複数の値をフィールドをStringに格納するサンプル)
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Entity
-@Table(name = "SelectTable")
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,10 +21,11 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "SelectTable")
 public class Select extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
     /**
-     * ID
+     * 内部ID
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

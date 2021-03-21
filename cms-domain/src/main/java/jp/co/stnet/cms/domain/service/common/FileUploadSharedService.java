@@ -19,6 +19,7 @@ import jp.co.stnet.cms.domain.model.common.TempFile;
 
 import java.time.LocalDateTime;
 
+@Deprecated
 public interface FileUploadSharedService {
 
     /**

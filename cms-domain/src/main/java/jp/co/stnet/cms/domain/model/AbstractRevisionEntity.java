@@ -6,30 +6,53 @@ import lombok.Data;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * リビジョン管理用の抽象エンティティ.
+ */
+@SuppressWarnings("LombokDataInspection")
 @Data
 @MappedSuperclass
 public abstract class AbstractRevisionEntity {
 
+    /**
+     * リビジョンID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rid;
 
+    /**
+     * リビジョンタイプ(1:新規,2:更新)
+     */
     @Column(nullable = false)
     private Integer revType;
 
+    /**
+     * バージョン(排他制御用)
+     */
     @Column(nullable = false)
     private Long version;
 
+    /**
+     * 作成者(コピー)
+     */
     private String createdBy;
 
+    /**
+     * 最終更新者(コピー)
+     */
     private String lastModifiedBy;
 
-    @JsonFormat(pattern="yyyy/MM/dd HH:mm:ss")
+    /**
+     * 作成日時(コピー)
+     */
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private LocalDateTime createdDate;
 
-    @JsonFormat(pattern="yyyy/MM/dd HH:mm:ss")
+    /**
+     * 最終更新日時(コピー)
+     */
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private LocalDateTime lastModifiedDate;
 
-    @Column(nullable = false)
-    private String status;
 }

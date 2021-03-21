@@ -34,7 +34,7 @@ public class AccessCounterForm implements Serializable {
 
 
     /**
-     * ID
+     * 内部ID
      */
     private Long id;
 

@@ -17,4 +17,5 @@ public class UnlockServiceImpl implements jp.co.stnet.cms.domain.service.authent
     public void unlock(String username) {
         authenticationEventSharedService.deleteFailureEventByUsername(username);
     }
+
 }

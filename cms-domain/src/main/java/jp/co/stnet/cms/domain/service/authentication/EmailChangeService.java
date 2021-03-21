@@ -5,6 +5,9 @@ import jp.co.stnet.cms.domain.model.authentication.FailedEmailChangeRequest;
 
 import java.time.LocalDateTime;
 
+/**
+ * EmailChangeService
+ */
 public interface EmailChangeService {
 
     /**
@@ -19,16 +22,16 @@ public interface EmailChangeService {
     /**
      * 保存しているメール変更要求をトークンで取り出す
      *
-     * @param token
-     * @return
+     * @param token トークン
+     * @return EmailChangeRequest
      */
     EmailChangeRequest findOne(String token);
 
     /**
      * ユーザアカウントのメールアドレスを変更する。(トークンチェックあり)
      *
-     * @param token
-     * @param secret
+     * @param token  トークン
+     * @param secret シークレット
      * @Exception トークンが存在しない、トークンの有効期限が超過
      */
     void changeEmail(String token, String secret);
@@ -43,8 +46,9 @@ public interface EmailChangeService {
 
     /**
      * メール変更要求に対する暗証番号の認証に失敗した記録を保損する。
-     * @param token
-     * @return
+     *
+     * @param token トークン
+     * @return FailedEmailChangeRequest
      */
     FailedEmailChangeRequest fail(String token);
 

@@ -8,8 +8,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
+/**
+ * ユーザアカウントエンティティ
+ */
 @Entity
 @Data
 @Builder
@@ -18,6 +20,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
+@Table(indexes = {@Index(columnList = "apiKey", unique = true)})
 public class Account extends AbstractEntity<String> implements Serializable, StatusInterface {
 
     /**
@@ -82,7 +85,6 @@ public class Account extends AbstractEntity<String> implements Serializable, Sta
      * ログイン許可IPアドレス
      */
     private String allowedIp;
-
 
     @Override
     public String getId() {

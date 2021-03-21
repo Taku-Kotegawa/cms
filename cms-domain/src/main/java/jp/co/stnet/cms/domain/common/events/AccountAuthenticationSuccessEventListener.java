@@ -18,25 +18,24 @@ package jp.co.stnet.cms.domain.common.events;
 
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.service.authentication.AuthenticationEventSharedService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-
+/**
+ * 認証成功を記録するイベントリスナー
+ */
 @Component
 public class AccountAuthenticationSuccessEventListener {
 
-    @Inject
+    @Autowired
     AuthenticationEventSharedService authenticationEventSharedService;
 
     @EventListener(AuthenticationSuccessEvent.class)
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
-        LoggedInUser details = (LoggedInUser) event.getAuthentication()
-                .getPrincipal();
-
-        authenticationEventSharedService.authenticationSuccess(details
-                .getUsername());
+        LoggedInUser details = (LoggedInUser) event.getAuthentication().getPrincipal();
+        authenticationEventSharedService.authenticationSuccess(details.getUsername());
     }
 
 }

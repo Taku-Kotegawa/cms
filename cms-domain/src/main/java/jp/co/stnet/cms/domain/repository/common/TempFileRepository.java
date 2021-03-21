@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 
+@Deprecated
 @Repository
 public interface TempFileRepository extends JpaRepository<TempFile, String> {
 

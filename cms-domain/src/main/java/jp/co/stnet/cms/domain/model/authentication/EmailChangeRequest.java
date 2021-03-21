@@ -11,6 +11,9 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
+/**
+ * メールアドレス変更要求
+ */
 @Entity
 @Data
 @Builder

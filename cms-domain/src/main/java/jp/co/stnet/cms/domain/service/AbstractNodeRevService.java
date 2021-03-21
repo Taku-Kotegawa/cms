@@ -80,6 +80,7 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
         super.delete(id);
     }
 
+    @Transactional(readOnly = true)
     public U findMaxRevById(ID id) {
         V max = entityManager.find(maxRevClass, id);
         if (max == null) {
@@ -95,6 +96,8 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
         entityManager.merge(max);
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public Page<U> findMaxRevPageByInput(DataTablesInput input) {
         return new PageImpl<U>(
                 getJPQLQuery(input, false, revClass, maxRevClass).getResultList(),
@@ -102,10 +105,14 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
                 (Long) getJPQLQuery(input, true, revClass, maxRevClass).getSingleResult());
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public U findByIdLatestRev(ID id) {
         return getRevisionRepository().findByIdLatestRev(id);
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public U findByRid(Long rid) {
         return getRevisionRepository().findById(rid).orElse(null);
     }

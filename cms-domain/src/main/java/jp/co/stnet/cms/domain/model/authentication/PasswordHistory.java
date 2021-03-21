@@ -12,6 +12,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * パスワード履歴エンティティ
+ */
 @Entity
 @Data
 @Builder

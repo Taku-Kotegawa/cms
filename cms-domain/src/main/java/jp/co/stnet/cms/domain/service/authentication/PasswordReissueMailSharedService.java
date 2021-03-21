@@ -15,7 +15,16 @@
  */
 package jp.co.stnet.cms.domain.service.authentication;
 
+/**
+ * PasswordReissueMailSharedService
+ */
 public interface PasswordReissueMailSharedService {
+
+    /**
+     * パスワード再発行通知メールを送信する。
+     * @param to 送り先(メールアドレス)
+     * @param text メッセージ(テキスト)
+     */
     void send(String to, String text);
 
 }

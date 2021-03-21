@@ -15,10 +15,16 @@
  */
 package jp.co.stnet.cms.domain.service.authentication;
 
+/**
+ * UnlockService
+ */
 public interface UnlockService {
+
     /**
+     * アカウントロックを解除する。
      *
-     * @param username
+     * @param username ユーザ名
      */
     void unlock(String username);
+
 }

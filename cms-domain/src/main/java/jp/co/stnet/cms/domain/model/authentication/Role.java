@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.terasoluna.gfw.common.codelist.EnumCodeList;
 
+/**
+ * ロール Enum
+ */
 @AllArgsConstructor
 @Getter
 public enum Role implements EnumCodeList.CodeListItem {

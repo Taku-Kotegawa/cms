@@ -5,6 +5,9 @@ import org.springframework.http.MediaType;
 import java.util.HashMap;
 import java.util.Locale;
 
+/**
+ * MimeType
+ */
 @SuppressWarnings("serial")
 public class MimeTypes {
 
@@ -577,6 +580,12 @@ public class MimeTypes {
         };
     }
 
+    /**
+     * 拡張子からMIME TYPE(文字列)を取得。
+     *
+     * @param extension 拡張子
+     * @return MIME TYPE(文字列)
+     */
     public static String getMimeType(String extension) {
         if (extension == null) {
             return null;
@@ -587,10 +596,15 @@ public class MimeTypes {
         }
 
         String mime = mimeTypes.get(extension);
-
         return mime != null ? mime : "application/octet-stream";
     }
 
+    /**
+     * 拡張子からMIME TYPE(MediaType)を取得
+     *
+     * @param extension 拡張子
+     * @return MIME TYPE(MediaType)
+     */
     public static MediaType getMediaType(String extension) {
         return MediaType.parseMediaType(getMimeType(extension));
     }

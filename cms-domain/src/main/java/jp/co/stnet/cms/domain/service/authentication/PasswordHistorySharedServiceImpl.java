@@ -26,17 +26,16 @@ public class PasswordHistorySharedServiceImpl implements jp.co.stnet.cms.domain.
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PasswordHistory> findHistoriesByUseFrom(String username, LocalDateTime useFrom) {
-//        return passwordHistoryRepository.findByUsernameAndUsefromGreaterThanEqualSortByUsefromDesc(username, useFrom);
-
-      return passwordHistoryRepository.findByUsernameAndUseFromAfter(username, useFrom);
+        return passwordHistoryRepository.findByUsernameAndUseFromAfter(username, useFrom);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PasswordHistory> findLatest(String username, int limit) {
         PasswordHistory prob = PasswordHistory.builder().username(username).build();
         Pageable pageable = PageRequest.of(0, limit, Sort.Direction.DESC, "useFrom");
-
         Page<PasswordHistory> page = passwordHistoryRepository.findAll(Example.of(prob), pageable);
         return page.getContent();
     }

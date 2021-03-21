@@ -2,7 +2,6 @@ package jp.co.stnet.cms.domain.model.common;
 
 import jp.co.stnet.cms.domain.model.AbstractEntity;
 import lombok.*;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.http.ContentDisposition;
@@ -13,6 +12,13 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+/**
+ * ファイルマネージドエンティティ.
+ *
+ * <p>
+ * 保存するファイルの属性を管理する。
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Entity
 @Data
 @Builder
@@ -21,39 +27,61 @@ import java.net.URLEncoder;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
-@Table(indexes = {@Index(columnList = "uuid, status")})
+@Table(indexes = {@Index(columnList = "uuid", unique = true)})
 public class FileManaged extends AbstractEntity<Long> implements Serializable {
 
+    /**
+     * 内部ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fid;
+    private Long id;
 
+    /**
+     * ファイルを一意に特定する番号。
+     */
     private String uuid;
 
+    /**
+     * ファイル名
+     */
     @KeywordField
     private String originalFilename;
 
+    /**
+     * uri
+     */
     @Column(unique = true)
     private String uri;
 
-    private String filemime;
-
-    private Long filesize;
-
-    private String filetype;
+    /**
+     * MIME TYPE
+     */
+    private String fileMime;
 
     /**
+     * ファイルサイズ
+     */
+    private Long fileSize;
+
+    /**
+     * ファイルの種類
+     */
+    private String fileType;
+
+    /**
+     * ステータス
      * false: temporary(0), true: permanent(1)
      */
     @Column(columnDefinition = "varchar(255) default '0'")
     private String status;
 
     /**
-     * @return
+     * @return MediaType
      */
     public MediaType getMediaType() {
-        if (filemime != null) {
-            String[] mimeArray = filemime.split("/");
+        if (fileMime != null) {
+            String[] mimeArray = fileMime.split("/");
             return new MediaType(mimeArray[0], mimeArray[1]);
         } else {
             return null;
@@ -61,11 +89,11 @@ public class FileManaged extends AbstractEntity<Long> implements Serializable {
     }
 
     /**
-     * @return
+     * @return ContentDisposition
      */
     public ContentDisposition getAttachmentContentDisposition() {
         if (originalFilename != null) {
-            String encodedFilename = "";
+            String encodedFilename;
             try {
                 encodedFilename = URLEncoder.encode(originalFilename, "UTF-8");
             } catch (
@@ -82,18 +110,18 @@ public class FileManaged extends AbstractEntity<Long> implements Serializable {
         }
     }
 
+    /**
+     * ダウンロード時にタブで開くかファイル保存か
+     *
+     * @return true:タブで開く, false:ファイル保存
+     */
     private boolean isOpenWindows() {
-        return MediaType.APPLICATION_PDF_VALUE.equals(filemime);
-    }
-
-    @Override
-    public Long getId() {
-        return fid;
+        return MediaType.APPLICATION_PDF_VALUE.equals(fileMime);
     }
 
     @Override
     public boolean isNew() {
-        return fid == null;
+        return getVersion() == null;
     }
 
 }

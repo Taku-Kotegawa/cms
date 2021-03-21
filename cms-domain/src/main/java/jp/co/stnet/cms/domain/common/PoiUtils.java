@@ -3,6 +3,9 @@ package jp.co.stnet.cms.domain.common;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+/**
+ * Apache POI ユーティリティクラス
+ */
 public class PoiUtils {
 
     /**
@@ -10,8 +13,8 @@ public class PoiUtils {
      *
      * @param workbook          ワークブック
      * @param worksheet         ワークシート
-     * @param sourceRowNum      コピー元の行インデックス
-     * @param destinationRowNum コピー先の行インデックス
+     * @param sourceRowNum      コピー元の行インデックス(0から始まる整数)
+     * @param destinationRowNum コピー先の行インデックス(0から始まる整数)
      */
     public static void copyRow(Workbook workbook, Sheet worksheet, int sourceRowNum, int destinationRowNum) {
         Row newRow = worksheet.getRow(destinationRowNum);

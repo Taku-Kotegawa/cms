@@ -12,6 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import java.time.LocalDateTime;
 
+/**
+ * メールアドレス変更の認証失敗の記録
+ */
 @Entity
 @Data
 @Builder

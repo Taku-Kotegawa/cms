@@ -28,6 +28,5 @@ public class VariableServiceImpl extends AbstractNodeService<Variable, Long> imp
 
         // TODO 権限チェックの追加
         return true;
-
     }
 }

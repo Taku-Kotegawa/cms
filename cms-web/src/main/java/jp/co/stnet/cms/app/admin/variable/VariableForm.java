@@ -33,7 +33,7 @@ public class VariableForm implements Serializable {
     private static final long serialVersionUID = 2601462768185636865L;
 
     /**
-     * ID
+     * 内部ID
      */
     private Long id;
 

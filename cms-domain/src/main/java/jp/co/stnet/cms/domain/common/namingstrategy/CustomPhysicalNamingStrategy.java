@@ -4,6 +4,9 @@ import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
+/**
+ * Spring Data JPA モデルからテーブルを生成する際のカスタマイズ命名規則(大文字のスネークケース)
+ */
 public class CustomPhysicalNamingStrategy implements PhysicalNamingStrategy {
     
     private Identifier convertToSnakeCase(final Identifier identifier) {

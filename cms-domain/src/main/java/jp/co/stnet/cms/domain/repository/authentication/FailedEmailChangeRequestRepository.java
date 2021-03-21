@@ -2,20 +2,39 @@ package jp.co.stnet.cms.domain.repository.authentication;
 
 import jp.co.stnet.cms.domain.model.authentication.FailedEmailChangeRequest;
 import jp.co.stnet.cms.domain.model.authentication.FailedEmailChangeRequestPK;
-import jp.co.stnet.cms.domain.model.authentication.FailedPasswordReissue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+/**
+ * FailedEmailChangeRequestのリポジトリ.
+ */
 @Repository
 public interface FailedEmailChangeRequestRepository extends JpaRepository<FailedEmailChangeRequest, FailedEmailChangeRequestPK> {
 
-    Long countByToken(String token);
+    /**
+     * トークンで件数を数える。
+     *
+     * @param token トークン
+     * @return ヒットした件数
+     */
+    long countByToken(String token);
 
-    List<FailedEmailChangeRequest> deleteByAttemptDateLessThan(LocalDateTime attemptDate);
+    /**
+     * 指定した日付以前のデータを削除する。
+     *
+     * @param attemptDate 日付
+     * @return 削除した件数
+     */
+    long deleteByAttemptDateLessThan(LocalDateTime attemptDate);
 
-    List<FailedEmailChangeRequest> deleteByToken(String token);
+    /**
+     * トークンで削除する。
+     *
+     * @param token トークン
+     * @return 削除した件数
+     */
+    long deleteByToken(String token);
 
 }

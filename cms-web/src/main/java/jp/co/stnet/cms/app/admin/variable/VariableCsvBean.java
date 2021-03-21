@@ -16,7 +16,7 @@ import java.util.Date;
 public class VariableCsvBean implements Serializable {
 
     /**
-     * ID
+     * 内部ID
      */
     @CsvColumn(name = "ID", position = 0)
     private Long id;

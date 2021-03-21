@@ -18,9 +18,11 @@ public class IndexSharedServiceImpl implements IndexSharedService {
     @PersistenceContext
     EntityManager entityManager;
 
+    private final int BATCH_SIZE_TO_LOAD_OBJECTS = 25;
+
+    private final int THREADS_TO_LOAD_OBJECTS = 7;
 
     @Override
-    @Transactional(readOnly = true)
     public void reindexing(String entityName) throws InterruptedException, ClassNotFoundException {
 
         try {
@@ -28,8 +30,8 @@ public class IndexSharedServiceImpl implements IndexSharedService {
             SearchSession searchSession = Search.session(entityManager);
             MassIndexer indexer = searchSession.massIndexer(clazz)
                     .idFetchSize(Integer.MIN_VALUE)
-                    .batchSizeToLoadObjects(25)
-                    .threadsToLoadObjects(7);
+                    .batchSizeToLoadObjects(BATCH_SIZE_TO_LOAD_OBJECTS)
+                    .threadsToLoadObjects(THREADS_TO_LOAD_OBJECTS);
             indexer.start();
 
         } catch (ClassNotFoundException e) {
@@ -39,17 +41,15 @@ public class IndexSharedServiceImpl implements IndexSharedService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public boolean reindexingSync(String entityName) throws InterruptedException, ClassNotFoundException {
 
         try {
-
             Class<?> clazz = Class.forName(entityName);
             SearchSession searchSession = Search.session(entityManager);
             MassIndexer indexer = searchSession.massIndexer(clazz)
                     .idFetchSize(Integer.MIN_VALUE)
-                    .batchSizeToLoadObjects(25)
-                    .threadsToLoadObjects(7);
+                    .batchSizeToLoadObjects(BATCH_SIZE_TO_LOAD_OBJECTS)
+                    .threadsToLoadObjects(THREADS_TO_LOAD_OBJECTS);
             indexer.startAndWait();
 
         } catch (ClassNotFoundException e) {
@@ -59,6 +59,5 @@ public class IndexSharedServiceImpl implements IndexSharedService {
 
         return true;
     }
-
 
 }

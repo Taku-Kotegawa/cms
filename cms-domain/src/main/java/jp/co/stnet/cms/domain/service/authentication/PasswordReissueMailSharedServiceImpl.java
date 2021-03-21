@@ -1,12 +1,12 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 @Slf4j
@@ -14,10 +14,10 @@ import javax.inject.Named;
 @Transactional
 public class PasswordReissueMailSharedServiceImpl implements PasswordReissueMailSharedService {
 
-    @Inject
+    @Autowired
     JavaMailSender mailSender;
 
-    @Inject
+    @Autowired
     @Named("passwordReissueMessage")
     SimpleMailMessage templateMessage;
 
@@ -28,4 +28,5 @@ public class PasswordReissueMailSharedServiceImpl implements PasswordReissueMail
         message.setText(text);
         mailSender.send(message);
     }
+
 }

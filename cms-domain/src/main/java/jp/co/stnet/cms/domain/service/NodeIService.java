@@ -10,6 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.AccessDeniedException;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 
+/**
+ * エンティティ(リビジョン管理なし)用の抽象クラスのインタフェース
+ *
+ * @param <T> エンティティのクラス(AbstractEntityのサブクラス)
+ * @param <ID> 主キーのクラス
+ */
 public interface NodeIService<T extends AbstractEntity<ID>, ID> {
 
     /**
@@ -37,7 +43,6 @@ public interface NodeIService<T extends AbstractEntity<ID>, ID> {
      * 複数件の保存
      */
     Iterable<T> save(Iterable<T> entities);
-
 
     /**
      * １件の無効化

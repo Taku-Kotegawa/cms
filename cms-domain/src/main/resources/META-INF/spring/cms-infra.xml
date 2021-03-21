@@ -14,7 +14,7 @@
 
     <bean id="jpaVendorAdapter"
         class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="showSql" value="false" />
+        <property name="showSql" value="true" />
         <property name="database" value="${database}" />
     </bean>
 
@@ -47,6 +47,6 @@
         </property>
     </bean>
 
-    <jpa:auditing auditor-aware-ref="springSecurityAuditorAware" />
+    <jpa:auditing auditor-aware-ref="springSecurityAuditorAware" date-time-provider-ref="dateTimeProviderImpl" />
 
 </beans>

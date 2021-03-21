@@ -8,6 +8,10 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * SelectRevisionエンティティ.(複数の値をフィールドをStringに格納するサンプル)
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Entity
 @Data
 @AllArgsConstructor
@@ -17,7 +21,7 @@ import java.io.Serializable;
 public class SelectRevision extends AbstractRevisionEntity implements Serializable {
 
     /**
-     * ID
+     * 内部ID
      */
     @Column(nullable = false)
     private Long id;

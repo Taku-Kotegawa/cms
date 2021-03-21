@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class PersonSearchRow {
 
     /**
-     * ID
+     * 内部ID
      */
     private Long id;
 

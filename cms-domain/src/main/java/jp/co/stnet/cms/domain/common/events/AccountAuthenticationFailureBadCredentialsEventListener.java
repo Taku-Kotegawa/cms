@@ -17,23 +17,23 @@ package jp.co.stnet.cms.domain.common.events;
 
 
 import jp.co.stnet.cms.domain.service.authentication.AuthenticationEventSharedService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-
+/**
+ * 認証失敗を記録するイベントリスナー
+ */
 @Component
 public class AccountAuthenticationFailureBadCredentialsEventListener {
 
-    @Inject
+    @Autowired
     AuthenticationEventSharedService authenticationEventSharedService;
 
     @EventListener(AuthenticationFailureBadCredentialsEvent.class)
-    public void onApplicationEvent(
-            AuthenticationFailureBadCredentialsEvent event) {
+    public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
         String username = (String) event.getAuthentication().getPrincipal();
-
         authenticationEventSharedService.authenticationFailure(username);
     }
 

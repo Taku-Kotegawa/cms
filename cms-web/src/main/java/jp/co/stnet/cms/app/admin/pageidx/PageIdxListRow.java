@@ -75,7 +75,7 @@ public class PageIdxListRow implements Serializable {
     }
 
     /**
-     * ID
+     * 内部ID
      */
     private Long id;
 

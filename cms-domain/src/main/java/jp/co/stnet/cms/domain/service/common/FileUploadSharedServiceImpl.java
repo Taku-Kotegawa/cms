@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static jp.co.stnet.cms.domain.common.message.MessageKeys.E_SL_FW_5001;
 
-
+@Deprecated
 @Slf4j
 @Service
 @Transactional

@@ -5,6 +5,9 @@ import jp.co.stnet.cms.domain.model.authentication.SuccessfulAuthentication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * SuccessfulAuthenticationリポジトリ.
+ */
 @Repository
 public interface SuccessfulAuthenticationRepository extends JpaRepository<SuccessfulAuthentication, String> {
 }

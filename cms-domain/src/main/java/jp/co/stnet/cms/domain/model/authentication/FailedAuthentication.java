@@ -11,7 +11,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-
+/**
+ * ログイン認証失敗の記録
+ */
 @Entity
 @Data
 @Builder
@@ -25,12 +27,12 @@ public class FailedAuthentication implements Serializable {
     private Long id;
 
     /**
-     *   ユーザID
+     * ユーザID
      */
     private String username;
 
     /**
-     *   失敗日時
+     * 失敗日時
      */
     @CreatedDate
     private LocalDateTime authenticationTimestamp;

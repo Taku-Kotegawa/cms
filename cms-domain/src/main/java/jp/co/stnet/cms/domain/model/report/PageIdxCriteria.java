@@ -5,6 +5,9 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.Collection;
 
+/**
+ * ページ索引の検索条件格納用
+ */
 @Data
 public class PageIdxCriteria {
     private String CustomerNumber;

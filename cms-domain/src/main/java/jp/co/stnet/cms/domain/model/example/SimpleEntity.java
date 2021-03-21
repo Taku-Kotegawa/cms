@@ -16,6 +16,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * サンプルエンティティ
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Entity
 @Data
 @Builder
@@ -28,10 +32,16 @@ public class SimpleEntity extends AbstractEntity<Long> implements Serializable, 
 
     // SimpleEntityRevisionとフィールドを一致させること
 
+    /**
+     * 内部ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * ステータス
+     */
     @Column(nullable = false)
     private String status;
 
@@ -39,78 +49,96 @@ public class SimpleEntity extends AbstractEntity<Long> implements Serializable, 
      * テキストフィールド
      */
     private String text01;
+
     /**
      * テキストフィールド(数値・整数)
      */
     private Integer text02;
+
     /**
      * テキストフィールド(数値・小数あり)
      */
     private Float text03;
+
     /**
      * テキストフィールド(真偽値)
      */
     private Boolean text04;
+
     /**
      * テキストフィールド(複数の値)
      */
     @ElementCollection
     private List<String> text05;
+
     /**
      * ラジオボタン(真偽値)
      */
     private Boolean radio01;
+
     /**
      * ラジオボタン(文字列)
      */
     private String radio02;
+
     /**
      * チェックボックス(文字列)
      */
     private String checkbox01;
+
     /**
      * チェックボックス(複数の値)
      */
     @ElementCollection
     private List<String> checkbox02;
+
     /**
      * テキストエリア
      */
     private String textarea01;
+
     /**
      * 日付
      */
     private LocalDate date01;
+
     /**
      * 日付時刻
      */
     private LocalDateTime datetime01;
+
     /**
      * セレクト(単一の値)
      */
     private String select01;
+
     /**
      * セレクト(複数の値)
      */
     @ElementCollection
     private List<String> select02;
+
     /**
      * セレクト(単一の値, select2)
      */
     private String select03;
+
     /**
      * セレクト(複数の値, select2)
      */
     @ElementCollection
     private List<String> select04;
+
     /**
      * コンボボックス(単一の値, Bootstrap)
      */
     private String combobox01;
+
     /**
      * コンボボックス(単一の値, Select2)
      */
     private String combobox02;
+
     /**
      * コンボボックス(複数の値, Select2)
      */
@@ -127,17 +155,13 @@ public class SimpleEntity extends AbstractEntity<Long> implements Serializable, 
      */
     @ManyToOne(cascade = CascadeType.ALL)
     @NotFound(action = NotFoundAction.IGNORE)
-    @JoinColumn(name = "attachedFile01Uuid", referencedColumnName = "uuid", unique=true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "attachedFile01Uuid", referencedColumnName = "uuid", unique = true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private FileManaged attachedFile01Managed;
 
-
+    /**
+     * 明細行
+     */
     @ElementCollection
     private Collection<LineItem> lineItems;
-
-
-    @Override
-    public boolean isNew() {
-        return getId() == null;
-    }
 
 }

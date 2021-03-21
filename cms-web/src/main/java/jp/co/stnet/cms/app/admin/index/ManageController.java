@@ -1,6 +1,5 @@
 package jp.co.stnet.cms.app.admin.index;
 
-import jp.co.stnet.cms.domain.model.report.PageIdx;
 import jp.co.stnet.cms.domain.service.common.IndexSharedService;
 import jp.co.stnet.cms.domain.service.example.PersonService;
 import org.springframework.batch.core.launch.JobOperator;
@@ -32,27 +31,21 @@ public class ManageController {
         return "admin/index/manage";
     }
 
-
     @GetMapping("view")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String view(Model model, @RequestParam String term) {
-
-
         return "admin/index/manage";
     }
-
 
     @GetMapping("{entityName}/reindexing")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String reindexing(Model model, @PathVariable() String entityName) {
-
 
         try {
             indexSharedService.reindexing(entityName);
         } catch (InterruptedException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
 
         return "redirect:/admin/index/manage";
     }

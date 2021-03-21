@@ -16,6 +16,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * ドキュメントエンティティ.
+ * <p>
+ * ファイルを管理する。
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Indexed
 @Entity
 @Data
@@ -29,7 +35,7 @@ import java.time.LocalDateTime;
 public class Document extends AbstractEntity<Long> implements Serializable, StatusInterface {
 
     /**
-     * ID
+     * 内部ID
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,19 +48,12 @@ public class Document extends AbstractEntity<Long> implements Serializable, Stat
     @Column(nullable = false)
     private String status;
 
-
     /**
      * ドキュメント名
      */
     @KeywordField
     @Column(nullable = false)
     private String title;
-
-//    /**
-//     * レポートコード
-//     */
-//    @Column(nullable = false)
-//    private String reportCode;
 
     /**
      * レポート(Enum)
@@ -65,10 +64,6 @@ public class Document extends AbstractEntity<Long> implements Serializable, Stat
     @Column(nullable = false)
     private Report report;
 
-    public String getReportLabel() {
-        return report.getTitle();
-    }
-
     /**
      * 店所コード
      */
@@ -76,8 +71,11 @@ public class Document extends AbstractEntity<Long> implements Serializable, Stat
     @Column(nullable = false)
     private String shopCode;
 
+    /**
+     * 店所オブジェクト
+     */
     @ManyToOne
-    @JoinColumn(name = "shopCode", referencedColumnName = "shopCode", unique=false, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "shopCode", referencedColumnName = "shopCode", unique = false, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Shop shop;
 
     /**
@@ -127,15 +125,14 @@ public class Document extends AbstractEntity<Long> implements Serializable, Stat
      */
     private String attachedFileUuid;
 
+    /**
+     * 添付ファイルオブジェクト
+     */
     @OneToOne(cascade = CascadeType.ALL)
     @NotFound(action = NotFoundAction.IGNORE)
-    @JoinColumn(name = "attachedFileUuid", referencedColumnName = "uuid", unique=true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "attachedFileUuid", referencedColumnName = "uuid", unique = true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     @IndexedEmbedded
     @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     private FileManaged attachedFileManaged;
 
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
 }

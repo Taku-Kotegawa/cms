@@ -72,7 +72,7 @@ public class VariableListRow implements Serializable {
     }
 
     /**
-     * ID
+     * 内部ID
      */
     private Long id;
 

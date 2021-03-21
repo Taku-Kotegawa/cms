@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * 受信メールエンティティ.
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -17,10 +20,12 @@ public class ReceivedMail implements Serializable {
      * 送信者アドレス
      */
     private String from;
+
     /**
      * 宛先アドレス
      */
     private String to;
+
     /**
      * 件名
      */

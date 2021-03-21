@@ -1,6 +1,5 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
-import javassist.NotFoundException;
 import jp.co.stnet.cms.domain.model.authentication.EmailChangeRequest;
 import jp.co.stnet.cms.domain.model.authentication.FailedEmailChangeRequest;
 import jp.co.stnet.cms.domain.repository.authentication.EmailChangeRequestRepository;
@@ -9,19 +8,17 @@ import org.passay.CharacterRule;
 import org.passay.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.terasoluna.gfw.common.exception.BusinessException;
 import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
 import org.terasoluna.gfw.common.message.ResultMessages;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.mail.internet.MimeMessage;
-import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,7 +29,7 @@ import static jp.co.stnet.cms.domain.common.message.MessageKeys.*;
 
 @Service
 @Transactional
-public class EmailChangeServiceImpl implements  EmailChangeService {
+public class EmailChangeServiceImpl implements EmailChangeService {
 
     @Autowired
     PasswordGenerator passwordGenerator;
@@ -65,8 +62,7 @@ public class EmailChangeServiceImpl implements  EmailChangeService {
     public String createAndSendMailChangeRequest(String username, String mail) {
 
         // 暗証番号を生成
-        String rowSecret = passwordGenerator.generatePassword(10,
-                passwordGenerationRules);
+        String rowSecret = passwordGenerator.generatePassword(10, passwordGenerationRules);
 
         // トークンを生成
         String token = UUID.randomUUID().toString();
@@ -113,6 +109,7 @@ public class EmailChangeServiceImpl implements  EmailChangeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EmailChangeRequest findOne(String token) {
 
         // トークンの存在チェック

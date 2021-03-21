@@ -75,8 +75,7 @@ public class PasswordReissueServiceImpl implements PasswordReissueService {
     @Override
     public String createAndSendReissueInfo(String username) {
 
-        String rowSecret = passwordGenerator.generatePassword(10,
-                passwordGenerationRules);
+        String rowSecret = passwordGenerator.generatePassword(10, passwordGenerationRules);
 
         if (!accountSharedService.exists(username)) {
             return rowSecret;
@@ -107,6 +106,7 @@ public class PasswordReissueServiceImpl implements PasswordReissueService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PasswordReissueInfo findOne(String token) {
         PasswordReissueInfo info = passwordReissueInfoRepository.findById(token)
                 .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(E_SL_PR_5002, token)));
@@ -146,4 +146,5 @@ public class PasswordReissueServiceImpl implements PasswordReissueService {
 
         return true;
     }
+
 }

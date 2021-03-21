@@ -34,6 +34,7 @@ public class AuthenticationEventSharedServiceImpl implements jp.co.stnet.cms.dom
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FailedAuthentication> findLatestFailureEvents(String username, int count) {
         return failedAuthenticationRepository.findAll(
                 Example.of(FailedAuthentication.builder().username(username).build()),

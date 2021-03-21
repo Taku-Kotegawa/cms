@@ -39,7 +39,7 @@ public class DocumentForm implements Serializable {
 
 
     /**
-     * ID
+     * 内部ID
      */
     private Long id;
 

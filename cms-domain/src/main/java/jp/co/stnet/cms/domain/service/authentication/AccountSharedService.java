@@ -20,19 +20,24 @@ import jp.co.stnet.cms.domain.model.common.FileManaged;
 
 import java.time.LocalDateTime;
 
+/**
+ * AccountSharedService
+ */
 public interface AccountSharedService {
 
     /**
      * キーでアカウントエンティティを取得する。
      *
-     * @param username ユーザID
+     * @param username ユーザ名
      * @return アカウント・ロールエンティティ
      */
     Account findOne(String username);
 
     /**
-     * @param username
-     * @return
+     * 最終ログイン日時を取得する。
+     *
+     * @param username ユーザ名
+     * @return 最終ログイン日時
      */
     LocalDateTime getLastLoginDate(String username);
 
@@ -47,53 +52,68 @@ public interface AccountSharedService {
     String create(Account account, String imageId);
 
     /**
-     * @param username
-     * @return
+     * ユーザアカウントの存在チェック
+     *
+     * @param username ユーザ名
+     * @return true:存在する, false:存在しない
      */
     boolean exists(String username);
 
     /**
-     * @param username
-     * @return
+     * ユーザのロックを確認する。
+     *
+     * @param username ユーザ名
+     * @return true:ロックしている, false:ロックしていない
      */
     boolean isLocked(String username);
 
     /**
-     * @param username
-     * @return
+     * パスワードが初期状態かどうか。
+     *
+     * @param username ユーザ名
+     * @return true:初期状態, false:変更しれている
      */
     boolean isInitialPassword(String username);
 
     /**
-     * @param username
-     * @return
+     * パスワードの有効期限が切れているかどうか。
+     *
+     * @param username ユーザ名
+     * @return true:有効期限が切れている, false:切れていない
      */
     boolean isCurrentPasswordExpired(String username);
 
     /**
-     * @param username
-     * @param rawPassword
-     * @return
+     * パスワードを設定する。
+     *
+     * @param username    ユーザ名
+     * @param rawPassword パスワード(ハッシュ化前)
+     * @return true:パスワードが変更できた, false:変更できなかった
      */
     boolean updatePassword(String username, String rawPassword);
 
     /**
+     * メールアドレスを設定する。
      *
-     * @param username
-     * @param email
-     * @return
+     * @param username ユーザ名
+     * @param email    メールアドレス
+     * @return true:メールアドレスが変更できた, false:変更できなかった
      */
     boolean updateEmail(String username, String email);
 
     /**
+     * キャッシュをクリアする。
+     *
      * @param username
      */
     void clearPasswordValidationCache(String username);
 
     /**
+     * 画像データを取得する。
      *
-     * @param username
-     * @return
+     * @param username ユーザ名
+     * @return 画像データ
      */
     FileManaged getImage(String username);
+
 }

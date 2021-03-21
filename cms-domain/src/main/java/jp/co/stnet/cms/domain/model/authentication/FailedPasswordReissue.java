@@ -14,6 +14,9 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * パスワード変更の認証失敗の記録
+ */
 @Entity
 @Data
 @Builder
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class FailedPasswordReissue implements Serializable {
+
     /**
      * トークン
      */

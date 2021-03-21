@@ -1,7 +1,5 @@
 package jp.co.stnet.cms.domain.service.common;
 
-import jp.co.stnet.cms.domain.common.Constants;
-import jp.co.stnet.cms.domain.common.message.MessageKeys;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.common.AccessCounter;
 import jp.co.stnet.cms.domain.model.common.Status;
@@ -12,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.terasoluna.gfw.common.exception.ResourceNotFoundException;
-import org.terasoluna.gfw.common.message.ResultMessages;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -24,22 +22,25 @@ public class AccessCounterServiceImpl extends AbstractNodeService<AccessCounter,
     AccessCounterRepository accessCounterRepository;
 
     @Override
+    @Transactional(readOnly = true)
     protected JpaRepository<AccessCounter, Long> getRepository() {
         return accessCounterRepository;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Boolean hasAuthority(String Operation, LoggedInUser loggedInUser) {
-        return null;
+        return true;
     }
 
     @Override
-    public AccessCounter findByUrl(String url) {
-        return accessCounterRepository.findByUrl(url).orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(MessageKeys.E_SL_FW_5001)));
+    @Transactional(readOnly = true)
+    public Optional<AccessCounter> findByUrl(String url) {
+        return accessCounterRepository.findByUrl(url);
     }
 
     @Override
-    public Long countUp(String url) {
+    public long countUp(String url) {
         AccessCounter accessCounter = accessCounterRepository.findByUrl(url)
                 .orElse(AccessCounter.builder()
                         .url(url)

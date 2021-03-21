@@ -16,21 +16,48 @@
 package jp.co.stnet.cms.domain.common.scheduled;
 
 
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import jp.co.stnet.cms.domain.service.authentication.PasswordReissueService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
-import java.time.LocalDateTime;
-
+/**
+ * 不要になったパスワード再発行要求の削除処理クラス.
+ * <br><br>
+ * (前提条件)
+ * <ul>
+ *     <li>スケジューラーから定期的に呼び出される</li>
+ * </ul>
+ * <br>
+ * (スケジュールの設定例: applicationContext.xmlに指定)
+ * <pre>{@code
+ *     <bean id="expiredReissueInfoCleaner"
+ *         class="jp.co.stnet.cms.domain.common.scheduled.UnnecessaryReissueInfoCleaner" />
+ *     <bean id="expiredReissueInfoCleanTrigger" class="org.springframework.scheduling.support.PeriodicTrigger">
+ *         <constructor-arg name="period" value="${security.reissueInfoCleanupSeconds}" />
+ *         <constructor-arg name="timeUnit" value="SECONDS" />
+ *     </bean>
+ *     <task:scheduler id="reissueInfoCleanupTaskScheduler" />
+ *
+ *     <task:scheduled-tasks scheduler="reissueInfoCleanupTaskScheduler">
+ *         <task:scheduled ref="expiredReissueInfoCleaner" method="cleanup"
+ *             trigger="expiredReissueInfoCleanTrigger" />
+ *     </task:scheduled-tasks>
+ * }</pre>
+ * <br>
+ */
 public class UnnecessaryReissueInfoCleaner {
 
-//    @Inject
-//    ClassicDateFactory dateFactory;
+    @Autowired
+    CustomDateFactory dateFactory;
 
-    @Inject
+    @Autowired
     PasswordReissueService passwordReissueService;
 
+    /**
+     * 不要なパスワード再発行要求の削除
+     */
     public void cleanup() {
-        passwordReissueService.removeExpired(LocalDateTime.now());
+        passwordReissueService.removeExpired(dateFactory.newLocalDateTime());
     }
 
 }

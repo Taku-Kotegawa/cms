@@ -8,7 +8,7 @@ import javax.persistence.ElementCollection;
 public class SimpleEntityCsv {
 
     /**
-     * ID
+     * 内部ID
      */
     private String id;
 

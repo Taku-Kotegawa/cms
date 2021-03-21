@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @Transactional
-public class PasswordChangeServiceImpl implements jp.co.stnet.cms.domain.service.authentication.PasswordChangeService {
+public class PasswordChangeServiceImpl implements PasswordChangeService {
 
     @Autowired
     AccountSharedService accountSharedService;

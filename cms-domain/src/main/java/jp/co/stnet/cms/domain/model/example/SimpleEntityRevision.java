@@ -13,6 +13,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * サンプルエンティティ(Revision)
+ */
+@SuppressWarnings({"LombokDataInspection", "LombokEqualsAndHashCodeInspection"})
 @Entity
 @Data
 @AllArgsConstructor
@@ -22,9 +26,10 @@ import java.util.List;
 public class SimpleEntityRevision extends AbstractRevisionEntity implements Serializable {
 
     // SimpleEntityとフィールドを一致させること
+    // @GeneratedValue は外すこと
 
     /**
-     * id
+     * 内部ID
      */
     @Column(nullable = false)
     private Long id;
@@ -143,11 +148,14 @@ public class SimpleEntityRevision extends AbstractRevisionEntity implements Seri
     /**
      * 添付ファイル(FileManaged)
      */
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @NotFound(action = NotFoundAction.IGNORE)
-    @JoinColumn(name = "attachedFile01Uuid", referencedColumnName = "uuid", unique=true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "attachedFile01Uuid", referencedColumnName = "uuid", unique = true, insertable = false, updatable = false, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private FileManaged attachedFile01Managed;
 
+    /**
+     * 明細行
+     */
     @ElementCollection
     private Collection<LineItem> lineItems;
 

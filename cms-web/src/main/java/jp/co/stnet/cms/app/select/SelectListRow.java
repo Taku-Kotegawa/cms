@@ -53,7 +53,7 @@ public class SelectListRow implements Serializable {
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private LocalDateTime lastModifiedDate;
     /**
-     * ID
+     * 内部ID
      */
     private Long id;
     /**
