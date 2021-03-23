@@ -102,6 +102,7 @@ public class OperationsUtil {
     /**
      * 「参照」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
     public String getViewUrl(String id) {
@@ -111,6 +112,7 @@ public class OperationsUtil {
     /**
      * 「編集」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
     public String getEditUrl(String id) {
@@ -120,6 +122,7 @@ public class OperationsUtil {
     /**
      * 「削除」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
     public String getDeleteUrl(String id) {
@@ -129,6 +132,7 @@ public class OperationsUtil {
     /**
      * 「複製」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
     public String getCopyUrl(String id) {
@@ -147,6 +151,7 @@ public class OperationsUtil {
     /**
      * 「ロック解除」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
     public String getUnlockUrl(String id) {
@@ -158,6 +163,7 @@ public class OperationsUtil {
     /**
      * 「下書き取消」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
     public String getCancelDraftUrl(String id) {
@@ -167,6 +173,7 @@ public class OperationsUtil {
     /**
      * 「無効化」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
     public String getInvalidUrl(String id) {
@@ -176,6 +183,7 @@ public class OperationsUtil {
     /**
      * 「無効解除」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
     public String getValidUrl(String id) {
@@ -185,6 +193,7 @@ public class OperationsUtil {
     /**
      * 「ダウンロード」ボタンのURLを返す。
      *
+     * @param uuid UUID
      * @return URL
      */
     public String getDownloadUrl(String uuid) {
@@ -194,10 +203,11 @@ public class OperationsUtil {
     /**
      * 「スイッチ」ボタンのURLを返す。
      *
+     * @param id ID
      * @return URL
      */
-    public String getSwitchUserUrl(String uuid) {
-        return baseUrl + convId(URL_SWITCH_USER, uuid);
+    public String getSwitchUserUrl(String id) {
+        return baseUrl + convId(URL_SWITCH_USER, id);
     }
 
     // ------ Link<A> -----------------------------------------------

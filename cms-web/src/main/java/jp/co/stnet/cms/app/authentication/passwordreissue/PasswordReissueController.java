@@ -19,6 +19,7 @@ package jp.co.stnet.cms.app.authentication.passwordreissue;
 import jp.co.stnet.cms.domain.model.authentication.PasswordReissueInfo;
 import jp.co.stnet.cms.domain.service.authentication.PasswordReissueService;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +28,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.terasoluna.gfw.common.exception.BusinessException;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 @Controller
 @RequestMapping("/reissue")
