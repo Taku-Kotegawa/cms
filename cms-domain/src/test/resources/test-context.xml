@@ -13,12 +13,11 @@
 
     <bean id="exceptionLogger" class="org.terasoluna.gfw.common.exception.ExceptionLogger" />
 
-    <import resource="classpath:META-INF/spring/cms-domain.xml" />
+<!--    <import resource="classpath:META-INF/spring/cms-domain.xml" />-->
 
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource" />
     </bean>
-
 
     <!-- for AccountSharedServiceImpl test -->
     <bean id="upperCaseRule" class="org.passay.CharacterRule">
@@ -64,5 +63,9 @@
         <property name="from" value="test-from@stnet.co.jp" />
         <property name="subject" value="test-subject" />
     </bean>
+
+
+    <!-- auditorAware -->
+    <context:component-scan base-package="jp.co.stnet.cms.domain.common.auditing" />
 
 </beans>

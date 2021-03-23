@@ -11,7 +11,6 @@ import java.util.Optional;
 /**
  * Spring Data JPA の @CreatedDate, @LastModifiedDate のシステム時刻を制御できる様にする設定
  */
-@Component
 public class DateTimeProviderImpl implements DateTimeProvider {
 
     @Autowired

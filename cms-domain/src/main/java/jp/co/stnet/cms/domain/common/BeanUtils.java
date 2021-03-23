@@ -48,6 +48,10 @@ public class BeanUtils extends org.apache.commons.beanutils.BeanUtils {
                         || "java.lang.Enum".equals(fieldClass.getName())) {
                     // 何もしない
 
+                    //TODO モデルクラスのListの場合のネスト対応が未対応
+                    //getSigunature()を使う予定
+
+
                 } else {
                     fieldsMap.putAll(getFields(fieldClass, fieldName));
                 }
@@ -132,7 +136,7 @@ public class BeanUtils extends org.apache.commons.beanutils.BeanUtils {
      * @param m メソッド
      * @return シグネチャ
      */
-    public String getSignature(Method m) {
+    public static String getSignature(Method m) {
         String sig;
         try {
             Field gSig = Method.class.getDeclaredField("signature");
@@ -154,6 +158,7 @@ public class BeanUtils extends org.apache.commons.beanutils.BeanUtils {
                 .toString();
     }
 
-
+    // インスタンス化禁止
+    private BeanUtils() {}
 
 }

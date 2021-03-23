@@ -10,7 +10,6 @@ import java.util.Optional;
 /**
  * Spring Data JPA Audit 機能を実装するクラス.
  */
-@Component
 public class SpringSecurityAuditorAware implements AuditorAware<String> {
 
     /**

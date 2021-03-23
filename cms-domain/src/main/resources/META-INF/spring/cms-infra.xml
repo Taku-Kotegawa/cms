@@ -48,5 +48,8 @@
     </bean>
 
     <jpa:auditing auditor-aware-ref="springSecurityAuditorAware" date-time-provider-ref="dateTimeProviderImpl" />
+    <bean id="springSecurityAuditorAware" class="jp.co.stnet.cms.domain.common.auditing.SpringSecurityAuditorAware" />
+    <bean id="dateTimeProviderImpl" class="jp.co.stnet.cms.domain.common.auditing.DateTimeProviderImpl" />
+    <bean id="customDateFactory" class="jp.co.stnet.cms.domain.common.CustomDateFactory" />
 
 </beans>

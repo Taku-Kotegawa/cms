@@ -1,7 +1,6 @@
 package jp.co.stnet.cms.domain.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.terasoluna.gfw.common.date.ClassicDateFactory;
 
 import java.time.LocalDate;
@@ -15,7 +14,6 @@ import java.time.ZoneId;
  * (前提条件)「org.terasoluna.gfw.common.date.DefaultClassicDateFactory」を継承したクラスをdateFactoryとしてBean定義する。<br>
  * (参照) TERASOLUNA開発ガイド「システム時刻」参照
  */
-@Component
 public class CustomDateFactory {
 
     @Autowired
