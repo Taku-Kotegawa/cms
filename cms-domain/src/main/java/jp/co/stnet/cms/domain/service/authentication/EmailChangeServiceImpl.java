@@ -1,5 +1,6 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import jp.co.stnet.cms.domain.model.authentication.EmailChangeRequest;
 import jp.co.stnet.cms.domain.model.authentication.FailedEmailChangeRequest;
 import jp.co.stnet.cms.domain.repository.authentication.EmailChangeRequestRepository;
@@ -58,6 +59,9 @@ public class EmailChangeServiceImpl implements EmailChangeService {
     @Autowired
     AccountSharedService accountSharedService;
 
+    @Autowired
+    CustomDateFactory dateFactory;
+
     @Override
     public String createAndSendMailChangeRequest(String username, String mail) {
 
@@ -68,7 +72,7 @@ public class EmailChangeServiceImpl implements EmailChangeService {
         String token = UUID.randomUUID().toString();
 
         // 暗証番号の有効期限
-        LocalDateTime expiryDate = LocalDateTime.now().plusSeconds(tokenLifeTimeSeconds);
+        LocalDateTime expiryDate = dateFactory.newLocalDateTime().plusSeconds(tokenLifeTimeSeconds);
 
         // 新しいメールアドレスと暗証番号を記録
         EmailChangeRequest emailChangeRequest = emailChangeRequestRepository.save(
@@ -117,7 +121,7 @@ public class EmailChangeServiceImpl implements EmailChangeService {
                 .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(E_SL_MC_5002, token)));
 
         // 有効期限チェック
-        if (LocalDateTime.now().isAfter(emailChangeRequest.getExpiryDate())) {
+        if (dateFactory.newLocalDateTime().isAfter(emailChangeRequest.getExpiryDate())) {
             throw new BusinessException(ResultMessages.error().add(E_SL_MC_5004, token));
         }
 
@@ -161,7 +165,7 @@ public class EmailChangeServiceImpl implements EmailChangeService {
         return failedEmailChangeRequestRepository.save(
                 FailedEmailChangeRequest.builder()
                         .token(token)
-                        .attemptDate(LocalDateTime.now())
+                        .attemptDate(dateFactory.newLocalDateTime())
                         .build()
         );
     }

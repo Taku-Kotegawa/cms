@@ -1,6 +1,7 @@
 package jp.co.stnet.cms.batch.RYREI002;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import jp.co.stnet.cms.domain.common.MimeTypes;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.report.Document;
@@ -66,6 +67,9 @@ public class RYREI002Tasklet01 implements Tasklet {
 
     @Autowired
     FileManagedRepository fileManagedRepository;
+
+    @Autowired
+    CustomDateFactory dateFactory;
 
     private static final Logger log = LoggerFactory.getLogger("JobLogger");
 
@@ -196,9 +200,9 @@ public class RYREI002Tasklet01 implements Tasklet {
         Document v = beanMapper.map(csv, Document.class);
         v.setStatus(INITIAL_STATUS);
         v.setCreatedBy(JOB_EXECUTOR);
-        v.setCreatedDate(LocalDateTime.now());
+        v.setCreatedDate(dateFactory.newLocalDateTime());
         v.setLastModifiedBy((JOB_EXECUTOR));
-        v.setLastModifiedDate(LocalDateTime.now());
+        v.setLastModifiedDate(dateFactory.newLocalDateTime());
         return v;
     }
 

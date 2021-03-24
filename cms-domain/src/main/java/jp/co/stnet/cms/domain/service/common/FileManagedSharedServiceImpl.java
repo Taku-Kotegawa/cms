@@ -1,5 +1,6 @@
 package jp.co.stnet.cms.domain.service.common;
 
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import jp.co.stnet.cms.domain.common.MimeTypes;
 import jp.co.stnet.cms.domain.common.StringUtils;
 import jp.co.stnet.cms.domain.common.message.MessageKeys;
@@ -35,6 +36,9 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
 
     @Autowired
     FileManagedRepository fileManagedRepository;
+
+    @Autowired
+    CustomDateFactory dateFactory;
 
     @Value("${file.store.basedir}")
     private String STORE_BASEDIR;
@@ -122,8 +126,8 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
         // Webからの登録の場合は、@EntityListeners(AuditingEntityListener.class) により自動設定される
         fileManaged.setCreatedBy("JOB_USER");
         fileManaged.setLastModifiedBy("JOB_USER");
-        fileManaged.setCreatedDate(LocalDateTime.now());
-        fileManaged.setLastModifiedDate(LocalDateTime.now());
+        fileManaged.setCreatedDate(dateFactory.newLocalDateTime());
+        fileManaged.setLastModifiedDate(dateFactory.newLocalDateTime());
 
         return fileManagedRepository.save(fileManaged);
 
@@ -182,8 +186,8 @@ public class FileManagedSharedServiceImpl implements FileManagedSharedService {
             // Webからの登録の場合は、@EntityListeners(AuditingEntityListener.class) により自動設定される
             fileManaged.setCreatedBy("JOB_USER");
             fileManaged.setLastModifiedBy("JOB_USER");
-            fileManaged.setCreatedDate(LocalDateTime.now());
-            fileManaged.setLastModifiedDate(LocalDateTime.now());
+            fileManaged.setCreatedDate(dateFactory.newLocalDateTime());
+            fileManaged.setLastModifiedDate(dateFactory.newLocalDateTime());
 
             return fileManagedRepository.save(fileManaged);
 

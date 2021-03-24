@@ -1,6 +1,7 @@
 package jp.co.stnet.cms.batch.job03;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import jp.co.stnet.cms.domain.common.exception.NoChangeBusinessException;
 import jp.co.stnet.cms.domain.model.example.SimpleEntity;
 import jp.co.stnet.cms.domain.repository.example.SimpleEntityRepository;
@@ -54,6 +55,9 @@ public class Job03Tasklet implements Tasklet {
 
     @Autowired
     Mapper beanMapper;
+
+    @Autowired
+    CustomDateFactory dateFactory;
 
     private static final Logger log = LoggerFactory.getLogger("JobLogger");
 
@@ -125,9 +129,9 @@ public class Job03Tasklet implements Tasklet {
 
                     if (csvLine.getId() == null) {
                         v.setCreatedBy(executedBy);
-                        v.setCreatedDate(LocalDateTime.now());
+                        v.setCreatedDate(dateFactory.newLocalDateTime());
                         v.setLastModifiedBy(executedBy);
-                        v.setLastModifiedDate(LocalDateTime.now());
+                        v.setLastModifiedDate(dateFactory.newLocalDateTime());
                         // 新規登録
                         simpleEntityService.save(v);
                         count_insert++;
@@ -143,7 +147,7 @@ public class Job03Tasklet implements Tasklet {
                                     v.setVersion(current.getVersion());
                                     simpleEntityService.save(v);
                                     v.setLastModifiedBy(executedBy);
-                                    v.setLastModifiedDate(LocalDateTime.now());
+                                    v.setLastModifiedDate(dateFactory.newLocalDateTime());
                                     count_update++;
                                 } catch (NoChangeBusinessException e) {
                                     count_skip++;

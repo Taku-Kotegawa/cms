@@ -3,9 +3,12 @@ package jp.co.stnet.cms.domain.common;
 import jp.co.stnet.cms.domain.model.common.Status;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,30 +27,8 @@ class BeanUtilsTest {
     }
 
 
-//    @Test
-//    void getFieldList() {
-//    }
-//
-//    @Test
-//    void testGetFieldList() {
-//    }
-//
-//    @Test
-//    void getFieldByAnnotation() {
-//    }
-//
-//    @Test
-//    void getSignature() {
-//    }
-
     @Nested
     class getFields {
-
-        /**
-         * 準備: フィールドを持たないクラス
-         */
-        @Data
-        class SampleModel01 { }
 
         @Test
         @DisplayName("[正常]フィールドを持たないクラスの場合、空のMapを返す。")
@@ -61,17 +42,6 @@ class BeanUtilsTest {
             // 検証
             assertThat(actual).isEqualTo(expected);
             log.info("actual : " + actual.toString());
-        }
-
-        /**
-         * 基本的なクラスのフィールドを持つ
-         */
-        @Data
-        class SampleModel02 {
-            private int field1;
-            private boolean field2;
-            private String field3;
-            private Integer field4;
         }
 
         @Test
@@ -92,16 +62,6 @@ class BeanUtilsTest {
             log.info("actual : " + actual.toString());
         }
 
-        /**
-         * getter を持たない
-         */
-        class SampleModel03 {
-            private int field1;
-            private boolean field2;
-            private String field3;
-            private Integer field4;
-        }
-
         @Test
         @DisplayName("[正常]getterを持たない場合、空のMapを返す。")
         void test003() {
@@ -114,16 +74,6 @@ class BeanUtilsTest {
             // 検証
             assertThat(actual).isEqualTo(expected);
             log.info("actual : " + actual.toString());
-        }
-
-        /**
-         * LIST, MAP, ENUM など
-         */
-        @Data
-        class SampleModel04 {
-            private List<String> field1;
-            private Map<String, String> field2;
-            private Status field3;
         }
 
         @Test
@@ -141,15 +91,6 @@ class BeanUtilsTest {
             // 検証
             assertThat(actual).isEqualTo(expected);
             log.info("actual : " + actual.toString());
-        }
-
-
-        /**
-         * 他のクラスをフィールドに持つ場合
-         */
-        @Data
-        class SampleModel05 {
-            private SampleModel02 field1;
         }
 
         @Test
@@ -171,17 +112,8 @@ class BeanUtilsTest {
             log.info("actual : " + actual.toString());
         }
 
-        /**
-         * 他のモデルの List, Map を持つ場合
-         */
-        @Data
-        class SampleModel06 {
-            private List<SampleModel02> field1;
-            private Map<String, SampleModel02> field2;
-        }
-
         @Test
-        @DisplayName("[正常] 他のモデルのLIST, MAP のフィールドの場合、フィールド名とクラスを格納したMapを返す。")
+        @DisplayName("[正常] 他のクラスのLIST, MAPのフィールドの場合、他のクラスのフィールドは取得しない。(TODO:他のクラスのフィールドも取得できる様にしたい)")
         void test006() {
             // 準備
             Map<String, String> expected = new HashMap<>();
@@ -196,6 +128,61 @@ class BeanUtilsTest {
             log.info("actual : " + actual.toString());
         }
 
+        /**
+         * 準備: フィールドを持たないクラス
+         */
+        @Data
+        class SampleModel01 {
+        }
+
+        /**
+         * 基本的なクラスのフィールドを持つ
+         */
+        @Data
+        class SampleModel02 {
+            private int field1;
+            private boolean field2;
+            private String field3;
+            private Integer field4;
+        }
+
+        /**
+         * getter を持たない
+         */
+        class SampleModel03 {
+            private int field1;
+            private boolean field2;
+            private String field3;
+            private Integer field4;
+        }
+
+        /**
+         * LIST, MAP, ENUM など
+         */
+        @Data
+        class SampleModel04 {
+            private List<String> field1;
+            private Map<String, String> field2;
+            private Status field3;
+        }
+
+        /**
+         * 他のクラスをフィールドに持つ場合
+         */
+        @Data
+        class SampleModel05 {
+            private SampleModel02 field1;
+        }
+
+        /**
+         * 他のモデルの List, Map を持つ場合
+         */
+        @Data
+        class SampleModel06 {
+            private List<SampleModel02> field1;
+            private Map<String, SampleModel02> field2;
+        }
+
     }
 
 
@@ -203,28 +190,78 @@ class BeanUtilsTest {
     class getFieldList {
 
         @Test
-        @DisplayName("[正常] 他のクラスをフィールドに持つ場合、フィールドに指定したクラス内のフィールドとクラスもMapに格納される。")
+        @DisplayName("[正常] getFieldsのMapのキーがリストに変換される。過不足・重複は認めない。並び順は問わない。")
         void test001() {
             // 準備
-            List<String> expected = new ArrayList<>();
-            expected.add("field1-field1");
-            expected.add("field1-field2");
-            expected.add("field1-field3");
-            expected.add("field1-field4");
-            expected.add("field1");
 
             // 実行
-            List<String> actual = BeanUtils.getFieldList(getFields.SampleModel05.class, "");
+            List<String> actual = BeanUtils.getFieldList(getFields.SampleModel05.class);
 
             // 検証
-            assertThat(actual).isEqualTo(expected);
-            log.info("actual : " + actual.toString());
+            // 並び順は問わず、期待値が必ず含まれており、重複していないこと。
+            assertThat(actual).containsOnlyOnce("field1", "field1-field1", "field1-field2", "field1-field3", "field1-field4");
         }
 
     }
 
 
+    @Nested
+    class getFieldByAnnotation {
 
+        @Test
+        @DisplayName("[正常系] @NotNullアノテーションを設定したフィールドの一覧が取得できる。(2件)")
+        void test001() {
+            // 準備
+
+            // 実行
+            Map<String, Annotation> actual = BeanUtils
+                    .getFieldByAnnotation(getFieldByAnnotation.SampleModel07.class, "", NotNull.class);
+
+            // 検証
+            assertThat(actual).size().isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("[正常系] @Lengthアノテーションを設定したフィールドの一覧が取得できる。(1件)")
+        void test002() {
+            // 準備
+
+            // 実行
+            Map<String, Annotation> actual = BeanUtils
+                    .getFieldByAnnotation(getFieldByAnnotation.SampleModel07.class, "", Length.class);
+
+            // 検証
+            assertThat(actual).size().isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("[正常系] 存在しないアノテーションの場合は空のリストが取得できる。(0件)")
+        void test003() {
+            // 準備
+
+            // 実行
+            Map<String, Annotation> actual = BeanUtils
+                    .getFieldByAnnotation(getFieldByAnnotation.SampleModel07.class, "", Max.class);
+
+            // 検証
+            assertThat(actual).isEmpty();
+        }
+
+        /**
+         * Annotation が設定されたクラス
+         */
+        @Data
+        class SampleModel07 {
+            @NotNull
+            private int field1;
+            @NotNull
+            private boolean field2;
+            @Length(min = 3)
+            private String field3;
+            private Integer field4;
+        }
+
+    }
 
 
 }

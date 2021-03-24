@@ -16,6 +16,7 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import jp.co.stnet.cms.domain.model.authentication.*;
 import jp.co.stnet.cms.domain.model.common.FileManaged;
 import jp.co.stnet.cms.domain.model.common.Status;
@@ -71,6 +72,9 @@ public class AccountSharedServiceImpl implements AccountSharedService {
 
     @Autowired
     PasswordHistorySharedService passwordHistorySharedService;
+
+    @Autowired
+    CustomDateFactory dateFactory;
 
     @Resource(name = "passwordGenerationRules")
     List<CharacterRule> passwordGenerationRules;
@@ -151,7 +155,7 @@ public class AccountSharedServiceImpl implements AccountSharedService {
 
         return !failureEvents.get(lockingThreshold - 1)
                 .getAuthenticationTimestamp()
-                .isBefore(LocalDateTime.now().minusSeconds(lockingDurationSeconds));
+                .isBefore(dateFactory.newLocalDateTime().minusSeconds(lockingDurationSeconds));
     }
 
     @Override
@@ -187,7 +191,7 @@ public class AccountSharedServiceImpl implements AccountSharedService {
         return passwordHistories
                 .get(0)
                 .getUseFrom()
-                .isBefore(LocalDateTime.now().minusSeconds(passwordLifeTimeSeconds));
+                .isBefore(dateFactory.newLocalDateTime().minusSeconds(passwordLifeTimeSeconds));
     }
 
     @Override
@@ -203,7 +207,7 @@ public class AccountSharedServiceImpl implements AccountSharedService {
                 PasswordHistory.builder()
                 .username(username)
                 .password(password)
-                .useFrom(LocalDateTime.now()).build());
+                .useFrom(dateFactory.newLocalDateTime()).build());
 
         return true;
     }

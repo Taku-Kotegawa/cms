@@ -1,5 +1,6 @@
 package jp.co.stnet.cms.domain.service.authentication;
 
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.PasswordReissueInfo;
 import jp.co.stnet.cms.domain.repository.authentication.FailedPasswordReissueRepository;
@@ -50,6 +51,9 @@ public class PasswordReissueServiceImpl implements PasswordReissueService {
     @Autowired
     PasswordGenerator passwordGenerator;
 
+    @Autowired
+    CustomDateFactory dateFactory;
+
     @Resource(name = "passwordGenerationRules")
     List<CharacterRule> passwordGenerationRules;
 
@@ -84,7 +88,7 @@ public class PasswordReissueServiceImpl implements PasswordReissueService {
         Account account = accountSharedService.findOne(username);
 
         String token = UUID.randomUUID().toString();
-        LocalDateTime expiryDate = LocalDateTime.now().plusSeconds(tokenLifeTimeSeconds);
+        LocalDateTime expiryDate = dateFactory.newLocalDateTime().plusSeconds(tokenLifeTimeSeconds);
 
         PasswordReissueInfo info = passwordReissueInfoRepository.save(
                 PasswordReissueInfo.builder()
@@ -111,7 +115,7 @@ public class PasswordReissueServiceImpl implements PasswordReissueService {
         PasswordReissueInfo info = passwordReissueInfoRepository.findById(token)
                 .orElseThrow(() -> new ResourceNotFoundException(ResultMessages.error().add(E_SL_PR_5002, token)));
 
-        if (LocalDateTime.now().isAfter(info.getExpiryDate())) {
+        if (dateFactory.newLocalDateTime().isAfter(info.getExpiryDate())) {
             throw new BusinessException(ResultMessages.error().add(E_SL_PR_2001, token));
         }
 

@@ -16,6 +16,7 @@
 package jp.co.stnet.cms.domain.common.validation;
 
 import jp.co.stnet.cms.domain.common.Constants;
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import jp.co.stnet.cms.domain.model.authentication.Account;
 import jp.co.stnet.cms.domain.model.authentication.PasswordHistory;
 import jp.co.stnet.cms.domain.model.authentication.Role;
@@ -26,6 +27,7 @@ import org.passay.PasswordValidator;
 import org.passay.RuleResult;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -40,21 +42,21 @@ import java.util.List;
 public class NotReusedPasswordValidator implements
         ConstraintValidator<NotReusedPassword, Object> {
 
-//    @Inject
-//    ClassicDateFactory dateFactory;
-
-    @Inject
+    @Autowired
     AccountSharedService accountSharedService;
 
-    @Inject
+    @Autowired
     PasswordHistorySharedService passwordHistorySharedService;
 
-    @Inject
+    @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Inject
+    @Autowired
     @Named("encodedPasswordHistoryValidator")
     PasswordValidator encodedPasswordHistoryValidator;
+
+    @Autowired
+    CustomDateFactory dateFactory;
 
     @Value("${security.passwordHistoricalCheckingCount}")
     int passwordHistoricalCheckingCount;
@@ -114,7 +116,7 @@ public class NotReusedPasswordValidator implements
 
     private boolean checkHistoricalPassword(String username,
                                             String newPassword, ConstraintValidatorContext context) {
-        LocalDateTime useFrom = LocalDateTime.now().minusMinutes(passwordHistoricalCheckingPeriod);
+        LocalDateTime useFrom = dateFactory.newLocalDateTime().minusMinutes(passwordHistoricalCheckingPeriod);
         List<PasswordHistory> historyByTime = passwordHistorySharedService
                 .findHistoriesByUseFrom(username, useFrom);
         List<PasswordHistory> historyByCount = passwordHistorySharedService

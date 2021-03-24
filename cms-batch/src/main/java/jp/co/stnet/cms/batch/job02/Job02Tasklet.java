@@ -1,6 +1,7 @@
 package jp.co.stnet.cms.batch.job02;
 
 import com.github.dozermapper.core.Mapper;
+import jp.co.stnet.cms.domain.common.CustomDateFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -16,7 +17,6 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static jp.co.stnet.cms.domain.common.Constants.MSG;
@@ -28,21 +28,17 @@ import static jp.co.stnet.cms.domain.common.Constants.MSG;
 @Component
 public class Job02Tasklet implements Tasklet {
 
+    private static final Logger log = LoggerFactory.getLogger("JobLogger");
     @Autowired
     VariableRepository variableRepository;
-
     @Autowired
     ItemStreamReader<VariableCsv> csvReader;
-
     @Autowired
     SmartValidator smartValidator;
-
-
-
     @Autowired
     Mapper beanMapper;
-
-    private static final Logger log = LoggerFactory.getLogger("JobLogger");
+    @Autowired
+    CustomDateFactory dateFactory;
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
@@ -57,10 +53,10 @@ public class Job02Tasklet implements Tasklet {
         MDC.put("jobName_jobExecutionId", jobName + "_" + jobExecutionId.toString());
 
 
-        int count_read   = 0;
+        int count_read = 0;
         int count_insert = 0;
         int count_update = 0;
-        int count_skip   = 0;
+        int count_skip = 0;
 
         // DB操作時の例外発生の有無を記録する
         boolean hasDBAccessException = false;
@@ -97,7 +93,7 @@ public class Job02Tasklet implements Tasklet {
                 count_read++;
                 Variable v = map(csvLine);
                 try {
-                    Variable current = findByTypeAndCode(v.getType(),v.getCode());
+                    Variable current = findByTypeAndCode(v.getType(), v.getCode());
                     if (current == null) {
                         v.setVersion(0L);
                         count_insert = count_insert + variableRepository.insert(v);
@@ -156,8 +152,8 @@ public class Job02Tasklet implements Tasklet {
         String JOB_EXECUTOR = "job_user";
 
         Variable v = beanMapper.map(csv, Variable.class);
-        v.setCreatedDate(LocalDateTime.now());
-        v.setLastModifiedDate(LocalDateTime.now());
+        v.setCreatedDate(dateFactory.newLocalDateTime());
+        v.setLastModifiedDate(dateFactory.newLocalDateTime());
         v.setCreatedBy(JOB_EXECUTOR);
         v.setLastModifiedBy(JOB_EXECUTOR);
         return v;
@@ -168,7 +164,7 @@ public class Job02Tasklet implements Tasklet {
         example.or().andTypeEqualTo(type).andCodeEqualTo(code);
         List<Variable> list = variableRepository.selectByExampleWithBLOBs(example);
 
-        if (list.size()>0) {
+        if (list.size() > 0) {
             return list.get(0);
         } else {
             return null;

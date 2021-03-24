@@ -70,7 +70,7 @@ public class BeanUtils extends org.apache.commons.beanutils.BeanUtils {
      * @param parentClassName 親クラス
      * @return フィールド一覧
      */
-    public static List<String> getFieldList(Class clazz, String parentClassName) {
+    private static List<String> getFieldList(Class clazz, String parentClassName) {
         Map<String, String> fields = getFields(clazz, parentClassName);
         List<String> fieldList = new ArrayList<>();
 
