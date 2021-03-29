@@ -14,7 +14,7 @@ import java.util.List;
 public interface EmailChangeRequestRepository extends JpaRepository<EmailChangeRequest, String> {
 
     /**
-     * 有効期限が指定された日時以前のデータを削除する。
+     * 有効期限が指定された日時より古いのデータを削除する。
      *
      * @param date 日付
      * @return 削除した件数

@@ -39,6 +39,7 @@ public class AccessCounter extends AbstractEntity<Long> implements Serializable,
     /**
      * url
      */
+    @Column(length = 1000)
     private String url;
 
     /**
@@ -48,7 +49,7 @@ public class AccessCounter extends AbstractEntity<Long> implements Serializable,
 
     @Override
     public boolean isNew() {
-        return url == null;
+        return getVersion() == null;
     }
 
 }

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(locations = {"classpath:test-context.xml"})
+@SpringJUnitConfig(locations = {"classpath:test-context.xml", "classpath:META-INF/spring/cms-infra.xml"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 //@Transactional
 class PermissionRoleRepositoryTest {

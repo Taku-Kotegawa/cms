@@ -1,15 +1,14 @@
 package jp.co.stnet.cms.domain.repository.example;
 
+import jp.co.stnet.cms.domain.model.example.Person;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.Transactional;
 
-//@SpringJUnitConfig()
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:test-context.xml", "classpath:META-INF/spring/cms-infra.xml"})
+@SpringJUnitConfig(locations = {"classpath:test-context.xml", "classpath:META-INF/spring/cms-infra.xml"})
+//@ExtendWith(SpringExtension.class)
+//@ContextConfiguration(locations = {"classpath:test-context.xml", "classpath:META-INF/spring/cms-infra.xml"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
 class PersonRepositoryTest {
@@ -38,13 +37,13 @@ class PersonRepositoryTest {
 
     @Test
     void test_001() {
-//        target.save(
-//                Person.builder()
-//                .name("taku.kotegawa")
-//                .age(11)
-//                .status("1")
-//                .build()
-//        );
+        target.save(
+                Person.builder()
+                .name("taku.kotegawa")
+                .age(11)
+                .status("1")
+                .build()
+        );
 
 
     }

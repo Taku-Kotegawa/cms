@@ -56,7 +56,7 @@ public class ExcelDownloadView extends AbstractFileDownloadView {
     private void setValue(Row row, int i, SimpleEntity entity) {
         row.getCell(0).setCellValue(entity.getId());
         row.getCell(1).setCellValue(StringUtils.nvl(entity.getText01()));
-        row.getCell(2).setCellValue(StringUtils.nvl(entity.getDate01()));
+        row.getCell(2).setCellValue(StringUtils.nvl(entity.getDate01().toString()));
         // getRow/getCellを使う場合、値が入っていないセルを参照するとNullPointerExceptionが発生する。(参照先のセルに罫線を引いておけばOK)
     }
 

@@ -42,22 +42,31 @@ public class StateMap {
      * @param clazz       Formクラス
      * @param includeKeys 追加するフィールド名のリスト
      * @param excludeKeys 除外するフィールド名のリスト
+     * @throws IllegalArgumentException いずれかの引数がnullの場合
      */
     public StateMap(Class<?> clazz, List<String> includeKeys, List<String> excludeKeys) {
+
+        if(clazz == null ) {
+            throw new IllegalArgumentException("clazz must not be null.");
+        }
+        if( includeKeys == null ) {
+            throw new IllegalArgumentException("includeKeys must not be null.");
+        }
+        if(excludeKeys == null) {
+            throw new IllegalArgumentException("excludeKeys must not be null.");
+        }
+
         List<String> filedNames = BeanUtils.getFieldList(clazz);
         filedNames.removeIf(excludeKeys::contains);
         filedNames.addAll(includeKeys);
         init(filedNames);
     }
 
-    // 引数なしのインスタンス化を禁止 TODO 効果正しく発揮されるか？の確認
-    private StateMap() {
-    }
-
     /**
      * fieldName__input → true
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setInputTrue(String fieldName) {
@@ -68,6 +77,7 @@ public class StateMap {
      * fieldName__input → false
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setInputFalse(String fieldName) {
@@ -78,6 +88,7 @@ public class StateMap {
      * fieldName__disabled → true
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setDisabledTrue(String fieldName) {
@@ -88,6 +99,7 @@ public class StateMap {
      * fieldName__disabled → false
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setDisabledFalse(String fieldName) {
@@ -98,6 +110,7 @@ public class StateMap {
      * fieldName__readonly → true
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setReadOnlyTrue(String fieldName) {
@@ -108,6 +121,7 @@ public class StateMap {
      * fieldName__readonly → false
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setReadOnlyFalse(String fieldName) {
@@ -118,6 +132,7 @@ public class StateMap {
      * fieldName__hidden → true
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setHiddenTrue(String fieldName) {
@@ -128,6 +143,7 @@ public class StateMap {
      * fieldName__hidden → false
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setHiddenFalse(String fieldName) {
@@ -138,6 +154,7 @@ public class StateMap {
      * fieldName__view → true
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setViewTrue(String fieldName) {
@@ -148,6 +165,7 @@ public class StateMap {
      * fieldName__view → false
      *
      * @param fieldName フィールド名
+     * @throws IllegalArgumentException 指定したフィールド名が存在しない
      * @return StateMap
      */
     public StateMap setViewFalse(String fieldName) {
@@ -250,7 +268,7 @@ public class StateMap {
      * @param fieldName フィールド名
      * @return StateMap
      */
-    public StateMap addKey(String fieldName) {
+    public StateMap addField(String fieldName) {
         for (String attribute : attributes) {
             authMap.put(fieldName + "__" + attribute, Boolean.FALSE);
         }
