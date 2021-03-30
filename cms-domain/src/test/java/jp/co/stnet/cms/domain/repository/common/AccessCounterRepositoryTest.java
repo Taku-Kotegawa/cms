@@ -52,7 +52,7 @@ class AccessCounterRepositoryTest {
      * @param id テストデータを一意に特定する番号
      * @return AccessCounterエンティティ
      */
-    private AccessCounter createAccessCounter(String id) {
+    private AccessCounter createEntity(String id) {
 
         AccessCounter accessCounter = AccessCounter.builder()
                 .status("0")
@@ -78,7 +78,7 @@ class AccessCounterRepositoryTest {
         @DisplayName("[正常系]データ挿入できること")
         void test001() {
             //準備
-            AccessCounter expected = createAccessCounter("1");
+            AccessCounter expected = createEntity("1");
             AccessCounter after = target.saveAndFlush(expected);
             entityManager.flush();
             entityManager.clear();
@@ -99,14 +99,14 @@ class AccessCounterRepositoryTest {
         void test001() {
             //準備
             insertIntoDatabase(
-                    createAccessCounter("1"),
-                    createAccessCounter("2"),
-                    createAccessCounter("3")
+                    createEntity("1"),
+                    createEntity("2"),
+                    createEntity("3")
             );
             entityManager.flush();
             entityManager.clear();
 
-            AccessCounter expected = createAccessCounter("2");
+            AccessCounter expected = createEntity("2");
 
             //実行
             AccessCounter actual = target.findByUrl(expected.getUrl()).orElse(null);

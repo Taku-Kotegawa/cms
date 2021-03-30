@@ -58,7 +58,7 @@ class AccountRepositoryTest {
      * @param id テストデータを一意に特定する番号
      * @return Accountエンティティ
      */
-    private Account createAccount(String id) {
+    private Account createEntity(String id) {
 
         List<String> roles = new ArrayList<>();
         roles.add("admin");
@@ -96,7 +96,7 @@ class AccountRepositoryTest {
         @DisplayName("[正常系] 最大桁数のデータ登録")
         void test001() {
             //準備
-            Account expected = createAccount("1");
+            Account expected = createEntity("1");
             target.save(expected);
             String id = expected.getId();
             entityManager.flush();
@@ -122,14 +122,14 @@ class AccountRepositoryTest {
         void test001() {
             //準備
             insertIntoDatabase(
-                    createAccount("1"),
-                    createAccount("2"),
-                    createAccount("3")
+                    createEntity("1"),
+                    createEntity("2"),
+                    createEntity("3")
             );
             entityManager.flush();
             entityManager.clear();
 
-            Account expected = createAccount("2");
+            Account expected = createEntity("2");
 
             //実行
             Account actual = target.findByApiKey(expected.getApiKey());
@@ -143,9 +143,9 @@ class AccountRepositoryTest {
         void test002() {
             //準備
             insertIntoDatabase(
-                    createAccount("1"),
-                    createAccount("2"),
-                    createAccount("3")
+                    createEntity("1"),
+                    createEntity("2"),
+                    createEntity("3")
             );
             entityManager.flush();
             entityManager.clear();

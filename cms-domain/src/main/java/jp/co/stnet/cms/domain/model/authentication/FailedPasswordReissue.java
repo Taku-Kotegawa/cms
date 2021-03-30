@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -23,6 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@IdClass(FailedPasswordReissuePK.class)
 public class FailedPasswordReissue implements Serializable {
 
     /**
@@ -34,6 +32,7 @@ public class FailedPasswordReissue implements Serializable {
     /**
      * 試行日時
      */
+    @Id
     private LocalDateTime attemptDate;
 
     @CreatedBy
