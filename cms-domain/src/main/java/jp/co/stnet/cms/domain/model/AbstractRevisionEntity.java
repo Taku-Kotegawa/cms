@@ -28,7 +28,7 @@ public abstract class AbstractRevisionEntity {
     private Integer revType;
 
     /**
-     * バージョン(排他制御用)
+     * バージョン(コピー)
      */
     @Column(nullable = false)
     private Long version;
