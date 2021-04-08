@@ -72,13 +72,11 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
         if (entity == null || entity.getAttachedFile01Uuid() == null) {
             return false;
         } else {
-            if (current == null || current.getAttachedFile01Uuid() == null
-                    || !Objects.equals(entity.getAttachedFile01Uuid(), current.getAttachedFile01Uuid())) {
-                return true;
-            }
+            return current == null || current.getAttachedFile01Uuid() == null
+                    || !Objects.equals(entity.getAttachedFile01Uuid(), current.getAttachedFile01Uuid());
         }
-        return false;
     }
+
 
     @Override
     protected void beforeSave(Person entity, Person current) {
@@ -95,12 +93,12 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
                     || !Objects.equals(entity.getAttachedFile01Uuid(), current.getAttachedFile01Uuid())) {
 
                 content = fileManagedSharedService.getContent(entity.getAttachedFile01Uuid());
-                content = content.replaceAll("[　]+", " ")
-                        .replaceAll("[ ]+", " ")
-                        .replaceAll("[\t]+", " ")
-                        .replaceAll("[ |\t]+", " ")
-                        .replaceAll("[\\n|\\r\\n|\\r]+", " ")
-                        .replaceAll("\\n|\\r\\n|\\r", " ");
+                content = content
+//                        .replaceAll("[　]+", " ")
+//                        .replaceAll("[ ]+", " ")
+//                        .replaceAll("[\t]+", " ")
+//                        .replaceAll("[ |\t]+", " ")
+                        .replaceAll("[ |　|\t|\\n|\\r\\n|\\r]+", " ");
             }
 
             entity.setContent(escapeHtml4(content));
@@ -115,26 +113,36 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
     }
 
+//    @Override
+//    public Person save(Person entity) {
+//
+//        // 保存前データ取得
+//        String currentUuid = null;
+//        if (entity.getId() != null) {
+//            currentUuid = findById(entity.getId()).getAttachedFile01Uuid();
+//        }
+//
+//        Person person = super.save(entity);
+//
+//
+//
+//
+//
+//        return person;
+//    }
+
     @Override
-    public Person save(Person entity) {
-
-        // 保存前データ取得
-        String currentUuid = null;
-        if (entity.getId() != null) {
-            currentUuid = findById(entity.getId()).getAttachedFile01Uuid();
-        }
-
-        Person person = super.save(entity);
-
-        if (currentUuid != null && !currentUuid.equals(entity.getAttachedFile01Uuid())) {
-            // 添付ファイル削除
-            fileManagedSharedService.delete(currentUuid);
+    protected void afterSave(Person entity, Person current) {
+        // UUID変更されていた場合、以前のUUIDを物理削除
+        if (current != null && current.getAttachedFile01Uuid() != null &&
+                !current.getAttachedFile01Uuid().equals(entity.getAttachedFile01Uuid())) {
+            fileManagedSharedService.delete(current.getAttachedFile01Uuid());
         }
 
         // 添付ファイル確定
-        fileManagedSharedService.permanent(entity.getAttachedFile01Uuid());
-
-        return person;
+        if (entity.getAttachedFile01Uuid() != null) {
+            fileManagedSharedService.permanent(entity.getAttachedFile01Uuid());
+        }
     }
 
     @Override
@@ -272,10 +280,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
     @Override
     protected boolean isFilterINClause(String fieldName) {
-        if ("status".equals(fieldName)) {
-            return true;
-        }
-        return false;
+        return "status".equals(fieldName);
     }
 
     public String highlight(String text, String term) {
@@ -312,7 +317,7 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
 
             String fragsString = "";
-            for (String f : Arrays.asList(frags)) {
+            for (String f : frags) {
                 fragsString = fragsString + f + " ";
             }
 
@@ -328,7 +333,53 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
 
     }
 
+    @Override
+    protected boolean compareEntity(Person entity, Person currentCopy) {
+        return super.compareEntity(entity, currentCopy);
+    }
 
+    @Override
+    protected boolean isLocalDate(String fieldName) {
+        return super.isLocalDate(fieldName);
+    }
 
+    @Override
+    protected boolean isLocalDateTime(String fieldName) {
+        return super.isLocalDateTime(fieldName);
+    }
 
+    @Override
+    protected boolean isNumber(String fieldName) {
+        return super.isNumber(fieldName);
+    }
+
+    @Override
+    protected boolean isCollection(String fieldName) {
+        return super.isCollection(fieldName);
+    }
+
+    @Override
+    protected boolean isBoolean(String fieldName) {
+        return super.isBoolean(fieldName);
+    }
+
+    @Override
+    protected boolean isEnum(String fieldName) {
+        return super.isEnum(fieldName);
+    }
+
+    @Override
+    protected boolean isCollectionElement(String fieldName) {
+        return super.isCollectionElement(fieldName);
+    }
+
+    @Override
+    protected boolean isId(String fieldName) {
+        return super.isId(fieldName);
+    }
+
+    @Override
+    protected boolean isRelation(String fieldName) {
+        return super.isRelation(fieldName);
+    }
 }

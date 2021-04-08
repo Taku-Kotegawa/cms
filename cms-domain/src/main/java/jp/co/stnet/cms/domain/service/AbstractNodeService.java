@@ -110,6 +110,7 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         try {
             beforeSave(entity, currentCopy);
             entity = getRepository().saveAndFlush(entity);
+            afterSave(entity, currentCopy);
 
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new OptimisticLockingFailureBusinessException(ResultMessages.error().add(MessageKeys.E_CM_FW_8001));
@@ -120,6 +121,13 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         entityManager.detach(entity);
         return getRepository().findById(Objects.requireNonNull(entity.getId())).orElse(null);
     }
+
+    /**
+     * 保存後処理
+     */
+    protected void afterSave(T entity, T current) {
+    }
+
 
     protected boolean compareEntity(T entity, T currentCopy) {
         return Objects.equals(entity, currentCopy);
@@ -151,6 +159,8 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         List<T> saveds = new ArrayList<>();
         for (ID id : ids) {
             T entity = findById(id);
+
+            // ステータスがVALID以外のデータは処理をスキップする
             if (entity.getStatus().equals(Status.VALID.getCodeValue())) {
                 saveds.add(invalid(id));
             }
@@ -277,19 +287,19 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                     sql.append(" IN (:");
                     sql.append(replacedColumnName);
                     sql.append(")");
-                } else if (isDate(convertedColumnName)) {
+                } else if (isLocalDate(convertedColumnName)) {
                     sql.append("function('date_format', c.");
                     sql.append(convertedColumnName);
                     sql.append(", '%Y/%m/%d') LIKE :");
                     sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
-                } else if (isDateTime(convertedColumnName)) {
+                } else if (isLocalDateTime(convertedColumnName)) {
                     sql.append("function('date_format', c.");
                     sql.append(convertedColumnName);
                     sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :");
                     sql.append(replacedColumnName);
                     sql.append(" ESCAPE '~'");
-                } else if (isNumeric(convertedColumnName)) {
+                } else if (isNumber(convertedColumnName)) {
                     sql.append("function('CONVERT', c.");
                     sql.append(convertedColumnName);
                     sql.append(", CHAR) LIKE :");
@@ -330,15 +340,15 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                     sql.append(" OR ");
                     String originalColumnName = column.getData();
                     String convertedColumnName = convertColumnName(originalColumnName);
-                    if (isDate(convertedColumnName)) {
+                    if (isLocalDate(convertedColumnName)) {
                         sql.append("function('date_format', c.");
                         sql.append(convertedColumnName);
                         sql.append(", '%Y/%m/%d') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isDateTime(convertedColumnName)) {
+                    } else if (isLocalDateTime(convertedColumnName)) {
                         sql.append("function('date_format', c.");
                         sql.append(convertedColumnName);
                         sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isNumeric(convertedColumnName)) {
+                    } else if (isNumber(convertedColumnName)) {
                         sql.append("function('CONVERT', c.");
                         sql.append(convertedColumnName);
                         sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
@@ -422,20 +432,23 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         return typedQuery;
     }
 
-    protected boolean isDate(String fieldName) {
+    protected boolean isLocalDate(String fieldName) {
         return "java.time.LocalDate".equals(fieldMap.get(fieldName));
     }
 
-    protected boolean isDateTime(String fieldName) {
+    protected boolean isLocalDateTime(String fieldName) {
         return "java.time.LocalDateTime".equals(fieldMap.get(fieldName));
     }
 
-    protected boolean isNumeric(String fieldName) {
+    protected boolean isNumber(String fieldName) {
         return "java.lang.Integer".equals(fieldMap.get(fieldName))
                 || "java.lang.Long".equals(fieldMap.get(fieldName))
                 || "java.lang.BigDecimal".equals(fieldMap.get(fieldName))
                 || "java.lang.Float".equals(fieldMap.get(fieldName))
-                || "java.lang.Double".equals(fieldMap.get(fieldName));
+                || "java.lang.Double".equals(fieldMap.get(fieldName))
+                || "java.lang.Short".equals(fieldMap.get(fieldName))
+                || "java.lang.Byte".equals(fieldMap.get(fieldName))
+                || "java.math.BigInteger".equals(fieldMap.get(fieldName));
     }
 
     protected boolean isCollection(String fieldName) {
@@ -448,7 +461,6 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     }
 
     protected boolean isEnum(String fieldName) {
-
         try {
             Class<?> c = Class.forName(fieldMap.get(fieldName));
             return c.isEnum();
@@ -457,7 +469,19 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         }
     }
 
+    protected boolean isId(String fieldName) {
+            Map<String, Annotation> map = BeanUtils.getFieldByAnnotation(clazz, null, Id.class);
+            return map.keySet().contains(fieldName);
+    }
+
+    /**
+     * 検索文字列のリストをEnumのリストに変換する(サブクラスでオーバーライトして利用する)
+     * @param fieldName フィールド名
+     * @param values 検索文字列のリスト
+     * @return Enumのリスト
+     */
     protected List<Object> getEnumListByName(String fieldName, List<String> values) {
+        // オーバーライトしないと何も検索しない。
         return new ArrayList<>();
     }
 
