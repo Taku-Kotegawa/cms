@@ -93,7 +93,7 @@ class AccountRepositoryTest {
     @Nested
     class getOne extends baseTest {
         @Test
-        @DisplayName("[正常系] 最大桁数のデータ登録")
+        @DisplayName("[正] 最大桁数のデータ登録")
         void test001() {
             //準備
             Account expected = createEntity("1");
@@ -118,7 +118,7 @@ class AccountRepositoryTest {
     @Nested
     class findByApiKey extends baseTest {
         @Test
-        @DisplayName("[正常系] API-KEYで検索")
+        @DisplayName("[正] API-KEYで検索")
         void test001() {
             //準備
             insertIntoDatabase(
@@ -139,7 +139,7 @@ class AccountRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] API-KEYで検索して、検索できない場合はnullを返す。")
+        @DisplayName("[正] API-KEYで検索して、検索できない場合はnullを返す。")
         void test002() {
             //準備
             insertIntoDatabase(

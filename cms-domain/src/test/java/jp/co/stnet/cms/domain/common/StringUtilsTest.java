@@ -25,7 +25,7 @@ class StringUtilsTest {
     @Nested
     class toLowerSnakeCase {
         @Test
-        @DisplayName("[正常系]キャメルケースをスネークケース(小文字)に変換する。(1)")
+        @DisplayName("[正] キャメルケースをスネークケース(小文字)に変換する。(1)")
         void test001() {
             //実行
             String actual = toLowerSnakeCase(thisIsAPen);
@@ -35,7 +35,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]キャメルケースをスネークケース(小文字)に変換する。(2)")
+        @DisplayName("[正] キャメルケースをスネークケース(小文字)に変換する。(2)")
         void test002() {
             //実行
             String actual = toLowerSnakeCase(ThisIsAPen);
@@ -45,7 +45,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]nullを代入するとnullが返る。")
+        @DisplayName("[正] nullを代入するとnullが返る。")
         void test003() {
             //実行
             String actual = toLowerSnakeCase(null);
@@ -58,7 +58,7 @@ class StringUtilsTest {
     @Nested
     class toUpperSnakeCase {
         @Test
-        @DisplayName("[正常系]キャメルケースをスネークケース(大文字)に変換する。(1)")
+        @DisplayName("[正] キャメルケースをスネークケース(大文字)に変換する。(1)")
         void test001() {
             //実行
             String actual = toUpperSnakeCase(thisIsAPen);
@@ -68,7 +68,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]キャメルケースをスネークケース(大文字)に変換する。(2)")
+        @DisplayName("[正] キャメルケースをスネークケース(大文字)に変換する。(2)")
         void test002() {
             //実行
             String actual = toUpperSnakeCase(ThisIsAPen);
@@ -78,7 +78,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]nullを代入するとnullが返る。")
+        @DisplayName("[正] nullを代入するとnullが返る。")
         void test003() {
             //実行
             String actual = toUpperSnakeCase(null);
@@ -91,7 +91,7 @@ class StringUtilsTest {
     @Nested
     class toLowerCamelCase {
         @Test
-        @DisplayName("[正常系]スネークケースをキャメルケース(小文字)に変換する。(1)")
+        @DisplayName("[正] スネークケースをキャメルケース(小文字)に変換する。(1)")
         void test001() {
             //実行
             String actual = toLowerCamelCase(this_is_a_pen);
@@ -101,7 +101,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]スネークケースをキャメルケース(小文字)に変換する。(2)")
+        @DisplayName("[正] スネークケースをキャメルケース(小文字)に変換する。(2)")
         void test002() {
             //実行
             String actual = toLowerCamelCase(THIS_IS_A_PEN);
@@ -111,7 +111,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]nullを代入するとnullが返る。")
+        @DisplayName("[正] nullを代入するとnullが返る。")
         void test003() {
             //実行
             String actual = toLowerCamelCase(null);
@@ -124,7 +124,7 @@ class StringUtilsTest {
     @Nested
     class toUpperCamelCase {
         @Test
-        @DisplayName("[正常系]スネークケースをキャメルケース(大文字)に変換する。(1)")
+        @DisplayName("[正] スネークケースをキャメルケース(大文字)に変換する。(1)")
         void test001() {
             //実行
             String actual = toUpperCamelCase(this_is_a_pen);
@@ -134,7 +134,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]スネークケースをキャメルケース(大文字)に変換する。(2)")
+        @DisplayName("[正] スネークケースをキャメルケース(大文字)に変換する。(2)")
         void test002() {
             //実行
             String actual = toUpperCamelCase(THIS_IS_A_PEN);
@@ -144,7 +144,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]nullを代入するとnullが返る。")
+        @DisplayName("[正] nullを代入するとnullが返る。")
         void test003() {
             //実行
             String actual = toUpperCamelCase(null);
@@ -157,7 +157,7 @@ class StringUtilsTest {
     @Nested
     class nvl {
         @Test
-        @DisplayName("[正常系]文字列を文字列をで返す。")
+        @DisplayName("[正] 文字列を文字列をで返す。")
         void test001() {
             //実行
             String actual = nvl(THIS_IS_A_PEN);
@@ -167,7 +167,7 @@ class StringUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系]nullを空白文字で返す。")
+        @DisplayName("[正] nullを空白文字で返す。")
         void test002() {
             //準備
 

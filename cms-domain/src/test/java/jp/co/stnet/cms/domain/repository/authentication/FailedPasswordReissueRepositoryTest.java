@@ -77,7 +77,7 @@ class FailedPasswordReissueRepositoryTest {
     @Nested
     class findByToken extends baseTest {
         @Test
-        @DisplayName("[正常]トークンで検索できる。(1件)")
+        @DisplayName("[正] トークンで検索できる。(1件)")
         void test001() {
             // 準備
             FailedPasswordReissue expected = createEntity("1", LocalDateTime.of(2001,12,31,23,59,59));
@@ -95,7 +95,7 @@ class FailedPasswordReissueRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常]トークンで検索できる。(2件)")
+        @DisplayName("[正] トークンで検索できる。(2件)")
         void test002() {
             // 準備
             FailedPasswordReissue expected1 = createEntity("1", LocalDateTime.of(2001,12,31,23,59,59));
@@ -115,7 +115,7 @@ class FailedPasswordReissueRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常]トークンで検索できる。(0件)")
+        @DisplayName("[正] トークンで検索できる。(0件)")
         void test003() {
             // 準備
             FailedPasswordReissue expected = createEntity("1", LocalDateTime.of(2001,12,31,23,59,59));
@@ -135,7 +135,7 @@ class FailedPasswordReissueRepositoryTest {
     @Nested
     class countByToken extends baseTest {
         @Test
-        @DisplayName("[正常]トークンで検索できる。(1件)")
+        @DisplayName("[正] トークンで検索できる。(1件)")
         void test001() {
             // 準備
             FailedPasswordReissue expected = createEntity("1", LocalDateTime.of(2001,12,31,23,59,59));
@@ -153,7 +153,7 @@ class FailedPasswordReissueRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常]トークンで検索できる。(2件)")
+        @DisplayName("[正] トークンで検索できる。(2件)")
         void test002() {
             // 準備
             FailedPasswordReissue expected1 = createEntity("1", LocalDateTime.of(2001,12,31,23,59,59));
@@ -173,7 +173,7 @@ class FailedPasswordReissueRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常]トークンで検索できる。(0件)")
+        @DisplayName("[正] トークンで検索できる。(0件)")
         void test003() {
             // 準備
             FailedPasswordReissue expected = createEntity("1", LocalDateTime.of(2001,12,31,23,59,59));
@@ -194,7 +194,7 @@ class FailedPasswordReissueRepositoryTest {
     @Nested
     class deleteByToken extends baseTest {
         @Test
-        @DisplayName("[正常]トークンで削除できる。(2件)")
+        @DisplayName("[正] トークンで削除できる。(2件)")
         void test001() {
             // 準備
             FailedPasswordReissue expected1 = createEntity("1", LocalDateTime.of(2001,12,31,23,59,58));
@@ -214,7 +214,7 @@ class FailedPasswordReissueRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常]トークンで削除できる。(残ったレコード数3件)")
+        @DisplayName("[正] トークンで削除できる。(残ったレコード数3件)")
         void test002() {
             // 準備
             FailedPasswordReissue expected1 = createEntity("1", LocalDateTime.of(2001,12,31,23,59,58));
@@ -239,7 +239,7 @@ class FailedPasswordReissueRepositoryTest {
     @Nested
     class deleteByAttemptDateLessThan extends baseTest {
         @Test
-        @DisplayName("[正常]トークンで削除できる。(1件)")
+        @DisplayName("[正] トークンで削除できる。(1件)")
         void test001() {
             // 準備
             insertTables(
@@ -256,7 +256,7 @@ class FailedPasswordReissueRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常]トークンで削除できる。(残ったレコード数2件)")
+        @DisplayName("[正] トークンで削除できる。(残ったレコード数2件)")
         void test002() {
             // 準備
             insertTables(

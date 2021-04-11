@@ -75,7 +75,7 @@ class AccessCounterRepositoryTest {
     @Nested
     class getOne extends baseTest {
         @Test
-        @DisplayName("[正常系]データ挿入できること")
+        @DisplayName("[正] データ挿入できること")
         void test001() {
             //準備
             AccessCounter expected = createEntity("1");
@@ -95,7 +95,7 @@ class AccessCounterRepositoryTest {
     @Nested
     class findByUrl extends baseTest {
         @Test
-        @DisplayName("[正常系]URLでデータを検索できる。")
+        @DisplayName("[正] URLでデータを検索できる。")
         void test001() {
             //準備
             insertIntoDatabase(

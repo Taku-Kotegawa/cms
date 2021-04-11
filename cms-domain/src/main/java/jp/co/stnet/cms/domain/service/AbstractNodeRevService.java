@@ -12,6 +12,7 @@ import jp.co.stnet.cms.domain.repository.NodeRevRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.terasoluna.gfw.common.message.ResultMessages;
 
@@ -100,9 +101,9 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
     @Transactional(readOnly = true)
     public Page<U> findMaxRevPageByInput(DataTablesInput input) {
         return new PageImpl<U>(
-                getJPQLQuery(input, false, revClass, maxRevClass).getResultList(),
-                getPageable(input),
-                (Long) getJPQLQuery(input, true, revClass, maxRevClass).getSingleResult());
+                getJPQLQuery(input, false, revClass).getResultList(),
+                PageRequest.of(input.getStart() / input.getLength(), input.getLength()),
+                (Long) getJPQLQuery(input, true, revClass).getSingleResult());
     }
 
     @Override
@@ -115,6 +116,21 @@ public abstract class AbstractNodeRevService<T extends AbstractEntity<ID> & Stat
     @Transactional(readOnly = true)
     public U findByRid(Long rid) {
         return getRevisionRepository().findById(rid).orElse(null);
+    }
+
+
+    @Override
+    protected StringBuilder getSelectFromClause(Class clazz, boolean count) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(super.getSelectFromClause(clazz, count));
+
+        // 最大リビジョンを取得するための結合
+        if (clazz == revClass) {
+            sql.append(" INNER JOIN ");
+            sql.append(maxRevClass.getSimpleName());
+            sql.append(" m ON m.rid = c.rid AND c.revType < 2 ");
+        }
+        return sql;
     }
 
 }

@@ -1,6 +1,8 @@
 package jp.co.stnet.cms.domain.service.example;
 
 import jp.co.stnet.cms.domain.common.StringUtils;
+import jp.co.stnet.cms.domain.common.datatables.Column;
+import jp.co.stnet.cms.domain.common.datatables.DataTablesInput;
 import jp.co.stnet.cms.domain.model.authentication.LoggedInUser;
 import jp.co.stnet.cms.domain.model.example.Person;
 import jp.co.stnet.cms.domain.repository.example.PersonRepository;
@@ -68,14 +70,14 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
         return this.personRepository;
     }
 
-    private boolean changeContent(Person entity, Person current) {
-        if (entity == null || entity.getAttachedFile01Uuid() == null) {
-            return false;
-        } else {
-            return current == null || current.getAttachedFile01Uuid() == null
-                    || !Objects.equals(entity.getAttachedFile01Uuid(), current.getAttachedFile01Uuid());
-        }
-    }
+//    private boolean changeContent(Person entity, Person current) {
+//        if (entity == null || entity.getAttachedFile01Uuid() == null) {
+//            return false;
+//        } else {
+//            return current == null || current.getAttachedFile01Uuid() == null
+//                    || !Objects.equals(entity.getAttachedFile01Uuid(), current.getAttachedFile01Uuid());
+//        }
+//    }
 
 
     @Override
@@ -188,8 +190,6 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
             String text = person.getContent();
             System.out.println(highlight(text, term));
         }
-
-
     }
 
     @Override
@@ -379,7 +379,88 @@ public class PersonServiceImpl extends AbstractNodeService<Person, Long> impleme
     }
 
     @Override
+    protected javax.persistence.Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz) {
+        return super.getJPQLQuery(input, count, clazz);
+    }
+
+    @Override
+    protected StringBuilder getOrderClause(DataTablesInput input) {
+        return super.getOrderClause(input);
+    }
+
+    @Override
+    protected StringBuilder getGlobalFilterWhereClause(Column column) {
+        return super.getGlobalFilterWhereClause(column);
+    }
+
+    @Override
+    protected String getJPQL(DataTablesInput input, boolean count, Class clazz) {
+        return super.getJPQL(input, count, clazz);
+    }
+
+    @Override
+    protected StringBuilder getWhereClause(DataTablesInput input) {
+        return super.getWhereClause(input);
+    }
+
+    @Override
+    protected StringBuilder getLeftOuterJoinClause(DataTablesInput input) {
+        return super.getLeftOuterJoinClause(input);
+    }
+
+    @Override
+    protected List<Object> getEnumListByName(String fieldName, List<String> values) {
+        return super.getEnumListByName(fieldName, values);
+    }
+
+    @Override
+    protected String convertColumnName(String org) {
+        return super.convertColumnName(org);
+    }
+
+    @Override
+    protected String replacedColumnName(String fieldName) {
+        return super.replacedColumnName(fieldName);
+    }
+
+    @Override
+    protected String getRelationEntity(String fieldName) {
+        return super.getRelationEntity(fieldName);
+    }
+
+    @Override
+    protected StringBuilder getSelectFromClause(Class clazz, boolean count) {
+        return super.getSelectFromClause(clazz, count);
+    }
+
+    @Override
+    protected StringBuilder getFieldFilterWhereClause(Column column) {
+        return super.getFieldFilterWhereClause(column);
+    }
+
+    @Override
+    protected boolean hasFieldFilter(DataTablesInput input) {
+        return super.hasFieldFilter(input);
+    }
+
+    @Override
+    protected boolean isIdInteger(String fieldName) {
+        return super.isIdInteger(fieldName);
+    }
+
+    @Override
+    protected boolean isIdLong(String fieldName) {
+        return super.isIdLong(fieldName);
+    }
+
+    @Override
+    protected boolean isIdString(String fieldName) {
+        return super.isIdString(fieldName);
+    }
+
+    @Override
     protected boolean isRelation(String fieldName) {
         return super.isRelation(fieldName);
     }
+
 }

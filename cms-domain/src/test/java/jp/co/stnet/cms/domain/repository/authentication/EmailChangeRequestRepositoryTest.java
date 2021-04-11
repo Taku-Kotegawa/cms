@@ -81,7 +81,7 @@ class EmailChangeRequestRepositoryTest {
     @Nested
     class deleteByExpiryDateLessThan extends baseTest {
         @Test
-        @DisplayName("[正常系] データ挿入の検証(件数の妥当性)")
+        @DisplayName("[正] データ挿入の検証(件数の妥当性)")
         void test001() {
             // 準備
             insertTables(
@@ -101,7 +101,7 @@ class EmailChangeRequestRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] 登録されたデータが正しく取得できること")
+        @DisplayName("[正] 登録されたデータが正しく取得できること")
         void test002() {
             // 準備
             insertTables(
@@ -120,7 +120,7 @@ class EmailChangeRequestRepositoryTest {
 
 
         @Test
-        @DisplayName("[正常系] データの削除[0件]")
+        @DisplayName("[正] データの削除[0件]")
         void test003() {
             // 準備
             target.deleteAll();
@@ -143,7 +143,7 @@ class EmailChangeRequestRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] データの削除、戻り値が削除件数になっている。")
+        @DisplayName("[正] データの削除、戻り値が削除件数になっている。")
         void test004() {
             // 準備
             insertTables(
@@ -162,7 +162,7 @@ class EmailChangeRequestRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] データの削除、残っているデータの妥当性")
+        @DisplayName("[正] データの削除、残っているデータの妥当性")
         void test005() {
             // 準備
 

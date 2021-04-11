@@ -19,7 +19,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,12 +80,6 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     protected void beforeSave(T entity, T current) {
     }
 
-    /**
-     * 保存処理
-     *
-     * @param entity 更新するエンティティ
-     * @return entity 保存後のエンティティ
-     */
     @Override
     public T save(T entity) {
 
@@ -129,6 +122,12 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     }
 
 
+    /**
+     * エンティティの比較(オーバライトして利用する)
+     * @param entity
+     * @param currentCopy
+     * @return
+     */
     protected boolean compareEntity(T entity, T currentCopy) {
         return Objects.equals(entity, currentCopy);
     }
@@ -208,208 +207,58 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
     public Page<T> findPageByInput(DataTablesInput input) {
         return new PageImpl<T>(
                 getJPQLQuery(input, false, clazz).getResultList(),
-                getPageable(input),
+                PageRequest.of(input.getStart() / input.getLength(), input.getLength()),
                 (Long) getJPQLQuery(input, true, clazz).getSingleResult());
     }
 
     /**
-     * JPQLの作成
+     * JPQLQueryを作成する。
+     * @param input DataTablesInput
+     * @param count true: 件数を取得する, false: しない
+     * @param clazz エンティティクラス
+     * @return
      */
     protected Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz) {
-        return getJPQLQuery(input, count, clazz, null);
-    }
 
-    /**
-     * JPQLの作成
-     */
-    protected Query getJPQLQuery(DataTablesInput input, boolean count, Class clazz, Class maxRevClazz) {
+        String sql = getJPQL(input, count, clazz);
 
-        boolean hasFieldFilter = false;
-        Set<String> relationEntitySet = new HashSet<>();
-
-        StringBuilder sql = new StringBuilder();
-        if (!count) {
-            sql.append("SELECT distinct c FROM ");
-        } else {
-            sql.append("SELECT count(distinct c) FROM ");
-        }
-
-        sql.append(clazz.getSimpleName());
-        sql.append(" c ");
-
-        if (maxRevClazz != null) {
-            sql.append(" INNER JOIN ");
-            sql.append(maxRevClazz.getSimpleName());
-            sql.append(" m ON m.rid = c.rid AND c.revType < 2 ");
-        }
-
-        // @OneToOne etc, @ElementCollection フィールドのための結合
-        for (Column column : input.getColumns()) {
-            String originalColumnName = column.getData();
-            String convertedColumnName = convertColumnName(originalColumnName);
-
-            if (isCollectionElement(convertedColumnName)) {
-                sql.append(" LEFT JOIN c.");
-                sql.append(convertedColumnName);
-            }
-
-            String relationEntityName = getRelationEntity(originalColumnName);
-            if (relationEntityName != null) {
-                relationEntitySet.add(relationEntityName);
-            }
-        }
-
-        for (String entityName : relationEntitySet) {
-            sql.append(" LEFT JOIN c.");
-            sql.append(entityName);
-        }
-
-        // フィールドフィルタ
-        for (Column column : input.getColumns()) {
-            if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
-                if (!hasFieldFilter) {
-                    sql.append(" WHERE ");
-                    hasFieldFilter = true;
-                } else {
-                    sql.append(" AND ");
-                }
-                String originalColumnName = column.getData();
-                String convertedColumnName = convertColumnName(originalColumnName);
-                String replacedColumnName = replacedColumnName(originalColumnName);
-
-                if (isFilterINClause(convertedColumnName)) {
-                    sql.append("c." + convertedColumnName);
-                    sql.append(" IN (:");
-                    sql.append(replacedColumnName);
-                    sql.append(")");
-                } else if (isEnum(convertedColumnName)) {
-                    sql.append("c." + convertedColumnName);
-                    sql.append(" IN (:");
-                    sql.append(replacedColumnName);
-                    sql.append(")");
-                } else if (isLocalDate(convertedColumnName)) {
-                    sql.append("function('date_format', c.");
-                    sql.append(convertedColumnName);
-                    sql.append(", '%Y/%m/%d') LIKE :");
-                    sql.append(replacedColumnName);
-                    sql.append(" ESCAPE '~'");
-                } else if (isLocalDateTime(convertedColumnName)) {
-                    sql.append("function('date_format', c.");
-                    sql.append(convertedColumnName);
-                    sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :");
-                    sql.append(replacedColumnName);
-                    sql.append(" ESCAPE '~'");
-                } else if (isNumber(convertedColumnName)) {
-                    sql.append("function('CONVERT', c.");
-                    sql.append(convertedColumnName);
-                    sql.append(", CHAR) LIKE :");
-                    sql.append(replacedColumnName);
-                    sql.append(" ESCAPE '~'");
-                } else if (isCollection(convertedColumnName)) {
-                    sql.append(convertedColumnName);
-                    sql.append(" LIKE :");
-                    sql.append(replacedColumnName);
-                    sql.append(" ESCAPE '~'");
-                } else if (isRelation(originalColumnName)) {
-                    sql.append("c." + originalColumnName);
-                    sql.append(" LIKE :");
-                    sql.append(replacedColumnName);
-                    sql.append(" ESCAPE '~'");
-                } else if (isBoolean(convertedColumnName)) {
-                    sql.append("function('FORMAT', c.");
-                    sql.append(convertedColumnName);
-                    sql.append(", 0) LIKE :");
-                    sql.append(replacedColumnName);
-                    sql.append(" ESCAPE '~'");
-                } else {
-                    sql.append("c.");
-                    sql.append(convertedColumnName);
-                    sql.append(" LIKE :");
-                    sql.append(replacedColumnName);
-                    sql.append(" ESCAPE '~'");
-                }
-            }
-        }
-
-        // グローバルフィルタ
-        String globalSearch = input.getSearch().getValue();
-        if (!hasFieldFilter && !StringUtils.isEmpty(globalSearch)) {
-            sql.append(" WHERE 1 = 2 ");
-            for (Column column : input.getColumns()) {
-                if (column.getSearchable()) {
-                    sql.append(" OR ");
-                    String originalColumnName = column.getData();
-                    String convertedColumnName = convertColumnName(originalColumnName);
-                    if (isLocalDate(convertedColumnName)) {
-                        sql.append("function('date_format', c.");
-                        sql.append(convertedColumnName);
-                        sql.append(", '%Y/%m/%d') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isLocalDateTime(convertedColumnName)) {
-                        sql.append("function('date_format', c.");
-                        sql.append(convertedColumnName);
-                        sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :globalSearch ESCAPE '~'");
-                    } else if (isNumber(convertedColumnName)) {
-                        sql.append("function('CONVERT', c.");
-                        sql.append(convertedColumnName);
-                        sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
-                    } else if (isCollection(convertedColumnName)) {
-                        sql.append(convertedColumnName);
-                        sql.append(" LIKE :globalSearch ESCAPE '~'");
-                    } else if (isBoolean(convertedColumnName)) {
-                        sql.append("function('CONVERT', c.");
-                        sql.append(convertedColumnName);
-                        sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
-                    } else if (isRelation(originalColumnName)) {
-                        sql.append("c." + originalColumnName);
-                        sql.append(" LIKE :globalSearch ESCAPE '~'");
-                    } else {
-                        sql.append("c.");
-                        sql.append(convertedColumnName);
-                        sql.append(" LIKE :globalSearch ESCAPE '~'");
-                    }
-                }
-            }
-        }
-
-        // Order BY
-        if (!count) {
-            List<String> orderClauses = new ArrayList<>();
-            for (Order order : input.getOrder()) {
-                String originalFiledName = input.getColumns().get(order.getColumn()).getData();
-                String convertColumnName = convertColumnName(originalFiledName);
-
-                String orderClause;
-                if (isCollection(convertColumnName)) {
-                    orderClause = convertColumnName + " " + order.getDir();
-                } else if (isRelation(originalFiledName)) {
-                    orderClause = "c." + originalFiledName + " " + order.getDir();
-                } else {
-                    orderClause = "c." + convertColumnName + " " + order.getDir();
-                }
-                orderClauses.add(orderClause);
-            }
-            sql.append(" ORDER BY ");
-            sql.append(StringUtils.join(orderClauses, ','));
-        }
-
-        // Limit
+        // パラメータ値設定(データ取得範囲)Limit
         TypedQuery typedQuery;
         if (!count) {
-            typedQuery = entityManager.createQuery(sql.toString(), clazz);
-            typedQuery.setFirstResult(input.getStart());
-            typedQuery.setMaxResults(input.getLength());
+            // 通常は１ページに必要な範囲を抽出する。
+            typedQuery = entityManager.createQuery(sql, clazz);
+            typedQuery.setFirstResult(input.getStart()); //開始行数
+            typedQuery.setMaxResults(input.getLength()); //取得件数
         } else {
-            typedQuery = entityManager.createQuery(sql.toString(), Long.class);
+            // 件数を取得する場合は、データの範囲を指定しない。
+            typedQuery = entityManager.createQuery(sql, Long.class);
         }
 
-        // フィールドフィルタ
+        // パラメータ値設定(フィールドフィルタ)
         for (Column column : input.getColumns()) {
             String originalColumnName = column.getData();
             String convertColumnName = convertColumnName(originalColumnName);
-            String replacedColumnName = replacedColumnName(originalColumnName);
+            String replacedColumnName = replacedColumnName(convertColumnName);
             if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
-                // 検索文字列を%で囲む
-                if (isFilterINClause(convertColumnName)) {
+
+                if (isIdLong(convertColumnName)) {
+                    try {
+                        typedQuery.setParameter(replacedColumnName, Long.valueOf(column.getSearch().getValue()));
+                    } catch (Exception e) {
+                        typedQuery.setParameter(replacedColumnName, null);
+                    }
+
+                } else if (isIdLong(convertColumnName)) {
+                    try {
+                        typedQuery.setParameter(replacedColumnName, Integer.valueOf(column.getSearch().getValue()));
+                    } catch (Exception e) {
+                        typedQuery.setParameter(replacedColumnName, null);
+                    }
+
+                } else if (isIdString(convertColumnName)) {
+                    typedQuery.setParameter(replacedColumnName, column.getSearch().getValue());
+
+                } else if (isFilterINClause(convertColumnName)) {
                     typedQuery.setParameter(replacedColumnName, Arrays.asList(StringUtils.split(column.getSearch().getValue(), ",")));
 
                 } else if (isEnum(convertColumnName)) {
@@ -418,28 +267,309 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                             getEnumListByName(convertColumnName, Arrays.asList(StringUtils.split(column.getSearch().getValue(), ","))));
 
                 } else {
+                    // 検索文字列を%で囲む
                     typedQuery.setParameter(replacedColumnName, QueryEscapeUtils.toContainingCondition(column.getSearch().getValue()));
 
                 }
             }
         }
 
-        // グローバルフィルタ
-        if (!hasFieldFilter && !StringUtils.isEmpty(globalSearch)) {
-            typedQuery.setParameter("globalSearch", QueryEscapeUtils.toContainingCondition(globalSearch));
+        // パラメータ値設定(グローバルフィルタ)
+        if (!hasFieldFilter(input) && !StringUtils.isEmpty(input.getSearch().getValue())) {
+            typedQuery.setParameter("globalSearch", QueryEscapeUtils.toContainingCondition(input.getSearch().getValue()));
         }
 
         return typedQuery;
     }
 
+    /**
+     * SQL(JPQL)文を作成する。
+     * @param input DataTablesInput
+     * @param count true: 件数を取得する, false: しない
+     * @param clazz エンティティクラス
+     * @return SQL(JPQL)文字列
+     */
+    protected String getJPQL(DataTablesInput input, boolean count, Class clazz) {
+
+        // SQL(JPQL)を格納する変数
+        StringBuilder sql = new StringBuilder();
+
+        // SELECT句 FROM句
+        sql.append(getSelectFromClause(clazz, count));
+
+        // LEFT OUTER JOIN の追加
+        sql.append(getLeftOuterJoinClause(input));
+
+        // WHERE句の追加
+        sql.append(getWhereClause(input));
+
+        // OrderBY句
+        if (!count) {
+            sql.append(getOrderClause(input));
+        }
+
+        return sql.toString();
+    }
+
+    /**
+     * SELECT c FROM エンティティ を作成する
+     *
+     * @param clazz エンティティ
+     * @param count true: 件数を取得する, false: しない
+     * @return 文字列
+     */
+    protected StringBuilder getSelectFromClause(Class clazz, boolean count) {
+        StringBuilder sql = new StringBuilder();
+        // SELECT句
+        if (!count) {
+            sql.append("SELECT distinct c");
+        } else {
+            sql.append("SELECT count(distinct c)");
+        }
+
+        // FROM句 主テーブル
+        sql.append(" FROM ");
+        sql.append(clazz.getSimpleName());
+        sql.append(" c ");
+
+        return sql;
+    }
+
+    /**
+     * 外部結合(LEFT OUTER文)を作成する。
+     * @param input DataTablesInput
+     * @return 外部結合文字列
+     */
+    protected StringBuilder getLeftOuterJoinClause(DataTablesInput input) {
+        StringBuilder sql = new StringBuilder();
+        // @OneToOne etc, @ElementCollection フィールドのための結合
+        for (Column column : input.getColumns()) {
+            String originalColumnName = column.getData();
+            String convertedColumnName = convertColumnName(originalColumnName);
+
+            if (isCollectionElement(convertedColumnName)) {
+                sql.append(" LEFT JOIN c.");
+                sql.append(convertedColumnName);
+            } else if (getRelationEntity(originalColumnName) != null) {
+                sql.append(" LEFT JOIN c.");
+                sql.append(getRelationEntity(originalColumnName));
+            }
+        }
+        return sql;
+    }
+
+    /**
+     * OrderBy句文字列を作成する。
+     *
+     * @param input DataTablesInput
+     * @return OrderBy句文字列
+     */
+    protected StringBuilder getOrderClause(DataTablesInput input) {
+        StringBuilder sql = new StringBuilder();
+        List<String> orderClauses = new ArrayList<>();
+        for (Order order : input.getOrder()) {
+            String originalFiledName = input.getColumns().get(order.getColumn()).getData();
+            String convertColumnName = convertColumnName(originalFiledName);
+
+            String orderClause;
+            if (isCollection(convertColumnName)) {
+                orderClause = convertColumnName + " " + order.getDir();
+            } else if (isRelation(originalFiledName)) {
+                orderClause = "c." + originalFiledName + " " + order.getDir();
+            } else {
+                orderClause = "c." + convertColumnName + " " + order.getDir();
+            }
+            orderClauses.add(orderClause);
+        }
+
+        if (!orderClauses.isEmpty()) {
+            sql.append(" ORDER BY ");
+            sql.append(StringUtils.join(orderClauses, ','));
+        }
+
+        return sql;
+    }
+
+    /**
+     * Where句を作成する。
+     * @param input DataTablesInput
+     * @return Where句文字列
+     */
+    protected StringBuilder getWhereClause(DataTablesInput input) {
+        StringBuilder sql = new StringBuilder();
+        // Where句
+        if (hasFieldFilter(input)) {
+            // フィールドフィルタ
+            sql.append(" WHERE 1 = 1 ");
+            for (Column column : input.getColumns()) {
+                sql.append(getFieldFilterWhereClause(column));
+            }
+
+        } else {
+            // グローバルフィルタ
+            if (!StringUtils.isEmpty(input.getSearch().getValue())) {
+                sql.append(" WHERE 1 = 2 ");
+                for (Column column : input.getColumns()) {
+                    sql.append(getGlobalFilterWhereClause(column));
+                }
+            }
+        }
+        return sql;
+    }
+
+    /**
+     * グローバルフィルターのためのフィールド毎の等号文字列を作成する。
+     * @param column Column
+     * @return 等号文字列
+     */
+    protected StringBuilder getGlobalFilterWhereClause(Column column) {
+        StringBuilder sql = new StringBuilder();
+        if (column.getSearchable()) {
+            sql.append(" OR ");
+            String originalColumnName = column.getData();
+            String convertedColumnName = convertColumnName(originalColumnName);
+            if (isLocalDate(convertedColumnName)) {
+                sql.append("function('date_format', c.");
+                sql.append(convertedColumnName);
+                sql.append(", '%Y/%m/%d') LIKE :globalSearch ESCAPE '~'");
+            } else if (isLocalDateTime(convertedColumnName)) {
+                sql.append("function('date_format', c.");
+                sql.append(convertedColumnName);
+                sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :globalSearch ESCAPE '~'");
+            } else if (isNumber(convertedColumnName)) {
+                sql.append("function('CONVERT', c.");
+                sql.append(convertedColumnName);
+                sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
+            } else if (isCollection(convertedColumnName)) {
+                sql.append(convertedColumnName);
+                sql.append(" LIKE :globalSearch ESCAPE '~'");
+            } else if (isBoolean(convertedColumnName)) {
+                sql.append("function('CONVERT', c.");
+                sql.append(convertedColumnName);
+                sql.append(", CHAR) LIKE :globalSearch ESCAPE '~'");
+            } else if (isRelation(originalColumnName)) {
+                sql.append("c." + originalColumnName);
+                sql.append(" LIKE :globalSearch ESCAPE '~'");
+            } else {
+                sql.append("c.");
+                sql.append(convertedColumnName);
+                sql.append(" LIKE :globalSearch ESCAPE '~'");
+            }
+        }
+        return sql;
+    }
+
+    /**
+     * フィールドフィルターのためのフィールド毎の等号文字列を作成する。
+     * @param column Column
+     * @return 等号文字列
+     */
+    protected StringBuilder getFieldFilterWhereClause(Column column) {
+        StringBuilder sql = new StringBuilder();
+
+        if (!StringUtils.isEmpty(column.getSearch().getValue())) {
+
+            String originalColumnName = column.getData();
+            String convertedColumnName = convertColumnName(originalColumnName);
+            String replacedColumnName = replacedColumnName(convertedColumnName);
+
+            sql.append(" AND ");
+            if (isId(convertedColumnName)) {
+                sql.append("c." + convertedColumnName);
+                sql.append(" = :");
+                sql.append(replacedColumnName);
+            } else if (isFilterINClause(convertedColumnName)) {
+                sql.append("c." + convertedColumnName);
+                sql.append(" IN (:");
+                sql.append(replacedColumnName);
+                sql.append(")");
+            } else if (isEnum(convertedColumnName)) {
+                sql.append("c." + convertedColumnName);
+                sql.append(" IN (:");
+                sql.append(replacedColumnName);
+                sql.append(")");
+            } else if (isLocalDate(convertedColumnName)) {
+                sql.append("function('date_format', c.");
+                sql.append(convertedColumnName);
+                sql.append(", '%Y/%m/%d') LIKE :");
+                sql.append(replacedColumnName);
+                sql.append(" ESCAPE '~'");
+            } else if (isLocalDateTime(convertedColumnName)) {
+                sql.append("function('date_format', c.");
+                sql.append(convertedColumnName);
+                sql.append(", '%Y/%m/%d %h:%i:%s') LIKE :");
+                sql.append(replacedColumnName);
+                sql.append(" ESCAPE '~'");
+            } else if (isNumber(convertedColumnName)) {
+                sql.append("function('CONVERT', c.");
+                sql.append(convertedColumnName);
+                sql.append(", CHAR) LIKE :");
+                sql.append(replacedColumnName);
+                sql.append(" ESCAPE '~'");
+            } else if (isCollection(convertedColumnName)) {
+                sql.append(convertedColumnName);
+                sql.append(" LIKE :");
+                sql.append(replacedColumnName);
+                sql.append(" ESCAPE '~'");
+            } else if (isRelation(originalColumnName)) {
+                sql.append("c." + originalColumnName);
+                sql.append(" LIKE :");
+                sql.append(replacedColumnName);
+                sql.append(" ESCAPE '~'");
+            } else if (isBoolean(convertedColumnName)) {
+                sql.append("function('FORMAT', c.");
+                sql.append(convertedColumnName);
+                sql.append(", 0) LIKE :");
+                sql.append(replacedColumnName);
+                sql.append(" ESCAPE '~'");
+            } else {
+                sql.append("c.");
+                sql.append(convertedColumnName);
+                sql.append(" LIKE :");
+                sql.append(replacedColumnName);
+                sql.append(" ESCAPE '~'");
+            }
+        }
+        return sql;
+    }
+
+    /**
+     * フィールドフィルターの設定されている
+     * @param input DataTablesInput
+     * @return true:フィールドフィルタを設定あり, false:なし
+     */
+    protected boolean hasFieldFilter(DataTablesInput input) {
+        for (Column column : input.getColumns()) {
+            if (column.getSearchable() && !StringUtils.isEmpty(column.getSearch().getValue())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 指定されたフィールド名がLocalDate型かどうか
+     * @param fieldName フィールド名
+     * @return true:LocalDate型である, false:ない
+     */
     protected boolean isLocalDate(String fieldName) {
         return "java.time.LocalDate".equals(fieldMap.get(fieldName));
     }
 
+    /**
+     * 指定されたフィールド名がLocalDateTIme型かどうか
+     * @param fieldName フィールド名
+     * @return true:LocalDateTIme型である, false:ない
+     */
     protected boolean isLocalDateTime(String fieldName) {
         return "java.time.LocalDateTime".equals(fieldMap.get(fieldName));
     }
 
+    /**
+     * 指定されたフィールド名がNumber型かどうか
+     * @param fieldName フィールド名
+     * @return true:Number型である, false:ない
+     */
     protected boolean isNumber(String fieldName) {
         return "java.lang.Integer".equals(fieldMap.get(fieldName))
                 || "java.lang.Long".equals(fieldMap.get(fieldName))
@@ -451,15 +581,30 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
                 || "java.math.BigInteger".equals(fieldMap.get(fieldName));
     }
 
+    /**
+     * 指定されたフィールド名がCollection型 or List型 かどうか
+     * @param fieldName フィールド名
+     * @return true:Collection型である, false:ない
+     */
     protected boolean isCollection(String fieldName) {
         return "java.util.Collection".equals(fieldMap.get(fieldName))
                 || "java.util.List".equals(fieldMap.get(fieldName));
     }
 
+    /**
+     * 指定されたフィールド名がBooleanかどうか
+     * @param fieldName フィールド名
+     * @return true:Booleanである, false:ない
+     */
     protected boolean isBoolean(String fieldName) {
         return "java.lang.Boolean".equals(fieldMap.get(fieldName));
     }
 
+    /**
+     * 指定されたフィールド名はEnumかどうか
+     * @param fieldName フィールド名
+     * @return true:Enumである, false:ない
+     */
     protected boolean isEnum(String fieldName) {
         try {
             Class<?> c = Class.forName(fieldMap.get(fieldName));
@@ -469,15 +614,76 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         }
     }
 
+    /**
+     * 指定されたフィールド名に@IDが設定されている。
+     * @param fieldName フィールド名
+     * @return true:IDである, false:ない
+     */
     protected boolean isId(String fieldName) {
-            Map<String, Annotation> map = BeanUtils.getFieldByAnnotation(clazz, null, Id.class);
-            return map.keySet().contains(fieldName);
+        Map<String, Annotation> map = BeanUtils.getFieldByAnnotation(clazz, null, Id.class);
+        return map.containsKey(fieldName);
+    }
+
+    /**
+     * 指定されたフィールド名に@IDが設定され、Integer型である。
+     * @param fieldName フィールド名
+     * @return true:Integer型のIDである, false:ない
+     */
+    protected boolean isIdInteger(String fieldName) {
+        return isId(fieldName) && "java.lang.Integer".equals(fieldMap.get(fieldName));
+    }
+
+    /**
+     * 指定されたフィールド名に@IDが設定され、Long型である。
+     * @param fieldName フィールド名
+     * @return true:Long型のIDである, false:ない
+     */
+    protected boolean isIdLong(String fieldName) {
+        return isId(fieldName) && "java.lang.Long".equals(fieldMap.get(fieldName));
+    }
+
+    /**
+     * 指定されたフィールド名に@IDが設定され、String型である。
+     * @param fieldName フィールド名
+     * @return true:String型のIDである, false:ない
+     */
+    protected boolean isIdString(String fieldName) {
+        return isId(fieldName) && "java.lang.String".equals(fieldMap.get(fieldName));
+    }
+
+    /**
+     * 指定されたフィールド名がCollectionElementかどうか
+     * @param fieldName フィールド名
+     * @return true:CollectionElementである, false:ない
+     */
+    protected boolean isCollectionElement(String fieldName) {
+        return elementCollectionFieldsMap.containsKey(fieldName);
+    }
+
+    /**
+     * 指定したフィールドがリレーションかどうか
+     * @param fieldName フィールド名
+     * @return true:リレーションである, false:ない
+     */
+    protected boolean isRelation(String fieldName) {
+        return getRelationEntity(fieldName) != null;
+    }
+
+    /**
+     * LIKEでなくINで検索するフィールドを設定する。(オーバーライトする前提)
+     *
+     * @param fieldName フォールド名
+     * @return true:INで検索する, false:しない
+     */
+    protected boolean isFilterINClause(String fieldName) {
+        return false;
     }
 
     /**
      * 検索文字列のリストをEnumのリストに変換する(サブクラスでオーバーライトして利用する)
+     *
      * @param fieldName フィールド名
-     * @param values 検索文字列のリスト
+     * @param values    検索文字列のリスト
      * @return Enumのリスト
      */
     protected List<Object> getEnumListByName(String fieldName, List<String> values) {
@@ -485,13 +691,13 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         return new ArrayList<>();
     }
 
+    /**
+     * DataTablesのフィールド名とエンティティのフィールド名の変換
+     *
+     * @param org 変換前のフィールド名
+     * @return 変換後のフォールド名
+     */
     protected String convertColumnName(String org) {
-
-        // 一旦削除
-//        if (StringUtils.contains(org, ".")) {
-//            return StringUtils.substring(org, org.indexOf(".") + 1);
-//        }
-
         if (StringUtils.endsWith(org, "Label")) {
             return StringUtils.left(org, org.length() - 5);
         } else {
@@ -499,27 +705,22 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         }
     }
 
+    /**
+     * フィールド名の変換(プレースフォルダ用にフィールド名に . が使えないことへの対応)
+     *
+     * @param fieldName . を含むフィールド名
+     * @return . を _ に置換したフィールド名
+     */
     protected String replacedColumnName(String fieldName) {
-        return convertColumnName(fieldName).replace('.', '_');
+        return fieldName.replace('.', '_');
     }
 
-
-
-    protected boolean isCollectionElement(String fieldName) {
-        return elementCollectionFieldsMap.containsKey(fieldName);
-    }
-
-    protected boolean isRelation(String fieldName) {
-        if (getRelationEntity(fieldName) != null) {
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean isFilterINClause(String fieldName) {
-        return false;
-    }
-
+    /**
+     * 指定したフィールドが外部結合の場合、結合するエンティテイ名を取得する。
+     *
+     * @param fieldName フィールド名
+     * @return 結合するエンティティ名, 存在しない場合はnull.
+     */
     protected String getRelationEntity(String fieldName) {
 
         String entityName = null;
@@ -534,8 +735,5 @@ public abstract class AbstractNodeService<T extends AbstractEntity<ID> & StatusI
         }
     }
 
-    protected Pageable getPageable(DataTablesInput input) {
-        return PageRequest.of(input.getStart() / input.getLength(), input.getLength());
-    }
 
 }

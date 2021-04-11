@@ -20,7 +20,7 @@ class CsvUtilsTest {
     @Nested
     class getCsvDefault {
         @Test
-        @DisplayName("[正常系]Csvのデフォルト設定が取得できること。設定する値は問わない。")
+        @DisplayName("[正] Csvのデフォルト設定が取得できること。設定する値は問わない。")
         void test001() {
             //実行
             CsvConfig actual = CsvUtils.getCsvDefault();
@@ -35,7 +35,7 @@ class CsvUtilsTest {
     @Nested
     class getTsvDefault {
         @Test
-        @DisplayName("[正常系]Tsvのデフォルト設定が取得できること。設定する値は問わない。")
+        @DisplayName("[正] Tsvのデフォルト設定が取得できること。設定する値は問わない。")
         void test001() {
             //実行
             CsvConfig actual = CsvUtils.getTsvDefault();

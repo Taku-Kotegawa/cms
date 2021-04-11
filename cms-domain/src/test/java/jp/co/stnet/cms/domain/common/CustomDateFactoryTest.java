@@ -41,7 +41,7 @@ class CustomDateFactoryTest {
     class newLocalDateTime {
 
         @Test
-        @DisplayName("[正常系] dateFactoryからLocalDateTimeを取得する。")
+        @DisplayName("[正] dateFactoryからLocalDateTimeを取得する。")
         void test001() {
             //準備 -> setUp()参照
 
@@ -56,7 +56,7 @@ class CustomDateFactoryTest {
     @Nested
     class newLocalDate {
         @Test
-        @DisplayName("[正常系] dateFactoryからLocalDateを取得する。")
+        @DisplayName("[正] dateFactoryからLocalDateを取得する。")
         void test001() {
             //準備 -> setUp()参照
 
@@ -71,7 +71,7 @@ class CustomDateFactoryTest {
     @Nested
     class newLocalTime {
         @Test
-        @DisplayName("[正常系] dateFactoryからLocalTimeを取得する。")
+        @DisplayName("[正] dateFactoryからLocalTimeを取得する。")
         void test001() {
             //準備 -> setUp()参照
 

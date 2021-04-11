@@ -67,7 +67,7 @@ class FailedEmailChangeRequestRepositoryTest {
     @Nested
     class countByToken extends baseTest {
         @Test
-        @DisplayName("[正常系] 1件が検索できる。")
+        @DisplayName("[正] 1件が検索できる。")
         void test001() {
             // 準備
             FailedEmailChangeRequest expected = createEntity("1", LocalDateTime.of(2001, 12, 31, 23, 59, 50));
@@ -86,7 +86,7 @@ class FailedEmailChangeRequestRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] 2件が検索できる。")
+        @DisplayName("[正] 2件が検索できる。")
         void test002() {
             // 準備
             FailedEmailChangeRequest expected = createEntity("1", LocalDateTime.of(2001, 12, 31, 23, 59, 50));
@@ -109,7 +109,7 @@ class FailedEmailChangeRequestRepositoryTest {
     @Nested
     class deleteByAttemptDateLessThan extends baseTest {
         @Test
-        @DisplayName("[正常系] 削除できる。(1件)")
+        @DisplayName("[正] 削除できる。(1件)")
         void test001() {
             // 準備
             insertTables(
@@ -128,7 +128,7 @@ class FailedEmailChangeRequestRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] 削除できる。(2件)")
+        @DisplayName("[正] 削除できる。(2件)")
         void test002() {
             // 準備
             insertTables(
@@ -152,7 +152,7 @@ class FailedEmailChangeRequestRepositoryTest {
     @Nested
     class deleteByToken extends baseTest {
         @Test
-        @DisplayName("[正常系] 削除できる。(3件)")
+        @DisplayName("[正] 削除できる。(3件)")
         void test002() {
             // 準備
             insertTables(

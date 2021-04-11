@@ -85,7 +85,7 @@ class PasswordHistoryRepositoryTest {
     @Nested
     class findByUsername extends baseTest {
         @Test
-        @DisplayName("[正常系]検索できる。(2件)")
+        @DisplayName("[正] 検索できる。(2件)")
         void test001() {
             //準備
             insertTable(
@@ -105,7 +105,7 @@ class PasswordHistoryRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系]検索できない。(0件)")
+        @DisplayName("[正] 検索できない。(0件)")
         void test002() {
             //準備
             insertTable(
@@ -127,7 +127,7 @@ class PasswordHistoryRepositoryTest {
     @Nested
     class findByUsernameAndUseFromAfter extends baseTest {
         @Test
-        @DisplayName("[正常系]検索できる。(1件)")
+        @DisplayName("[正] 検索できる。(1件)")
         void test001() {
             //準備
             target.save(createEntity("1", LocalDateTime.of(2001, 12, 31, 23, 59, 11)));

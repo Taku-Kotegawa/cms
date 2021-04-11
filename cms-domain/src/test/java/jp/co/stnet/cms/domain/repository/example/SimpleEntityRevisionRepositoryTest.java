@@ -95,7 +95,7 @@ class SimpleEntityRevisionRepositoryTest {
     @Nested
     class findByIdLatestRev extends baseTest {
         @Test
-        @DisplayName("[正常系]データ登録と取得ができる。")
+        @DisplayName("[正] データ登録と取得ができる。")
         void test001() {
 
             // 準備
@@ -114,7 +114,7 @@ class SimpleEntityRevisionRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] 最新のリビジョンが取得できる。")
+        @DisplayName("[正] 最新のリビジョンが取得できる。")
         void test002() {
 
             // 準備

@@ -91,7 +91,7 @@ class FailedAuthenticationRepositoryTest {
     @Nested
     class deleteByUsername extends baseTest {
         @Test
-        @DisplayName("[正常系]データ挿入の妥当性検証")
+        @DisplayName("[正] データ挿入の妥当性検証")
         void test001() {
             // 準備
             FailedAuthentication expected = createEntity("1", dummyTime);
@@ -110,7 +110,7 @@ class FailedAuthenticationRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] データの削除、戻り値に削除件数が返る[1件]")
+        @DisplayName("[正] データの削除、戻り値に削除件数が返る[1件]")
         void test002() {
             // 準備
             target.deleteAll();
@@ -133,7 +133,7 @@ class FailedAuthenticationRepositoryTest {
         }
 
         @Test
-        @DisplayName("[正常系] データの削除後、テーブルに残ったデータの妥当である。")
+        @DisplayName("[正] データの削除後、テーブルに残ったデータの妥当である。")
         void test003() {
             // 準備
             insertTables(

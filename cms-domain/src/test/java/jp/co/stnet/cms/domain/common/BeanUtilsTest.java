@@ -31,7 +31,7 @@ class BeanUtilsTest {
     class getFields {
 
         @Test
-        @DisplayName("[正常]フィールドを持たないクラスの場合、空のMapを返す。")
+        @DisplayName("[正] フィールドを持たないクラスの場合、空のMapを返す。")
         void test001() {
             // 準備
             Map<String, String> expected = new HashMap<>();
@@ -45,7 +45,7 @@ class BeanUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常]基本的な型のフィールドを持つクラスは、フィールド名とクラスを格納したMapを返す。")
+        @DisplayName("[正] 基本的な型のフィールドを持つクラスは、フィールド名とクラスを格納したMapを返す。")
         void test002() {
             // 準備
             Map<String, String> expected = new HashMap<>();
@@ -63,7 +63,7 @@ class BeanUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常]getterを持たない場合、空のMapを返す。")
+        @DisplayName("[正] getterを持たない場合、空のMapを返す。")
         void test003() {
             // 準備
             Map<String, String> expected = new HashMap<>();
@@ -77,7 +77,7 @@ class BeanUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常] LIST, MAP, ENUM のフィールドの場合、フィールド名とクラスを格納したMapを返す。")
+        @DisplayName("[正] LIST, MAP, ENUM のフィールドの場合、フィールド名とクラスを格納したMapを返す。")
         void test004() {
             // 準備
             Map<String, String> expected = new HashMap<>();
@@ -94,7 +94,7 @@ class BeanUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常] 他のクラスをフィールドに持つ場合、フィールドに指定したクラス内のフィールドとクラスもMapに格納される。")
+        @DisplayName("[正] 他のクラスをフィールドに持つ場合、フィールドに指定したクラス内のフィールドとクラスもMapに格納される。")
         void test005() {
             // 準備
             Map<String, String> expected = new HashMap<>();
@@ -113,7 +113,7 @@ class BeanUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常] 他のクラスのLIST, MAPのフィールドの場合、他のクラスのフィールドは取得しない。(TODO:他のクラスのフィールドも取得できる様にしたい)")
+        @DisplayName("[正] 他のクラスのLIST, MAPのフィールドの場合、他のクラスのフィールドは取得しない。(TODO:他のクラスのフィールドも取得できる様にしたい)")
         void test006() {
             // 準備
             Map<String, String> expected = new HashMap<>();
@@ -190,7 +190,7 @@ class BeanUtilsTest {
     class getFieldList {
 
         @Test
-        @DisplayName("[正常] getFieldsのMapのキーがリストに変換される。過不足・重複は認めない。並び順は問わない。")
+        @DisplayName("[正] getFieldsのMapのキーがリストに変換される。過不足・重複は認めない。並び順は問わない。")
         void test001() {
             // 準備
 
@@ -209,7 +209,7 @@ class BeanUtilsTest {
     class getFieldByAnnotation {
 
         @Test
-        @DisplayName("[正常系] @NotNullアノテーションを設定したフィールドの一覧が取得できる。(2件)")
+        @DisplayName("[正] @NotNullアノテーションを設定したフィールドの一覧が取得できる。(2件)")
         void test001() {
             // 準備
 
@@ -222,7 +222,7 @@ class BeanUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系] @Lengthアノテーションを設定したフィールドの一覧が取得できる。(1件)")
+        @DisplayName("[正] @Lengthアノテーションを設定したフィールドの一覧が取得できる。(1件)")
         void test002() {
             // 準備
 
@@ -235,7 +235,7 @@ class BeanUtilsTest {
         }
 
         @Test
-        @DisplayName("[正常系] 存在しないアノテーションの場合は空のリストが取得できる。(0件)")
+        @DisplayName("[正] 存在しないアノテーションの場合は空のリストが取得できる。(0件)")
         void test003() {
             // 準備
 

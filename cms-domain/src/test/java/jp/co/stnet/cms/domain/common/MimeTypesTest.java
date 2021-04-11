@@ -13,7 +13,7 @@ class MimeTypesTest {
     @Nested
     class getMimeType {
         @Test
-        @DisplayName("[正常系]拡張子からMimeTypeを取得する。")
+        @DisplayName("[正] 拡張子からMimeTypeを取得する。")
         void test001() {
             //準備
             String extension = "xlsx";
@@ -27,7 +27,7 @@ class MimeTypesTest {
         }
 
         @Test
-        @DisplayName("[異常系]拡張子からMimeTypeを取得する。存在しない場合は'application/octet-stream'が返る")
+        @DisplayName("[異] 拡張子からMimeTypeを取得する。存在しない場合は'application/octet-stream'が返る")
         void test002() {
             //準備
             String extension = "not exist";
@@ -45,7 +45,7 @@ class MimeTypesTest {
     @Nested
     class getMediaType {
         @Test
-        @DisplayName("[正常系]拡張子からMediaTypeを取得する。")
+        @DisplayName("[正] 拡張子からMediaTypeを取得する。")
         void test001() {
             //準備
             String extension = "xlsx";
@@ -59,7 +59,7 @@ class MimeTypesTest {
         }
 
         @Test
-        @DisplayName("[異常系]拡張子からMediaTypeを取得する。存在しない場合は'application/octet-stream'のMediaTypeが返る")
+        @DisplayName("[異] 拡張子からMediaTypeを取得する。存在しない場合は'application/octet-stream'のMediaTypeが返る")
         void test002() {
             //準備
             String extension = "not exist";
