@@ -23,29 +23,29 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:META-INF/spring/seleniumContext.xml" })
 public class HelloIT {
 
-    @Inject
-    WebDriver webDriver;
-
-    @Value("${selenium.applicationContextUrl}")
-    String applicationContextUrl;
+//    @Inject
+//    WebDriver webDriver;
+//
+//    @Value("${selenium.applicationContextUrl}")
+//    String applicationContextUrl;
 
     /**
      * Asserts that the content of the application home page is "Hello world!".
      */
-    @Test
-    public void testHelloWorld() throws IOException {
-
-        webDriver.get(applicationContextUrl);
-
-        assertThat(webDriver.findElement(By.id("title")).getText(),
-                is("Hello world!"));
-    }
+//    @Test
+//    public void testHelloWorld() throws IOException {
+//
+//        webDriver.get(applicationContextUrl);
+//
+//        assertThat(webDriver.findElement(By.id("title")).getText(),
+//                is("Hello world!"));
+//    }
 
     /**
      * Quits the driver, closing every associated window.
      */
-    @After
-    public void tearDown() {
-        webDriver.quit();
-    }
+//    @After
+//    public void tearDown() {
+//        webDriver.quit();
+//    }
 }
